@@ -9,7 +9,7 @@
 [![MCP Server](https://img.shields.io/badge/MCP-JSON--RPC_2.0_Stdio-a855f7?style=for-the-badge)](https://modelcontextprotocol.io/)
 [![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-90%2B_CVE_%2F_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-90-règles-cvecwe)
 [![BLAKE3](https://img.shields.io/badge/Contracts-BLAKE3_%2B_EARS_Sealed-10b981?style=for-the-badge)](#🔒-gouvernance-spec-driven-contrats-ears--sceau-blake3)
-[![License](https://img.shields.io/badge/License-MIT_%2F_Apache--2.0-fbbf24?style=for-the-badge)](#📄-licence)
+[![License: Non-Commercial](https://img.shields.io/badge/License-Non--Commercial-ef4444?style=for-the-badge)](#📄-licence)
 
 *Développé en **Rust 100% pur**, compilé en exécutables natifs autonomes ultra-légers (`~9 Mo`), sans Electron, sans runtime lourd, sans navigateur externe et sans console noire CMD.*
 
@@ -732,4 +732,9 @@ cargo build --release
 
 ## 📄 Licence
 
-Distribué sous double licence **MIT OR Apache-2.0**, au choix de l'utilisateur.
+Ce projet est sous **Licence Source-Available Non-Commerciale ([PolyForm Noncommercial 1.0.0](LICENSE))**.
+
+- ✅ **Libre & Autorisé :** Usage personnel, recherche en cybersécurité, évaluation, audit individuel, éducation et contributions open-source.
+- 🚫 **Strictement Interdit sans accord écrit préalable :** Toute utilisation ou déploiement par une entreprise commerciale à but lucratif, toute vente, intégration dans un produit propriétaire ou hébergement sous forme de service payant (SaaS).
+
+*Pour toute demande de licence commerciale ou de partenariat : contacter l'auteur.*

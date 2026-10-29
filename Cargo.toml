@@ -13,7 +13,8 @@ members = [
 version = "2.0.0"
 authors = ["AetherScope Engineering Team"]
 edition = "2021"
-license = "MIT OR Apache-2.0"
+license = "PolyForm-Noncommercial-1.0.0"
+license-file = "LICENSE"
 
 [workspace.dependencies]
 core-graph = { path = "crates/core-graph" }
