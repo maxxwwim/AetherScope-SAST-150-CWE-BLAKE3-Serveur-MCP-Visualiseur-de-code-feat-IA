@@ -1,0 +1,49 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core-graph",
+    "crates/ast-scanner",
+    "crates/arch-templates",
+    "crates/security-linter",
+    "crates/ai-file-bridge",
+    "crates/desktop-shell",
+]
+
+[workspace.package]
+version = "2.0.0"
+authors = ["AetherScope Engineering Team"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+core-graph = { path = "crates/core-graph" }
+ast-scanner = { path = "crates/ast-scanner" }
+arch-templates = { path = "crates/arch-templates" }
+security-linter = { path = "crates/security-linter" }
+ai-file-bridge = { path = "crates/ai-file-bridge" }
+
+# Data & Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+toml = "0.8"
+bitflags = { version = "2.6", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Async & I/O
+tokio = { version = "1.40", features = ["full"] }
+notify = "6.1"
+parking_lot = "0.12"
+walkdir = "2.5"
+rayon = "1.10"
+regex = "1.11"
+
+# Crypto & Hashing
+blake3 = "1.5"
+
+# Web Server & CLI
+axum = "0.7"
+tower-http = { version = "0.5", features = ["cors"] }
+clap = { version = "4.5", features = ["derive"] }
+colored = "2.1"
+webbrowser = "1.0"

@@ -1,0 +1,35 @@
+[package]
+name = "desktop-shell"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "aether-engine"
+path = "src/main.rs"
+
+[[bin]]
+name = "aetherscope-mcp"
+path = "src/mcp_main.rs"
+
+[dependencies]
+core-graph = { path = "../core-graph" }
+ast-scanner = { path = "../ast-scanner" }
+arch-templates = { path = "../arch-templates" }
+security-linter = { path = "../security-linter" }
+ai-file-bridge = { path = "../ai-file-bridge" }
+
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+axum.workspace = true
+tower-http.workspace = true
+clap.workspace = true
+colored.workspace = true
+webbrowser.workspace = true
+walkdir.workspace = true
+toml.workspace = true
+wry = "0.42"
+tao = "0.28"
+rfd = "0.15"

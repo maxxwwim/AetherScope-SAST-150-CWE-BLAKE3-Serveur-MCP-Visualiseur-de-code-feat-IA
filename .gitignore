@@ -1,0 +1,44 @@
+# ==========================================
+# Rust & Cargo Build Artifacts
+# ==========================================
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock.bak
+
+# ==========================================
+# AetherScope Runtime Transient Bridge
+# (Generated dynamically at runtime: audit reports, live targets, personal paths)
+# ==========================================
+/.aether/*
+!/.aether/.gitkeep
+
+# ==========================================
+# Release Archives & Binaries
+# ==========================================
+/releases/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ==========================================
+# Logs, Dumps & Temp Files
+# ==========================================
+*.log
+*.txt
+*.tmp
+*.bak
+*.swp
+*.patch
+
+# ==========================================
+# IDE & System Files
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini

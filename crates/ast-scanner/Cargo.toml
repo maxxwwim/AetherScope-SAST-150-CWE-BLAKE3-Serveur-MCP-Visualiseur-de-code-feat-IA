@@ -1,0 +1,16 @@
+[package]
+name = "ast-scanner"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+core-graph = { path = "../core-graph" }
+security-linter = { path = "../security-linter" }
+walkdir.workspace = true
+rayon.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true

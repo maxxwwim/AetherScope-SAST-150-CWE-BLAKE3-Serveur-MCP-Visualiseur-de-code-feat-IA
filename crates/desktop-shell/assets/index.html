@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🪐 AetherScope V2 — Architectural Intelligence & Live WebGL 2 Cockpit</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<canvas id="aether-canvas"></canvas>
+
+  <!-- Cosmic Hover Node Tooltip Popup -->
+  <div id="node-tooltip">
+    <div class="tt-header">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span class="tt-stereo" id="tt-stereo">«Function»</span>
+        <span class="tt-layer" id="tt-layer">Domain</span>
+      </div>
+      <span id="tt-loc-badge" class="tt-loc-badge" style="display:none;">12 LOC</span>
+    </div>
+    <div class="tt-name" id="tt-name">NomFonction</div>
+    <div class="tt-path" id="tt-path">chemin/fichier.rs</div>
+    
+    <!-- Signature Déclaration Normée (PHP / TS / Rust) -->
+    <div id="tt-sig-box" class="tt-sig-box" style="display:none;">
+      <code class="tt-sig-code" id="tt-sig-code"></code>
+    </div>
+    <!-- Résumé PHPDoc / Contrat Fonction -->
+    <div id="tt-doc-box" class="tt-doc-box" style="display:none;">
+      <div class="tt-doc-text" id="tt-doc-text"></div>
+    </div>
+
+    <div class="tt-details" id="tt-details">
+      <span id="tt-type">Symbole AST</span>
+      <span id="tt-extra">0 flux</span>
+    </div>
+  </div>
+
+
+  
+  <!-- ========================================================
+       PROJECT HUB & MULTI-ARCHITECTURE ORCHESTRATOR MODAL
+       ======================================================== -->
+  <div id="project-hub-modal" class="modal-overlay">
+    <div class="hub-modal-card">
+      <div class="hub-header">
+        <div class="hub-title-box">
+          <div class="hub-title-row">
+            <span>🪐</span>
+            <span>AETHERSCOPE V2 • PROJECT HUB & ARCHITECTURE ORCHESTRATOR</span>
+          </div>
+          <div class="hub-sub">Chargez un projet existant ou générez une architecture contract-driven avec découplage strict Client / Serveur / Nœuds de Données.</div>
+        </div>
+        <button class="modal-close" id="btn-close-hub-modal">&times;</button>
+      </div>
+
+      <div class="hub-body">
+        <!-- Section 1 : Ouvrir un Projet Existant -->
+        <div>
+          <div class="hub-section-title"><span>📂</span> 1. Explorer un Projet Existant</div>
+          <div class="hub-open-grid">
+            <div class="hub-action-card" id="btn-hub-action-workspace">
+              <div class="hub-action-info">
+                <div class="hub-action-title"><span>📁</span> Dossier Tous Projets (Workspace)</div>
+                <div class="hub-action-desc">Scanne le dossier racine contenant vos dépôts et peuple la liste déroulante AetherScope.</div>
+              </div>
+              <button class="aether-btn primary" style="font-size:0.75rem; white-space:nowrap; padding:6px 12px;">Parcourir...</button>
+            </div>
+
+            <div class="hub-action-card" id="btn-hub-action-project">
+              <div class="hub-action-info">
+                <div class="hub-action-title"><span>🎯</span> 1 Projet Unique Spécifique</div>
+                <div class="hub-action-desc">Sélectionne directement un dépôt n'importe où sur votre disque et lance la galaxie WebGL 2.</div>
+              </div>
+              <button class="aether-btn primary" style="font-size:0.75rem; white-space:nowrap; padding:6px 12px;">Ouvrir...</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2 : Créer une Nouvelle Architecture Multi-Niveaux -->
+        <div>
+          <div class="hub-section-title"><span>✨</span> 2. Forger une Nouvelle Architecture Modulaire Contract-Driven</div>
+          <div class="arch-grid" id="arch-selector-grid">
+            <!-- Carte Rust -->
+            <div class="arch-card theme-rust selected" data-stack="rust">
+              <div class="arch-header">
+                <div class="arch-title-group"><span>🦀</span> Pure Rust</div>
+                <span class="arch-badge">Zero-Runtime • Critique</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🎯 Profil & Attentes :</span>
+                <span class="arch-detail-text">Haute performance, sûreté mémoire absolue, zéro runtime, tolérance aux pannes.</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🏛️ Architecture Recommandée :</span>
+                <span class="arch-detail-text">Cargo Workspace Hexagonal (<code>crates/domain</code>, <code>crates/server-axum</code>, <code>crates/client-ui</code>, <code>crates/db-adapter</code>).</span>
+              </div>
+              <div class="arch-decoupling">
+                <strong>🔒 Découplage :</strong> Trait Rust <code>RepositoryPort</code> permettant de basculer d'un SQLite local (fichier) à un Postgres distant par simple configuration.
+              </div>
+            </div>
+
+            <!-- Carte Python -->
+            <div class="arch-card theme-python" data-stack="python">
+              <div class="arch-header">
+                <div class="arch-title-group"><span>🐍</span> Pure Python</div>
+                <span class="arch-badge">FastAPI • Pydantic v2 • ML/IA</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🎯 Profil & Attentes :</span>
+                <span class="arch-detail-text">IA, Data Science, APIs rapides, scripts d'automatisation, microservices asynchrones.</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🏛️ Architecture Recommandée :</span>
+                <span class="arch-detail-text">Modular Clean Monorepo (<code>uv</code> workspace) avec FastAPI, Pydantic v2 (Contrats stricts) et SQLAlchemy/SQLModel.</span>
+              </div>
+              <div class="arch-decoupling">
+                <strong>🔒 Découplage :</strong> Les schémas Pydantic dans <code>contracts/</code> valident les flux entre le client, l'API et les workers IA déportés.
+              </div>
+            </div>
+
+            <!-- Carte Node.js TS -->
+            <div class="arch-card theme-node" data-stack="ts">
+              <div class="arch-header">
+                <div class="arch-title-group"><span>🟢</span> Node.js (TypeScript)</div>
+                <span class="arch-badge">pnpm • tRPC/Hono • Zod</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🎯 Profil & Attentes :</span>
+                <span class="arch-detail-text">Fullstack temps réel, SaaS web moderne, écosystème ultra-riche, vélocité UI maximale.</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🏛️ Architecture Recommandée :</span>
+                <span class="arch-detail-text"><code>pnpm</code> Workspace + Architecture Orientée Contrats (tRPC / Hono / Zod / Vite).</span>
+              </div>
+              <div class="arch-decoupling">
+                <strong>🔒 Découplage :</strong> Validation de bout en bout : le dossier <code>packages/db</code> (Drizzle/Prisma) peut vivre en local ou devenir un microservice indépendant.
+              </div>
+            </div>
+
+            <!-- Carte Hybride Web3 / MMO -->
+            <div class="arch-card theme-hybrid" data-stack="hybrid">
+              <div class="arch-header">
+                <div class="arch-title-group"><span>⚡</span> Hybride Web3 & MMO</div>
+                <span class="arch-badge">PixiJS + Rust WS + EVM</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🎯 Profil & Attentes :</span>
+                <span class="arch-detail-text">Mondes virtuels 2D/3D temps réel (type Habbo/MMO), gaming haute cadence, Smart Contracts.</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🏛️ Architecture Recommandée :</span>
+                <span class="arch-detail-text">Client PixiJS/TS + Serveur Rust WebSocket + Smart Contracts EVM & Indexeurs d'événements.</span>
+              </div>
+              <div class="arch-decoupling">
+                <strong>🔒 Découplage :</strong> Paquets binaires WebSocket + Indexeur on-chain déporté sur nœuds distribués indépendants.
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulaire de Génération -->
+          <div class="scaffold-form-card" style="margin-top:14px;">
+            <div class="scaffold-form-row">
+              <div class="scaffold-field">
+                <label>📁 DOSSIER RACINE DE DESTINATION :</label>
+                <div class="input-with-button">
+                  <input type="text" id="hub-project-dir" class="cosmo-input" style="flex:1;" placeholder="Ex: C:\Users\1234\Desktop\Projets" />
+                  <button class="aether-btn" id="btn-hub-browse-dir" style="font-size:0.75rem; padding:4px 10px;">Parcourir</button>
+                </div>
+              </div>
+              <div class="scaffold-field">
+                <label>🏷️ NOM DU NOUVEAU PROJET :</label>
+                <input type="text" id="hub-project-name" class="cosmo-input" placeholder="Ex: cryptoRaptor, NeoHotel, FastApiApp" value="MonSuperProjet" />
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <div style="font-size:0.68rem; color:#94a3b8; font-family:var(--font-mono);">
+                Structure créée : <code>contracts/</code>, <code>client/</code>, <code>server/</code>, <code>data-nodes/</code>, <code>aether.lock.toml</code> + Contrats EARS.
+              </div>
+              <button class="aether-btn primary" id="btn-hub-create-scaffold" style="padding:8px 20px; font-weight:800; font-size:0.85rem; background:linear-gradient(135deg, #0284c7, #9333ea);">
+                ✨ Forger l'Architecture & Entrer dans le Cockpit WebGL 2
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       COCKPIT SETTINGS & PREFERENCES MODAL
+       ======================================================== -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="hub-modal-card" style="width: 680px;">
+      <div class="hub-header">
+        <div class="hub-title-box">
+          <div class="hub-title-row">
+            <span>⚙️</span>
+            <span>PRÉFÉRENCES & PERFORMANCE DU COCKPIT</span>
+          </div>
+          <div class="hub-sub">Ajustez la limite de longueur des noms, le chargement différé des READMEs et la fluidité GPU.</div>
+        </div>
+        <button class="modal-close" id="btn-close-settings-modal">&times;</button>
+      </div>
+
+      <div class="hub-body" style="gap: 16px;">
+        <!-- Option 1 : Limite de taille pour affichage de nom -->
+        <div class="settings-group-card">
+          <div class="hub-section-title"><span>🔤</span> 1. Affichage & Longueur des Noms de Symboles</div>
+          <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:8px;">
+            Définit la longueur maximale d'affichage des noms dans le graphe WebGL 2 pour un espace visuel épuré sans encombrement. Le nom complet reste visible au survol dans l'infobulle et l'inspecteur.
+          </div>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <input type="range" id="setting-label-len" min="10" max="40" step="2" value="18" style="flex:1; accent-color:#38bdf8; cursor:pointer;" />
+            <span id="setting-label-len-val" style="font-family:var(--font-mono); font-size:0.82rem; font-weight:800; color:#38bdf8; min-width:65px;">18 car.</span>
+          </div>
+          <div style="font-size:0.66rem; font-family:var(--font-mono); color:#64748b; margin-top:4px; display:flex; justify-content:space-between;">
+            <span>Court (10)</span>
+            <span>Équilibré (18-22)</span>
+            <span>Long (40)</span>
+          </div>
+          <div class="settings-preview-box" id="setting-label-preview">
+            Aperçu : <code>ReservationBookingController</code> ➔ <strong id="setting-preview-result" style="color:#38bdf8;">ReservationBoo..</strong>
+          </div>
+        </div>
+
+        <!-- Option 2 : Masquage Noms dans Bulles Denses (> 20 fichiers) -->
+        <div class="settings-group-card">
+          <div class="hub-section-title"><span>🫧</span> 2. Masquage Noms dans Bulles Denses (> 20 fichiers)</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.78rem; font-weight:700; color:#fff;">Épurer les bulles > 20 fichiers (Boost FPS Massif)</div>
+              <div style="font-size:0.70rem; color:#94a3b8;">Dans les dossiers contenant plus de 20 fichiers, n'affiche pas le texte par défaut pour préserver 60-120 FPS. Le nom réapparaît au survol ou au clic.</div>
+            </div>
+            <label class="aether-toggle">
+              <input type="checkbox" id="setting-hide-bubble-labels" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:8px;">
+            <span style="font-size:0.70rem; color:#cbd5e1;">Seuil limite de fichiers par bulle :</span>
+            <input type="number" id="setting-bubble-threshold" min="5" max="100" step="5" value="20" class="cosmo-input" style="width:70px; padding:2px 8px; font-family:var(--font-mono); font-size:0.75rem;" />
+            <span style="font-size:0.68rem; color:#64748b;">(Par défaut : 20 fichiers)</span>
+          </div>
+        </div>
+
+        <!-- Option 3 : Boost Chargement & Lazy-Loading README -->
+        <div class="settings-group-card">
+          <div class="hub-section-title"><span>⚡</span> 3. Boost Chargement & Mémoire (Lazy-Loading)</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.78rem; font-weight:700; color:#fff;">Charger les READMEs au clic</div>
+              <div style="font-size:0.70rem; color:#94a3b8;">Ne charge pas les gros fichiers Markdown en mémoire au démarrage : scan instantané et chargement au clic.</div>
+            </div>
+            <label class="aether-toggle">
+              <input type="checkbox" id="setting-lazy-readmes" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Option 4 : Rendu GPU & Fréquence -->
+        <div class="settings-group-card">
+          <div class="hub-section-title"><span>🚀</span> 4. Fréquence GPU & Fluidité</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.78rem; font-weight:700; color:#fff;">Rafraîchissement WebGL 2</div>
+              <div style="font-size:0.70rem; color:#94a3b8;">Fréquence d'actualisation de la boucle d'animation du graphe.</div>
+            </div>
+            <select id="setting-fps-limit" class="cosmo-select" style="min-width:115px;">
+              <option value="60">60 FPS (Éco)</option>
+              <option value="120" selected>120 FPS (Ultra)</option>
+              <option value="unlimited">Max Écran</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Option 5 : Effets Sonores & Spatialisation -->
+        <div class="settings-group-card">
+          <div class="hub-section-title"><span>🔊</span> 5. Audio Spatialisé & Retours Sonores</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.78rem; font-weight:700; color:#fff;">Synthèse Audio Interactive</div>
+              <div style="font-size:0.70rem; color:#94a3b8;">Retours sonores légers lors des sélections de nœuds et des supernovas IA.</div>
+            </div>
+            <label class="aether-toggle">
+              <input type="checkbox" id="setting-sound-enabled" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Option 6 : Exclusions de Fichiers & Dossiers (Scan AST & API) -->
+        <div class="settings-group-card">
+          <div class="hub-section-title"><span>🚫</span> 6. Exclusions de Fichiers & Dossiers (Scan AST & API)</div>
+          <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:8px;">
+            Excluez des dossiers ou motifs du scan AST (ex: tests, mocks, bundles). Saisissez un motif par ligne ou séparé par des virgules.
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <textarea id="setting-exclusions" class="cosmo-input" style="width:100%; height:75px; font-family:var(--font-mono); font-size:0.72rem; padding:8px; line-height:1.4; resize:vertical;" placeholder="tests&#10;*.spec.*&#10;*.test.*&#10;mocks&#10;fixtures&#10;dist"></textarea>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <span style="font-size:0.68rem; color:#64748b;">Suggestions :</span>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('tests')">+ tests/</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('w64devkit')">+ w64devkit/</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('libs')">+ libs/</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('lang')">+ lang/</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('res')">+ res/</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('*.spec.*')">+ *.spec.*</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('*.test.*')">+ *.test.*</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('mocks')">+ mocks/</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 7px;" onclick="addExclusionPill('dist')">+ dist/</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 7 : Préférences Copilote IA & Télémétrie Radar -->
+        <div class="settings-group-card" style="border-color: rgba(192, 132, 252, 0.4); background: rgba(192, 132, 252, 0.04);">
+          <div class="hub-section-title" style="color: #c084fc;"><span>🤖</span> 7. Préférences Copilote IA & Télémétrie Radar</div>
+          <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:8px;">
+            Configurez les interactions avec Antigravity, Claude ou Cursor : suivi de caméra en temps réel et tracé stellaire sur le graphe.
+          </div>
+          
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <!-- Auto-Cam -->
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:0.76rem; font-weight:700; color:#fff;">Auto-Caméra IA (Focus Temps Réel)</div>
+                <div style="font-size:0.68rem; color:#94a3b8;">La caméra s'aligne automatiquement sur la bulle stellaire lorsque l'IA explore ou refactorise du code.</div>
+              </div>
+              <label class="aether-toggle">
+                <input type="checkbox" id="setting-ai-autocam" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Tracé stellaire / Quantum Trail -->
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:0.76rem; font-weight:700; color:#fff;">Tracé Stellaire & Chemin d'Ariane IA</div>
+                <div style="font-size:0.68rem; color:#94a3b8;">Trace en direct les lignes violettes lumineuses reliant l'historique des bulles visitées par le Copilote.</div>
+              </div>
+              <label class="aether-toggle">
+                <input type="checkbox" id="setting-ai-trail" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Port MCP / REST -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:4px; border-top:1px solid rgba(192,132,252,0.15);">
+              <div>
+                <div style="font-size:0.76rem; font-weight:700; color:#fff;">Port Serveur Local AetherScope (MCP & REST)</div>
+                <div style="font-size:0.68rem; color:#94a3b8;">Port TCP d'écoute du serveur Axum local (par défaut : 3030).</div>
+              </div>
+              <input type="number" id="setting-ai-port" class="cosmo-input" style="width:80px; padding:3px 8px; font-family:var(--font-mono); font-size:0.75rem; text-align:center;" value="3030" min="1024" max="65535" />
+            </div>
+
+            <!-- Directives personnalisées Copilote -->
+            <div style="display:flex; flex-direction:column; gap:4px; margin-top:2px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label style="font-size:0.68rem; font-weight:700; color:#c084fc; font-family:var(--font-mono);">INSTRUCTIONS SPÉCIFIQUES COPILOTE (Optionnel) :</label>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="aether-btn ai" id="btn-settings-open-mcp" style="padding:2px 8px; font-size:0.62rem;">🔌 Configurer MCP</button>
+                  <button type="button" class="aether-btn ai" id="btn-settings-open-sysprompt" style="padding:2px 8px; font-size:0.62rem;">📜 Directives Système</button>
+                </div>
+              </div>
+              <textarea id="setting-ai-custom-prompt" class="cosmo-input" style="width:100%; height:60px; font-family:var(--font-mono); font-size:0.70rem; padding:8px; line-height:1.4; resize:vertical;" placeholder="Ex: Invariants EARS stricts, architecture sans I/O dans domain/, pas de dépendances circulaires..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 8 : Catalogue & Règles de Sécurité CVE / SAST -->
+        <div class="settings-group-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.04);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div class="hub-section-title" style="color:#ef4444; margin-bottom:0;">
+              <span>🛡️</span> 8. Règles de Sécurité & Détecteurs CVE / SAST
+              <span id="cve-rules-counter" class="cve-badge critical" style="margin-left:8px; font-size:0.65rem; padding:2px 6px;">20 règles</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 8px; color:#38bdf8; border-color:rgba(56,189,248,0.4);" onclick="toggleAllCveRules(true)">Tout Activer</button>
+              <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 8px; color:#f87171; border-color:rgba(239,68,68,0.4);" onclick="toggleAllCveRules(false)">Tout Couper</button>
+            </div>
+          </div>
+          <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:10px;">
+            Activez ou désactivez les moteurs d'analyse AST statique pour les smart contracts Web3, MMO Rust, canaux concurrents, et injections SAST.
+          </div>
+          <div style="display:flex; gap:8px; margin-bottom:8px;">
+            <input type="text" id="setting-cve-search" class="cosmo-input" style="flex:1; padding:4px 10px; font-size:0.72rem;" placeholder="Filtrer les CVE (ex: Web3, Mutex, Nonce, SQL, Rust)..." oninput="filterCveRulesList(this.value)" />
+          </div>
+          <div id="settings-cve-rules-container" class="settings-cve-checklist" style="max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;">
+            <!-- Dynamically populated by ui_ai_modals.js -->
+            <div style="font-size:0.75rem; color:#64748b; text-align:center; padding:12px;">Chargement du catalogue CVE...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hub-footer">
+        <button class="aether-btn" id="btn-reset-default-settings" style="font-size:0.70rem;">↺ Réinitialiser</button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="aether-btn" id="btn-cancel-settings" style="font-size:0.75rem;">Annuler</button>
+          <button class="aether-btn primary" id="btn-save-settings" style="padding:7px 22px; font-weight:800; background:linear-gradient(135deg, #38bdf8, #818cf8); color:#02040a;">💾 Enregistrer & Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header id="topbar">
+    <div class="topbar-left">
+      <div class="brand-title">
+        <span class="brand-glyph">✦</span>
+        <strong>AetherScope</strong>
+        <span class="project-pill" id="topbar-project-pill">Codebase</span>
+      </div>
+
+      <!-- Barre de Menus Déroulants Desktop -->
+      <nav class="desktop-menu-bar">
+        <!-- 1. Menu Projet -->
+        <div class="aether-dropdown" id="dropdown-menu-project">
+          <button class="menu-bar-btn" id="btn-menu-project-trigger" title="Projets, Workspaces & Architectures">📁 Projet ▾</button>
+          <div class="aether-dropdown-menu">
+            <button class="aether-dropdown-item primary-highlight" id="btn-menu-scaffold-project">
+              <span>✨ <strong>Nouveau Dossier / Projet...</strong></span>
+              <span class="kbd-shortcut">Hub</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-open-hub">
+              <span>🪐 <strong>Hub Multi-Architectures</strong></span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <button class="aether-dropdown-item" id="btn-menu-pick-workspace">
+              <span>📂 Choisir Dossier Workspace...</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-pick-project">
+              <span>🎯 Ouvrir 1 Projet Spécifique...</span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <button class="aether-dropdown-item" id="btn-menu-analyze">
+              <span>🚀 Analyser le Code (Rust)</span>
+              <span class="kbd-shortcut">F5</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-export">
+              <span>💾 Exporter Vue HTML Autonome</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Menu Affichage & Paramètres Visuels -->
+        <div class="aether-dropdown" id="dropdown-menu-view">
+          <button class="menu-bar-btn" id="btn-menu-view-trigger" title="Niveaux de détail, Affiliation & Paramètres d'Affichage">🔭 Affichage ▾</button>
+          <div class="aether-dropdown-menu">
+            <div class="menu-section-header">NIVEAUX DE DÉTAIL (LOD)</div>
+            <button class="aether-dropdown-item" id="btn-menu-lod-1">
+              <span>🔭 Vue Macro (Amas Stellaires)</span>
+              <span class="kbd-shortcut">1</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-lod-2">
+              <span>🪐 Vue Modules (Frontières)</span>
+              <span class="kbd-shortcut">2</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-lod-3">
+              <span>🔬 Vue Micro (Fonctions & Flux)</span>
+              <span class="kbd-shortcut">3</span>
+            </button>
+
+            <div class="aether-dropdown-divider"></div>
+            <div class="menu-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>5 FILTRES D'AFFILIATION</span>
+              <div class="menu-mini-actions">
+                <span class="mini-action-btn" onclick="setAllAffiliationFilters(true); event.stopPropagation();" title="Tout Activer">Tout ON</span>
+                <span class="mini-action-btn danger" onclick="setAllAffiliationFilters(false); event.stopPropagation();" title="Tout Désactiver">Tout OFF</span>
+              </div>
+            </div>
+            <button class="aether-dropdown-item aff-menu-item active" data-aff-bit="1" onclick="toggleAffiliationFilter(1, this); event.stopPropagation();">
+              <span class="aff-dot" style="background:#38bdf8;"></span>
+              <span>1. Structure (contains)</span>
+              <span class="aff-status-badge">ON</span>
+            </button>
+            <button class="aether-dropdown-item aff-menu-item active" data-aff-bit="2" onclick="toggleAffiliationFilter(2, this); event.stopPropagation();">
+              <span class="aff-dot" style="background:#f97316;"></span>
+              <span>2. Réseau & RPC (submits)</span>
+              <span class="aff-status-badge">ON</span>
+            </button>
+            <button class="aether-dropdown-item aff-menu-item active" data-aff-bit="4" onclick="toggleAffiliationFilter(4, this); event.stopPropagation();">
+              <span class="aff-dot" style="background:#06b6d4; box-shadow:0 0 6px #06b6d4;"></span>
+              <span>4. Realtime WS (Cyan)</span>
+              <span class="aff-status-badge">ON</span>
+            </button>
+            <button class="aether-dropdown-item aff-menu-item active" data-aff-bit="8" onclick="toggleAffiliationFilter(8, this); event.stopPropagation();">
+              <span class="aff-dot" style="background:#a855f7;"></span>
+              <span>8. Sémantique & Calls</span>
+              <span class="aff-status-badge">ON</span>
+            </button>
+            <button class="aether-dropdown-item aff-menu-item active" data-aff-bit="16" onclick="toggleAffiliationFilter(16, this); event.stopPropagation();">
+              <span class="aff-dot" style="background:#ef4444; box-shadow:0 0 6px #ef4444;"></span>
+              <span>16. 🚨 Violations SAST (Rouge)</span>
+              <span class="aff-status-badge">ON</span>
+            </button>
+
+            <div class="aether-dropdown-divider"></div>
+            <div class="menu-section-header">PARAMÈTRES D'AFFICHAGE & RENDU</div>
+            <button class="aether-dropdown-item" id="btn-menu-toggle-showFolderBadges" onclick="toggleDisplaySetting('showFolderBadges', 'Noms des Dossiers Auto'); event.stopPropagation();">
+              <span>🏷️ Noms des Dossiers (Auto)</span>
+              <span class="menu-toggle-badge" style="color:#64748b; font-weight:700;">OFF</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-toggle-showFolderMembranes" onclick="toggleDisplaySetting('showFolderMembranes', 'Membranes de Dossiers'); event.stopPropagation();">
+              <span>🫧 Membranes Cellulaires</span>
+              <span class="menu-toggle-badge" style="color:#38bdf8; font-weight:700;">ON</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-toggle-showGrid" onclick="toggleDisplaySetting('showGrid', 'Grille Cybernétique 3D'); event.stopPropagation();">
+              <span>🌐 Grille Cybernétique 3D</span>
+              <span class="menu-toggle-badge" style="color:#38bdf8; font-weight:700;">ON</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-toggle-showStarfield" onclick="toggleDisplaySetting('showStarfield', 'Poussières Stellaires'); event.stopPropagation();">
+              <span>🌠 Poussières & Micro-bulles</span>
+              <span class="menu-toggle-badge" style="color:#64748b; font-weight:700;">OFF</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-toggle-showShadows" onclick="toggleDisplaySetting('showShadows', 'Ombres Portées Plateau'); event.stopPropagation();">
+              <span>🌑 Ombres Portées Plateau</span>
+              <span class="menu-toggle-badge" style="color:#38bdf8; font-weight:700;">ON</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-audio">
+              <span>🔊 Audio Spatialisé</span>
+              <span class="menu-toggle-badge" id="menu-audio-status" style="color:#38bdf8; font-weight:700;">ON</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-gravity">
+              <span>🌌 Gravité Stellaire</span>
+              <span class="kbd-shortcut">G</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-toggle-synthesis" onclick="toggleSynthesisMenu(); event.stopPropagation();">
+              <span>🪐 Panneau Synthèse & Flux (☰)</span>
+              <span class="kbd-shortcut">B</span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <button class="aether-dropdown-item" id="btn-menu-fit">
+              <span>🎯 Recadrer la Caméra</span>
+              <span class="kbd-shortcut">F</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-snapshot">
+              <span>📸 Snapshot PNG</span>
+              <span class="kbd-shortcut">S</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Menu Modes Vision -->
+        <div class="aether-dropdown" id="dropdown-menu-vision">
+          <button class="menu-bar-btn" id="btn-menu-vision-trigger" title="Filtres visuels et santé du code">👁️ Vision ▾</button>
+          <div class="aether-dropdown-menu">
+            <button class="aether-dropdown-item" id="btn-menu-xray">
+              <span>🔦 Tunnel X-Ray Focus</span>
+              <span class="kbd-shortcut">X</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-heatmap">
+              <span>🌡️ Heatmap Santé & Complexité</span>
+              <span class="kbd-shortcut">H</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-deadcode">
+              <span>💀 Scanner Code Mort & Orphelins</span>
+              <span class="kbd-shortcut">D</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Menu Copilote IA -->
+        <div class="aether-dropdown" id="dropdown-menu-ai">
+          <button class="menu-bar-btn ai-menu-btn" id="btn-menu-ai-trigger" title="Outils IA, Journal de bord et Télémétrie">🤖 Copilote ▾</button>
+          <div class="aether-dropdown-menu">
+            <button class="aether-dropdown-item" id="btn-menu-ai-chat">
+              <span>💬 Journal Chat IA & Trajectoire</span>
+              <span class="kbd-shortcut">C</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-tasks">
+              <span>📋 Tâches & Quêtes Copilote</span>
+              <span class="kbd-shortcut">T</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-ai-telemetry">
+              <span>🤖 Télémétrie Live Copilot HUD</span>
+              <span class="kbd-shortcut">A</span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <div class="menu-section-header">DIRECTIVES, SÉCURITÉ & CONTRATS IA</div>
+            <button class="aether-dropdown-item primary-highlight" id="btn-menu-bounty-prompt" onclick="openBountyScopeModal()">
+              <span>🎯 <strong>Prompt PoC CVE & Scope Bug Bounty</strong></span>
+              <span class="kbd-shortcut">PoC</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-ai-newfile">
+              <span>✨ Forger Nouveau Fichier IA</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-ai-prompt-system">
+              <span>📜 Directives Système IA Dynamiques</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-master-prompt">
+              <span>🚀 Guide & Master Prompt Projet</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-mcp">
+              <span>🔌 Configuration Serveur MCP</span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <button class="aether-dropdown-item" id="btn-menu-ai-settings">
+              <span>⚙️ <strong>Préférences Copilote & Cockpit...</strong></span>
+              <span class="kbd-shortcut">P</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. Menu Paramètres & Préférences -->
+        <div class="aether-dropdown" id="dropdown-menu-settings">
+          <button class="menu-bar-btn" id="btn-menu-settings-trigger" title="Préférences, Affichage & Performance">⚙️ Options ▾</button>
+          <div class="aether-dropdown-menu">
+            <button class="aether-dropdown-item primary-highlight" id="btn-menu-open-settings">
+              <span>⚙️ <strong>Préférences Cockpit...</strong></span>
+              <span class="kbd-shortcut">P</span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <div class="menu-section-header">AFFICHAGE & RENDU</div>
+            <button class="aether-dropdown-item" id="btn-menu-open-settings-len">
+              <span>📏 Limite Longueur Noms</span>
+              <span class="kbd-shortcut" id="menu-current-label-len">18 car.</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-open-settings-bubble">
+              <span>🫧 Masquer Bulles > 20</span>
+              <span class="kbd-shortcut" id="menu-current-bubble">> 20</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-open-settings-lazy">
+              <span>⚡ Lazy-Load README</span>
+              <span class="kbd-shortcut" id="menu-current-lazy">Actif</span>
+            </button>
+            <div class="aether-dropdown-divider"></div>
+            <button class="aether-dropdown-item" id="btn-menu-reset-view">
+              <span>🎯 Recadrer la Caméra</span>
+              <span class="kbd-shortcut">F</span>
+            </button>
+            <button class="aether-dropdown-item" id="btn-menu-clear-cache">
+              <span>🗑️ Réinitialiser Préférences</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Central Compact Search Cockpit integrated in Topbar -->
+    <div class="topbar-search-cockpit" id="topbar-search-cockpit">
+      <div class="search-field-inner" id="topbar-search-field-inner">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="topbar-search-input" class="topbar-search-field" placeholder="Rechercher symbole, fichier, CVE... (Ctrl+K)" autocomplete="off" />
+        <div class="search-quick-cats" id="topbar-search-cats">
+          <button class="search-cat-pill active" data-cat="all">✨</button>
+          <button class="search-cat-pill" data-cat="folder" title="Dossiers">📁</button>
+          <button class="search-cat-pill" data-cat="file" title="Fichiers">📄</button>
+          <button class="search-cat-pill" data-cat="class" title="Classes">🏛️</button>
+          <button class="search-cat-pill" data-cat="func" title="Fonctions">⚡</button>
+          <button class="search-cat-pill" data-cat="violation" title="Violations & CVE">🚨</button>
+        </div>
+        <kbd class="search-kbd-hint">Ctrl+K</kbd>
+        <button class="search-clear-btn" id="btn-topbar-search-clear" style="display:none;" title="Effacer la recherche">&times;</button>
+      </div>
+
+      <!-- Autocomplete Dropdown floating right under Search Field -->
+      <div id="topbar-search-dropdown" class="topbar-search-dropdown">
+        <div class="topbar-search-results-list" id="topbar-search-results"></div>
+        <div class="topbar-search-footer">
+          <span id="topbar-search-count">0 résultats</span>
+          <span class="topbar-search-tip">↑↓ naviguer • Entrée cibler • Échap fermer</span>
+          <button id="btn-expand-search-modal" class="topbar-expand-btn" title="Ouvrir en Modale Plein Écran (V1)">⛶ Plein Écran</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Quick Actions (High Readability & Always Visible Labels) -->
+    <div class="topbar-right">
+      <button id="btn-open-bounty-modal" class="aether-btn bounty-btn" onclick="openBountyScopeModal()" title="Préparer le Prompt PoC CVE avec le In-Scope et Out-of-Scope du Bug Bounty">
+        <span>🎯</span> <strong class="responsive-label">PoC CVE / Scope</strong>
+      </button>
+      <button id="btn-topbar-cve" class="aether-btn cve-quick-btn" onclick="openCveInspectorTab()" title="Ouvrir l'Audit CVE & Violations de Sécurité">
+        <span>🚨</span> <span class="responsive-label">CVE</span> <span id="topbar-cve-badge" class="cve-mini-pill">0</span>
+      </button>
+      <button id="btn-ai-chat-toggle" class="aether-btn ai" title="Ouvrir le Journal Chat / Déplacements IA (C)">
+        <span>💬</span> <span class="responsive-label">Chat IA</span>
+      </button>
+      <button id="btn-topbar-docs" class="aether-btn" title="Ouvrir/Fermer la Documentation (D)">
+        <span>📖</span> <span class="responsive-label">Doc</span>
+      </button>
+      <button id="btn-inspector" class="aether-btn" title="Ouvrir/Fermer l'Inspecteur (I)">
+        <span>📑</span> <span class="responsive-label">Inspecteur</span>
+      </button>
+      <button id="btn-quick-settings" class="aether-btn" title="Paramètres & Préférences du Cockpit (P)">
+        <span>⚙️</span> <span class="responsive-label">Config</span>
+      </button>
+      <div class="status-pill"><span class="live-dot" id="sse-dot"></span> <span id="fps-counter">120 FPS</span></div>
+    </div>
+  </header>
+
+  <!-- Floating Aquatic Hydro-HUD Pill (Style Flottant Eau Live) -->
+  <div id="hydro-loading-hud" class="hydro-hud-banner hidden">
+    <div class="hydro-hud-wave">🫧</div>
+    <div class="hydro-hud-content">
+      <div class="hydro-hud-title" id="hydro-project-title">Émergence Aquatique</div>
+      <div class="hydro-hud-step" id="hydro-step-text">Naissance des bulles de dossiers en immersion...</div>
+    </div>
+    <div class="hydro-hud-dot"></div>
+  </div>
+
+  <div id="serverbar">
+    <div class="serverbar-left">
+      <span class="serverbar-label">📁</span>
+      <select id="project-select" class="cosmo-select" title="Projet actuellement sélectionné dans le workspace"><option value="">Chargement projets...</option></select>
+      <input type="text" id="project-path-input" class="cosmo-input" placeholder="Chemin du dossier projet..." title="Chemin absolu du projet actif" />
+      <button id="btn-analyze" class="aether-btn primary glow-btn" title="Lancer l'analyse AST du projet sélectionné">
+        <span>🚀</span> <strong class="responsive-label">Analyser</strong>
+      </button>
+      <button id="btn-pick-project" class="aether-btn" title="Sélectionner 1 projet unique à ouvrir et analyser">
+        <span>🎯</span> <span class="responsive-label">Projet</span>
+      </button>
+      <button id="btn-pick-workspace" class="aether-btn" title="Sélectionner le dossier racine contenant tous les projets">
+        <span>📂</span> <span class="responsive-label">Workspace</span>
+      </button>
+      <button id="btn-serverbar-new-folder" class="aether-btn" title="Créer un nouveau projet ou dossier avec architecture standardisée">
+        <span>➕</span>
+      </button>
+    </div>
+    <div class="serverbar-right">
+      <button id="btn-toggle-folder-badges" class="aether-btn" onclick="toggleFolderBadgesButton()" title="Afficher ou masquer automatiquement le nom de tous les dossiers sur la galaxie (sinon affiché uniquement au survol/clic)">
+        <span>🏷️</span> <span class="responsive-label">Dossiers:</span> <strong id="folder-badges-status-lbl" style="color:#94a3b8;">OFF</strong>
+      </button>
+      <div class="lod-selector">
+        <button class="lod-btn" id="btn-zoom-out" title="Dézoomer (Molette Bas ou touche -)">➖</button>
+        <button class="lod-btn active" id="btn-zoom-1" data-lod="1" title="Vue Macro (1) : Amas stellaires & Couches architecturales">🔭 1</button>
+        <button class="lod-btn" id="btn-zoom-2" data-lod="2" title="Vue Modules (2) : Dossiers & Frontières orbitales">🪐 2</button>
+        <button class="lod-btn" id="btn-zoom-3" data-lod="3" title="Vue Micro (3) : Fonctions, Classes & Flux d'appels">🔬 3</button>
+        <button class="lod-btn" id="btn-zoom-in" title="Zoomer (Molette Haut, Double-Clic ou touche +)">➕</button>
+      </div>
+      <div class="aether-capsule-group vision-group">
+        <button id="btn-xray" class="aether-btn" title="Mode X-Ray Focus (X)">🔦</button>
+        <button id="btn-heatmap" class="aether-btn" title="Heatmap Santé & Complexité (H)">🌡️</button>
+        <button id="btn-deadcode" class="aether-btn" title="Scanner Code Mort & Orphelins (D)">💀</button>
+      </div>
+      <button id="btn-fit" class="aether-btn" title="Recadrer la vue caméra (F)">🎯 <span class="responsive-label">Cadre</span></button>
+      <button id="btn-export" class="aether-btn export" title="Exporter le graphe 3D autonome dans le dossier">💾</button>
+    </div>
+  </div>
+
+  <!-- Floating Sci-Fi HUD for AI Copilot Telemetry -->
+  <div id="ai-telemetry-hud" class="ai-telemetry-banner hidden">
+    <div class="ai-banner-left">
+      <span class="ai-pulse-icon">🤖</span>
+      <span class="ai-badge-title">AI COPILOT</span>
+      <span class="ai-target-badge" id="ai-target-badge">Symbole</span>
+    </div>
+    <div class="ai-banner-center">
+      <span class="ai-action-badge" id="ai-action-badge">Exploration</span>
+      <span class="ai-details-text" id="ai-details-text">Analyse en cours...</span>
+    </div>
+    <div class="ai-banner-right">
+      <button class="aether-btn" id="btn-ai-autocam" style="padding:2px 8px; font-size:0.65rem;" title="Bascule le centrage automatique de la caméra sur l'IA">🎥 Auto-Cam: ON</button>
+      <button class="aether-btn primary" id="btn-ai-flyto" style="padding:2px 8px; font-size:0.65rem;" title="Recentrer manuellement sur l'IA">🎯 Suivre</button>
+      <button class="aether-btn" id="btn-ai-reset-trail" style="padding:2px 8px; font-size:0.65rem; border-color:#f43f5e; color:#fda4af;" title="Effacer le tracé stellaire / chemin de navigation de l'IA">🧹 Reset Chemin</button>
+      <button class="aether-btn ai" id="btn-ai-hud-open-chat" style="padding:2px 8px; font-size:0.65rem; border-color:#c084fc; color:#f5d0fe;" title="Ouvrir le journal des messages et déplacements">💬 Journal</button>
+      <button class="modal-close" id="btn-close-ai-hud" style="font-size:1.1rem; line-height:1;" title="Masquer le bandeau">&times;</button>
+    </div>
+  </div>
+
+  <!-- Draggable Sci-Fi AI Copilot Chat & Telemetry History Popup -->
+  <div id="ai-chat-popup" class="hidden">
+    <div class="ai-chat-header" id="ai-chat-header">
+      <div class="ai-chat-header-left">
+        <span class="ai-pulse-icon" style="font-size:1rem;">🤖</span>
+        <strong style="color:#f5d0fe; font-size:0.78rem; letter-spacing:0.04em;">JOURNAL COPILOT IA</strong>
+        <span id="ai-chat-status-badge" class="ai-status-badge idle">🟢 Prêt</span>
+        <span id="ai-chat-count-pill" style="font-size:0.62rem; background:rgba(192,132,252,0.25); color:#e9d5ff; border:1px solid rgba(192,132,252,0.4); padding:1px 6px; border-radius:999px;">0 msg</span>
+      </div>
+      <div class="ai-chat-header-actions">
+        <button class="aether-btn ai" id="btn-ai-new-session" style="padding:2px 7px; font-size:0.62rem; border-color:#c084fc; color:#e9d5ff;" title="Démarrer une nouvelle conversation avec Antigravity">✨ New Conv</button>
+        <button class="aether-btn-cancel-top" id="btn-ai-cancel-top" style="display:none; padding:2px 8px; font-size:0.62rem;" title="Annuler la réflexion en cours">🛑 Annuler</button>
+        <button class="aether-btn ai" id="btn-ai-mcp-config" style="padding:2px 7px; font-size:0.62rem; border-color:#38bdf8; color:#7dd3fc;" title="Configurer le serveur MCP (Claude Desktop, Cursor, Antigravity)">🔌 MCP</button>
+        <button class="ai-chat-header-btn" id="btn-ai-popup-reset-trail" title="Effacer le tracé et chemin stellaire de l'IA">🧹</button>
+        <button class="ai-chat-header-btn" id="btn-ai-chat-clear" title="Vider l'historique et réinitialiser la session">🗑️</button>
+        <button class="ai-chat-header-btn" id="btn-ai-chat-min" title="Réduire / Agrandir">🗕</button>
+        <button class="ai-chat-header-btn" id="btn-ai-chat-close" title="Fermer (C)">&times;</button>
+      </div>
+    </div>
+    <div class="ai-chat-body" id="ai-chat-body">
+      <div class="ai-chat-placeholder" style="text-align:center; padding:24px 12px; color:#64748b; font-size:0.75rem; font-family:var(--font-mono);">
+        En attente de messages ou déplacements de l'IA...<br/>
+        <span style="font-size:0.68rem; color:#475569;">(Connecté au serveur local sur le port 3030 — Mode Full Auto Actif)</span>
+      </div>
+    </div>
+    <!-- Interactive User Input Bar to Talk to AI / Copilot -->
+    <div class="ai-chat-input-bar">
+      <input type="text" id="ai-chat-user-input" class="ai-chat-input" placeholder="Poser une question ou demander un refactoring..." autocomplete="off" />
+      <button class="ai-chat-send-btn" id="btn-ai-chat-send" title="Envoyer le message (Entrée)">
+        <span id="ai-chat-send-label">Envoyer</span> <span id="ai-chat-send-icon">⚡</span>
+      </button>
+    </div>
+    <div class="ai-chat-footer">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span id="ai-chat-status-text">🟢 En écoute active</span>
+        <button id="btn-ai-cancel-footer" class="ai-cancel-btn-pulse" style="display:none; padding:1px 6px; font-size:0.60rem;">🛑 Annuler</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span id="ai-conv-id-pill" style="font-size:0.58rem; color:#64748b; font-family:var(--font-mono); max-width:85px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Session IA"></span>
+        <button class="aether-btn ai" id="btn-ai-chat-autoscroll" style="padding:2px 8px; font-size:0.62rem;">Défilement Auto: OUI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Sci-Fi HUD for X-Ray Focus Tunnel -->
+  <div id="xray-hud" class="xray-banner hidden" style="top:84px;">
+    <div class="xray-banner-left">
+      <span class="xray-pulse-icon">🔦</span>
+      <span class="xray-title">X-RAY FOCUS TUNNEL</span>
+      <span class="xray-node-badge" id="xray-node-name">Symbole</span>
+    </div>
+    <div class="xray-banner-stats">
+      <span class="xray-stat up" id="xray-stat-up">▲ 0 Appelants</span>
+      <span class="xray-stat down" id="xray-stat-down">▼ 0 Dépendances</span>
+      <span class="xray-stat total" id="xray-stat-total">⚡ 0 Flux</span>
+    </div>
+    <div class="xray-banner-right">
+      <button class="aether-btn export" id="btn-xray-snapshot" title="Capturer ce tunnel en PNG (S)" style="padding:3px 10px; font-size:0.68rem;">📸 Snapshot</button>
+      <button class="aether-btn primary" id="btn-xray-exit" title="Quitter le mode X-Ray (Touche X ou Échap)" style="padding:3px 10px; font-size:0.68rem;">✖ Quitter (X)</button>
+    </div>
+  </div>
+
+  <!-- Floating Sci-Fi HUD for Dead Code & Orphan Scanner -->
+  <div id="deadcode-hud" class="deadcode-banner hidden">
+    <div class="deadcode-banner-left">
+      <span class="deadcode-pulse-icon">💀</span>
+      <span class="deadcode-title">SCANNER CODE MORT & ORPHELINS</span>
+      <span class="deadcode-count-badge" id="deadcode-count">0 Détectés</span>
+    </div>
+    <div class="deadcode-banner-stats">
+      <span class="deadcode-stat" id="deadcode-loc-saved">~0 LOC inutilisées</span>
+      <div id="deadcode-quick-list" class="deadcode-tags"></div>
+    </div>
+    <div class="deadcode-banner-right">
+      <button class="aether-btn ai" id="btn-deadcode-ai-clean" style="padding:3px 10px; font-size:0.68rem;" title="Copier le prompt de nettoyage complet pour le LLM">🤖 Prompt Clean</button>
+      <button class="aether-btn primary" id="btn-deadcode-exit" style="padding:3px 10px; font-size:0.68rem;" title="Quitter le mode Code Mort (D)">✖ Quitter (D)</button>
+    </div>
+  </div>
+
+  <!-- Floating Sci-Fi HUD for Health & Complexity Heatmap -->
+  <div id="heatmap-hud" class="heatmap-banner hidden">
+    <div class="heatmap-banner-left">
+      <span class="heatmap-pulse-icon">🌡️</span>
+      <span class="heatmap-title">HEATMAP COMPLEXITÉ & SANTÉ</span>
+      <span class="heatmap-score-badge" id="heatmap-global-score">Santé : 100/100</span>
+    </div>
+    <div class="heatmap-banner-stats">
+      <span class="heatmap-legend-item"><span class="hm-dot hm-green"></span> Sain</span>
+      <span class="heatmap-legend-item"><span class="hm-dot hm-yellow"></span> Modéré</span>
+      <span class="heatmap-legend-item"><span class="hm-dot hm-red"></span> Hotspot (Risque)</span>
+      <div id="heatmap-hotspots" class="heatmap-hotspots-box"></div>
+    </div>
+    <div class="heatmap-banner-right">
+      <button class="aether-btn ai" id="btn-heatmap-ai-audit" style="padding:3px 10px; font-size:0.68rem;" title="Copier le prompt d'architecture et réduction de dette technique pour le LLM">🤖 Prompt Architecture</button>
+      <button class="aether-btn primary" id="btn-heatmap-exit" style="padding:3px 10px; font-size:0.68rem;" title="Quitter le mode Heatmap (H)">✖ Quitter (H)</button>
+    </div>
+  </div>
+
+  <!-- ☰ Floating Burger Trigger for Synthesis & Filters Menu -->
+  <button id="btn-toggle-synthesis-burger" class="synthesis-burger-trigger" title="Ouvrir/Fermer le menu Synthèse Multi-Couches (B)">
+    <div class="burger-bars-icon">
+      <span></span><span></span><span></span>
+    </div>
+    <span class="burger-title">Synthèse</span>
+    <span class="burger-count-badge" id="burger-count-badge">0 flux</span>
+  </button>
+
+  <div id="synthesis-card" class="collapsed">
+    <div class="synthesis-header">
+      <div class="synth-title-group">
+        <button id="btn-collapse-synthesis" class="synth-collapse-icon-btn" title="Replier le panneau (B ou Échap)">
+          <span class="burger-bars-icon mini"><span></span><span></span><span></span></span>
+        </button>
+        <div class="synth-title">🪐 <strong>Synthèse Multi-Couches</strong></div>
+      </div>
+      <div class="synth-header-actions">
+        <div class="synth-stats" id="synth-stats">0 symboles • 0 flux</div>
+        <button id="btn-close-synthesis" class="synth-close-btn" title="Fermer le panneau (B)">✕</button>
+      </div>
+    </div>
+
+    <!-- 🚨 TOP DIAGNOSTICS SÉCURITÉ & VULNÉRABILITÉS DÉTECTÉES (En haut du menu de gauche) -->
+    <div id="synth-top-diagnostics" class="synth-top-diagnostics-container"></div>
+
+    <!-- Accordion Group 1: 📁 Modules & Dossiers -->
+    <div class="synth-accordion-item" id="synth-acc-modules">
+      <div class="synth-accordion-header" onclick="toggleSynthAccordion('modules')">
+        <div class="synth-acc-title">
+          <span class="synth-acc-arrow" id="synth-arrow-modules">▼</span>
+          <span class="synth-acc-icon">📁</span>
+          <span>Modules & Dossiers</span>
+          <span class="synth-acc-badge" id="synth-badge-modules">0</span>
+        </div>
+        <div class="synth-acc-actions" onclick="event.stopPropagation()">
+          <button id="btn-module-all-on" onclick="setAllModuleFilters(true)" class="synth-mini-btn" title="Activer tous les modules">Tout ON</button>
+          <button id="btn-module-all-off" onclick="setAllModuleFilters(false)" class="synth-mini-btn off" title="Masquer tous les modules">Tout OFF</button>
+        </div>
+      </div>
+      <div class="synth-accordion-body" id="synth-body-modules">
+        <div class="pills-box" id="synth-module-pills" style="max-height:140px; overflow-y:auto;"></div>
+      </div>
+    </div>
+
+    <!-- Accordion Group 2: 🌌 Couches Architecturales -->
+    <div class="synth-accordion-item" id="synth-acc-layers">
+      <div class="synth-accordion-header" onclick="toggleSynthAccordion('layers')">
+        <div class="synth-acc-title">
+          <span class="synth-acc-arrow" id="synth-arrow-layers">▼</span>
+          <span class="synth-acc-icon">🌌</span>
+          <span>Couches Architecturales</span>
+          <span class="synth-acc-badge" id="synth-badge-layers">7</span>
+        </div>
+        <div class="synth-acc-actions" onclick="event.stopPropagation()">
+          <button id="btn-layer-all-on" onclick="setAllLayerFilters(true)" class="synth-mini-btn" title="Activer toutes les couches">Tout ON</button>
+          <button id="btn-layer-all-off" onclick="setAllLayerFilters(false)" class="synth-mini-btn off" title="Masquer toutes les couches">Tout OFF</button>
+        </div>
+      </div>
+      <div class="synth-accordion-body" id="synth-body-layers">
+        <div class="pills-box" id="synth-pills"></div>
+      </div>
+    </div>
+
+    <!-- Accordion Group 3: ⚡ Pipeline Données & Affiliations -->
+    <div class="synth-accordion-item" id="synth-acc-pipeline">
+      <div class="synth-accordion-header" onclick="toggleSynthAccordion('pipeline')">
+        <div class="synth-acc-title">
+          <span class="synth-acc-arrow" id="synth-arrow-pipeline">▼</span>
+          <span class="synth-acc-icon">⚡</span>
+          <span>Pipeline & Flux Données</span>
+          <span class="synth-acc-badge cyan" id="synth-badge-pipeline">6</span>
+        </div>
+        <div class="synth-acc-actions" onclick="event.stopPropagation()">
+          <button id="btn-aff-all-on" onclick="setAllAffiliationFilters(true)" class="synth-mini-btn">Tout ON</button>
+          <button id="btn-aff-all-off" onclick="setAllAffiliationFilters(false)" class="synth-mini-btn off">Tout OFF</button>
+        </div>
+      </div>
+      <div class="synth-accordion-body" id="synth-body-pipeline">
+        <div id="pipeline-tracker-shortcut" style="margin-bottom:8px;">
+          <button class="pipeline-tracker-btn" id="btn-toggle-data-pipeline" onclick="toggleDataPipelineTracker()" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:6px 9px; background:linear-gradient(135deg, rgba(255,107,0,0.15), rgba(0,200,255,0.15), rgba(0,240,255,0.15), rgba(16,185,129,0.15)); border:1px solid rgba(0,240,255,0.4); border-radius:6px; cursor:pointer;" title="Mettre en surbrillance tout le flux de données : Form Submit ➔ Net HTTP ➔ WS Temps Réel ➔ DB Queries">
+            <span style="display:flex; align-items:center; gap:6px; font-size:0.68rem; font-weight:700; color:#38bdf8;">
+              <span style="font-size:0.82rem;">⚡</span>
+              <span>Traçabilité (Submit➔Net➔WS➔DB)</span>
+            </span>
+            <span class="pipeline-tracker-badge token-pill" style="color:#00f0ff; background:rgba(0, 240, 255, 0.2); border:1px solid rgba(0, 240, 255, 0.5); font-size:0.58rem; font-weight:800; padding:2px 5px;">
+              OFF
+            </span>
+          </button>
+        </div>
+        <div class="pills-box" id="affiliation-filters-bar"></div>
+      </div>
+    </div>
+
+    <!-- Accordion Group 4: 🔗 Typologie des Liens -->
+    <div class="synth-accordion-item" id="synth-acc-links">
+      <div class="synth-accordion-header" onclick="toggleSynthAccordion('links')">
+        <div class="synth-acc-title">
+          <span class="synth-acc-arrow" id="synth-arrow-links">▼</span>
+          <span class="synth-acc-icon">🔗</span>
+          <span>Typologie des Liens</span>
+          <span class="synth-acc-badge purple" id="synth-badge-links">10</span>
+        </div>
+        <div class="synth-acc-actions" onclick="event.stopPropagation()">
+          <button id="btn-toggle-all-edges" style="background:transparent; border:none; color:#38bdf8; font-size:0.60rem; cursor:pointer; text-decoration:underline;">Tout masquer/afficher</button>
+        </div>
+      </div>
+      <div class="synth-accordion-body" id="synth-body-links">
+        <div class="synth-legend-list" id="synth-legend-list" style="max-height:160px;"></div>
+      </div>
+    </div>
+
+    <!-- Accordion Group 5: 🚨 Sécurité & Audit CVE -->
+    <div class="synth-accordion-item" id="synth-acc-cve">
+      <div class="synth-accordion-header" onclick="toggleSynthAccordion('cve')">
+        <div class="synth-acc-title">
+          <span class="synth-acc-arrow" id="synth-arrow-cve">▼</span>
+          <span class="synth-acc-icon">🚨</span>
+          <span>Sécurité & Anomalies CVE</span>
+          <span class="synth-acc-badge red" id="synth-badge-cve">0</span>
+        </div>
+      </div>
+      <div class="synth-accordion-body" id="synth-body-cve" style="display:flex; flex-direction:column; gap:6px;">
+        <button class="aether-btn" id="btn-open-cve-inspector" onclick="openCveInspectorTab()" style="width:100%; justify-content:space-between; padding:7px 10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); border-radius:8px; cursor:pointer;" title="Ouvrir le panneau d'audit CVE complet dans l'onglet de droite">
+          <span style="display:flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:700; color:#f87171;">
+            <span>🚨</span> Scanner CVE & Anomalies
+          </span>
+          <span id="cve-total-badge-left" class="token-pill" style="color:#f87171; background:rgba(239,68,68,0.22); border:1px solid rgba(239,68,68,0.5); font-size:0.62rem; font-weight:800; padding:2px 6px;">
+            0 anomalie ➔
+          </span>
+        </button>
+        <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="width:100%; justify-content:center; padding:6px 10px; border-radius:8px;" title="Préparer un Prompt CVE sur-mesure avec règles In-Scope / Out-of-Scope du Bug Bounty">
+          <span>🎯</span> <strong>Préparer Prompt CVE (In / Out Scope)</strong>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="depth-hud">
+    <div class="depth-pill">
+      <span class="depth-title" id="depth-title">Z-1 • 🌌 Galaxie Fichiers</span>
+      <div class="depth-btns">
+        <button class="depth-btn active" data-depth="1">1 🌌 Fichiers</button>
+        <button class="depth-btn" data-depth="2">2 🌐 Système</button>
+        <button class="depth-btn" data-depth="3">3 ⚙️ Flux DAG</button>
+        <button class="depth-btn" data-depth="4">4 🏛️ Classes UML</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orbital Radar Minimap -->
+  <div id="radar-container">
+    <div class="radar-header"><span>ORBITAL RADAR</span><span id="radar-zoom-level">1.0x</span></div>
+    <canvas id="radar-canvas" width="150" height="140"></canvas>
+  </div>
+
+  <!-- Left Markdown Documentation Reader Panel -->
+  <div id="doc-reader-panel" class="doc-panel hidden">
+    <div id="doc-panel-resizer" title="Glisser pour redimensionner le panneau Markdown"></div>
+    <div class="doc-header">
+      <div class="doc-title-box">
+        <span class="brand-glyph">📖</span>
+        <span id="doc-reader-title">README.md</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span id="doc-save-status" class="doc-status-badge">💾 Enregistré</span>
+        <button class="doc-edit-toggle-btn" id="btn-toggle-doc-mode" title="Basculer entre Aperçu Rendu et Éditeur Direct">
+          <span id="doc-mode-icon">✏️</span> <span id="doc-mode-label">Éditer</span>
+        </button>
+        <button class="aether-btn" id="btn-copy-doc" style="padding:2px 7px;font-size:0.65rem;" title="Copier le Markdown brut">📋 Copier</button>
+        <button class="doc-collapse-btn" id="btn-minimize-doc" title="Minimiser la Documentation (D)">‹</button>
+        <button class="modal-close" id="btn-close-doc" title="Fermer la Documentation (D)">&times;</button>
+      </div>
+    </div>
+    <div id="doc-reader-content" class="doc-content"></div>
+  </div>
+
+  <!-- Floating Doc Dock Trigger (Visible when doc panel is minimized/closed) -->
+  <button id="btn-expand-doc-dock" class="doc-dock-trigger" title="Ouvrir la Documentation (D)">
+    <span class="dock-arrow">›</span>
+    <span class="dock-icon">📖</span>
+    <span class="dock-label">Doc</span>
+  </button>
+
+  <!-- Floating Inspector Dock Trigger (Visible when minimized) -->
+  <button id="btn-expand-inspector-dock" class="inspector-dock-trigger" title="Ouvrir l'inspecteur (I)">
+    <span class="dock-arrow">‹</span>
+    <span class="dock-icon">📑</span>
+    <span class="dock-label">Inspecteur</span>
+  </button>
+
+  <!-- Side Inspector & UML Card (Minimized by default to keep viewport airy) -->
+  <div id="inspector" class="hidden">
+    <div id="inspector-resizer" title="Glisser pour redimensionner l'inspecteur"></div>
+    <div class="insp-header">
+      <div class="insp-header-top">
+        <div class="insp-stereo" id="insp-stereo">«Component»</div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="aether-btn ai" id="btn-insp-ai">🤖 Prompt IA</button>
+          <button class="aether-btn" id="btn-insp-task" style="padding:4px 9px;font-size:0.68rem;border-radius:999px;border-color:rgba(56,189,248,0.4);color:#38bdf8;">📋 Tâche</button>
+          <button class="aether-btn" id="btn-insp-mermaid" style="padding:4px 9px;font-size:0.68rem;border-radius:999px;">📋 Mermaid</button>
+          <button id="btn-collapse-inspector" class="insp-collapse-btn" title="Minimiser l'inspecteur (I)">›</button>
+        </div>
+      </div>
+      <div class="insp-name" id="insp-name">SymbolName</div>
+      <div class="insp-path" id="insp-path">src/component.tsx</div>
+
+      <!-- Quick AI Actions Bar (Click-to-Prompt ultra-rapide 1-clic) -->
+      <div class="quick-ai-bar" id="quick-ai-bar">
+        <span class="quick-ai-title">⚡ 1-Click Prompt :</span>
+        <div class="quick-ai-btns">
+          <button class="quick-ai-btn refactor" data-action="refactor" title="Copier prompt Refactorisation & Performance">⚡ Refactor</button>
+          <button class="quick-ai-btn tests" data-action="tests" title="Copier prompt Tests Unitaires">🧪 Tests</button>
+          <button class="quick-ai-btn audit" data-action="security" title="Copier prompt Audit Sécurité">🛡️ Audit</button>
+          <button class="quick-ai-btn doc" data-action="doc" title="Copier prompt Documentation">📖 Doc</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspector View Mode Tabs -->
+    <div class="insp-tabs">
+      <button class="insp-tab active" id="tab-btn-debrief" data-tab="debrief">📋 Débrief</button>
+      <button class="insp-tab" id="tab-btn-arch" data-tab="arch">🏛️ Fiche UML</button>
+      <button class="insp-tab" id="tab-btn-relations" data-tab="relations">🔗 Flux</button>
+      <button class="insp-tab cve-tab" id="tab-btn-cve" data-tab="cve">🚨 Audit & CVE (<span id="cve-total-badge">0</span>)</button>
+    </div>
+
+    <div class="insp-body">
+      <!-- Section 1: Débrief View -->
+      <div id="insp-debrief-view" class="insp-view">
+        <div id="debrief-content" class="debrief-box"></div>
+      </div>
+
+      <!-- Section 2: UML Class Diagram & Mini-DAG View -->
+      <div id="insp-arch-view" class="insp-view hidden">
+        <div>
+          <div class="insp-sec-title"><span>🏛️ Structure & Fiche UML</span></div>
+          <div id="insp-uml-card" class="uml-card"></div>
+        </div>
+        <div style="margin-top:12px;">
+          <div class="insp-sec-title"><span>⚙️ Graphe d'Appel Local (Mini-DAG)</span></div>
+          <div id="insp-svg-dag" class="svg-dag-box"></div>
+        </div>
+      </div>
+
+      <!-- Section 3: Relations List View -->
+      <div id="insp-relations-view" class="insp-view hidden">
+        <div class="insp-sec-title"><span>🔗 Flux Entrants & Sortants</span></div>
+        <div id="insp-relations"></div>
+      </div>
+
+      <!-- Section 4: Audit & Scanner CVE View (Onglet Droit Pleine Hauteur & Grande Lisibilité) -->
+      <div id="insp-cve-view" class="insp-view hidden">
+        <div class="cve-inspector-container">
+          <div class="cve-insp-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1.15rem;">🚨</span>
+              <div>
+                <div style="font-size:0.82rem; font-weight:800; color:#f87171; font-family:var(--font-ui);">Scanner CVE & PoC Bug Bounty</div>
+                <div style="font-size:0.67rem; color:#94a3b8;">Preuves de concept (PoC), triage In-Scope/Out-of-Scope & analyse Root Cause</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:5px; align-items:center;">
+              <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="font-size:0.65rem; padding:4px 9px;" title="Préparer un Prompt PoC CVE filtré avec In-Scope / Out-of-Scope du Bug Bounty">🎯 Scope & PoC</button>
+              <button class="aether-btn" onclick="copyAllCveHandshakes()" style="font-size:0.65rem; padding:4px 9px;" title="Copier le prompt PoC & Triage Bug Bounty pour toutes les CVE In-Scope">🧪 Tout Copier (PoC)</button>
+            </div>
+          </div>
+
+          <!-- Bandeau KPI Rapide (Critiques / Hautes / Fichiers touchés) -->
+          <div id="cve-kpi-strip" style="display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap;"></div>
+
+          <!-- Recherche instantanée multi-critères (CVE, CWE, fichier, symbole, donnée) -->
+          <div style="margin-bottom:6px;">
+            <input type="text" id="cve-quick-search-input" oninput="renderCveAnomaliesPanel()" placeholder="⚡ Filtrer par CVE, CWE, fichier, fonction ou donnée contaminée..." style="width:100%; box-sizing:border-box; background:rgba(15,23,42,0.85); border:1px solid rgba(248,113,113,0.3); border-radius:6px; color:#f1f5f9; font-size:0.68rem; font-family:var(--font-mono); padding:5px 8px; outline:none;" />
+          </div>
+
+          <!-- Sous-filtres rapides par langage/catégorie/sévérité -->
+          <div class="cve-lang-filters" id="cve-lang-filters">
+            <button class="cve-filter-btn active" data-lang="all" onclick="filterCveAnomalies('all', this)">[Tous]</button>
+            <button class="cve-filter-btn" data-lang="critical" onclick="filterCveAnomalies('critical', this)">[🔴 Critical]</button>
+            <button class="cve-filter-btn" data-lang="rust" onclick="filterCveAnomalies('rust', this)">[🦀 Rust]</button>
+            <button class="cve-filter-btn" data-lang="node" onclick="filterCveAnomalies('node', this)">[🟢 Node/TS]</button>
+            <button class="cve-filter-btn" data-lang="web3" onclick="filterCveAnomalies('web3', this)">[🌐 Web3]</button>
+            <button class="cve-filter-btn" data-lang="python" onclick="filterCveAnomalies('python', this)">[🐍 Python]</button>
+            <button class="cve-filter-btn" data-lang="cpp" onclick="filterCveAnomalies('cpp', this)">[⚙️ C/C++]</button>
+            <button class="cve-filter-btn" data-lang="arch" onclick="filterCveAnomalies('arch', this)">[🏛️ Arch]</button>
+          </div>
+
+          <!-- Liste déroulante des anomalies triées par sévérité -->
+          <div id="cve-anomalies-list" class="cve-anomalies-list-wide">
+            <div style="color:#64748b; font-size:0.70rem; font-family:var(--font-mono); padding:16px; text-align:center;">
+              Aucune anomalie détectée
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Omnibox Modal with Category Filtering -->
+  <div id="search-modal" class="modal-overlay">
+    <div class="search-modal-card">
+      <div class="search-modal-header">
+        <div class="search-input-wrapper">
+          <span class="search-glyph">🔍</span>
+          <input type="text" id="omni-search-input" placeholder="Rechercher classe, fonction, def, dossier ou readme..." autocomplete="off" />
+        </div>
+        <button class="modal-close" id="btn-close-search-modal">&times;</button>
+      </div>
+      <div class="search-categories">
+        <button class="cat-pill active" data-cat="all">✨ Tous</button>
+        <button class="cat-pill" data-cat="folder">📁 Dossiers</button>
+        <button class="cat-pill" data-cat="form">📝 Forms / API</button>
+        <button class="cat-pill" data-cat="class">🏛️ Classes / Modèles</button>
+        <button class="cat-pill" data-cat="func">⚡ Fonctions / Def</button>
+        <button class="cat-pill" data-cat="ui">🎨 Composants UI</button>
+        <button class="cat-pill" data-cat="doc">📖 Readme / Doc</button>
+        <button class="cat-pill" data-cat="file">📄 Fichiers</button>
+      </div>
+      <div id="search-results-list" class="search-results-list"></div>
+      <div class="search-modal-footer">
+        <span>Utilisez <kbd>↑</kbd> <kbd>↓</kbd> pour naviguer, <kbd>Entrée</kbd> pour illuminer et voler vers la cible</span>
+        <span id="search-count-pill">0 résultats</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Context Packer Modal -->
+  <div id="ai-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">🤖 <strong>Générateur de Prompt IA Contextuel</strong> <span class="project-pill" id="ai-modal-target">Symbole</span></div>
+        <button class="modal-close" id="btn-close-ai-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="task-selector">
+          <button class="task-btn active" data-task="refactor">⚡ Refactorisation</button>
+          <button class="task-btn" data-task="security">🛡️ Audit Sécurité</button>
+          <button class="task-btn" data-task="tests">🧪 Tests Unitaires</button>
+          <button class="task-btn" data-task="feature">✨ Nouvelle Feature</button>
+          <button class="task-btn" data-task="doc">📖 Documentation</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px; margin:2px 0;">
+          <label style="font-size:0.68rem; font-weight:700; color:#c084fc; font-family:var(--font-mono);">
+            ✍️ PRÉCISIONS / INSTRUCTIONS PERSONNALISÉES (Optionnel) :
+          </label>
+          <input type="text" id="ai-custom-input" class="cosmo-input" style="width:100%;" placeholder="Ex: Remplacer fetch par axios, utiliser Zod, ajouter typage strict, optimiser la boucle..." />
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.7rem; color:#94a3b8;">Format XML structuré optimisé pour Claude 3.5 Sonnet & GPT-4o :</span>
+          <span class="token-pill" id="ai-token-count">~320 tokens</span>
+        </div>
+        <textarea id="ai-prompt-preview" placeholder="Vous pouvez modifier directement le prompt ici avant de le copier..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="aether-btn primary" id="btn-copy-ai-prompt">📋 Copier le Prompt dans le Presse-Papier</button>
+        <button class="aether-btn" id="btn-dismiss-ai-modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master Blueprint IA Project Modal (Gemini, Claude, GPT) -->
+  <div id="master-prompt-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 840px; max-width: 95vw; border-color: #10b981; box-shadow: 0 0 50px rgba(16, 185, 129, 0.35);">
+      <div class="modal-header" style="border-bottom-color: rgba(16, 185, 129, 0.3);">
+        <div class="modal-title">
+          <span style="color:#10b981; font-size:1.15rem;">🚀</span>
+          <strong>Nouveau Projet IA — Méthode & Arborescence Optimale (LLM)</strong>
+        </div>
+        <button class="modal-close" id="btn-close-master-prompt-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 12px; max-height: 80vh; overflow-y: auto;">
+        <!-- LLM Selector Tabs -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="task-selector" id="llm-target-selector">
+            <button class="task-btn active" data-llm="claude">✨ Claude 3.5 Sonnet</button>
+            <button class="task-btn" data-llm="gemini">✨ Gemini 1.5 Pro / Flash</button>
+            <button class="task-btn" data-llm="gpt">✨ GPT-4o / o1</button>
+          </div>
+          <span class="token-pill" style="color:#10b981; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3);">Méthode AetherScope v2</span>
+        </div>
+
+        <!-- Explanatory Banner -->
+        <div style="background:rgba(15, 23, 42, 0.85); border:1px solid rgba(16, 185, 129, 0.25); border-radius:8px; padding:10px 14px; font-size:0.75rem; line-height:1.5; color:#cbd5e1;">
+          <div style="color:#6ee7b7; font-weight:800; margin-bottom:4px; font-size:0.78rem;">📐 RÈGLES DE DÉVELOPPEMENT OPTIMALES POUR VOS FUTURS PROJETS IA :</div>
+          <ul style="padding-left:18px; margin:0; display:flex; flex-direction:column; gap:4px;">
+            <li><strong>1. Spécification par Dossier (README.md obligatoire) :</strong> Chaque dossier contient ses attentes et contrats. L'IA n'analyse jamais tout le code à l'aveugle, mais cible uniquement le dossier requis.</li>
+            <li><strong>2. Fonctions Atomiques & Mini-Points :</strong> Découper en fonctions pures à responsabilité unique. Dans AetherScope, chaque fonction devient une étincelle stellaire (mini-point) reliée à son fichier-planète.</li>
+            <li><strong>3. Conventions de Naming Strictes :</strong> Préfixer explicitement les fonctions (<code>handle_</code>, <code>fetch_</code>, <code>submit_</code>, <code>render_</code>) pour un routage DAG limpide.</li>
+            <li><strong>4. Formulaires & API Réseau explicites :</strong> Utiliser des balises ou stéréotypes formulaires (<code>«Form»</code>) reliant les champs à l'action réseau (faisceau orange <code>submits</code> dans le graphe).</li>
+          </ul>
+        </div>
+
+        <!-- Target Project Directory Input for Auto-Scaffolding -->
+        <div style="background:rgba(6, 11, 25, 0.8); border:1px solid rgba(56, 189, 248, 0.25); border-radius:8px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:0.68rem; font-weight:700; color:#38bdf8; font-family:var(--font-mono);">
+            🔨 GÉNÉRATEUR AUTOMATIQUE DE SQUELETTE (RUST BACKEND) :
+          </div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="init-project-input" class="cosmo-input" style="flex:1;" placeholder="Ex: C:\Users\1234\Desktop\Projets\MonNouveauProjet" />
+            <button class="aether-btn primary" id="btn-init-skeleton" style="font-size:0.72rem; white-space:nowrap;">🔨 Créer Dossiers & READMEs</button>
+          </div>
+        </div>
+
+        <!-- Prompt Textarea -->
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.68rem; font-weight:700; color:#94a3b8; font-family:var(--font-mono);">PROMPT ARCHITECTURE MASTER BLUEPRINT :</label>
+            <span style="font-size:0.68rem; color:#64748b;">Prêt à copier dans le chat de l'IA</span>
+          </div>
+          <textarea id="master-prompt-textarea" style="width:100%; height:260px; background:rgba(2, 6, 23, 0.95); border:1px solid rgba(16, 185, 129, 0.3); border-radius:8px; padding:12px; color:#e2e8f0; font-family:var(--font-mono); font-size:0.72rem; line-height:1.45; resize:vertical; outline:none;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(16, 185, 129, 0.2);">
+        <button class="aether-btn primary" id="btn-copy-master-prompt" style="background:#10b981; color:#02040a; font-weight:800;">📋 Copier le Prompt IA</button>
+        <button class="aether-btn export" id="btn-download-master-prompt">💾 Télécharger prompt.md</button>
+        <button class="aether-btn" id="btn-dismiss-master-modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Universal Copilot System Prompt Modal (Claude, GPT, Gemini, Cursor, Antigravity) -->
+  <div id="ai-sysprompt-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 860px; max-width: 95vw; border-color: #38bdf8; box-shadow: 0 0 50px rgba(56, 189, 248, 0.35);">
+      <div class="modal-header" style="border-bottom-color: rgba(56, 189, 248, 0.3);">
+        <div class="modal-title">
+          <span style="color:#38bdf8; font-size:1.15rem;">📜</span>
+          <strong>Directives Système Universelles Copilot AetherScope (LLM & Agents)</strong>
+        </div>
+        <button class="modal-close" id="btn-close-ai-sysprompt-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 12px; max-height: 80vh; overflow-y: auto;">
+        <div style="background:linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15)); border:1px solid #10b981; border-radius:8px; padding:10px 14px; font-size:0.75rem; line-height:1.55; color:#cbd5e1;">
+          <div style="color:#6ee7b7; font-weight:800; margin-bottom:4px; font-size:0.80rem; display:flex; align-items:center; gap:6px;">
+            <span>🔒</span> <span>100% LOCAL-FIRST • AUCUNE CLÉ API REQUISE • ZÉRO ABONNEMENT</span>
+          </div>
+          <div>AetherScope ne requiert <strong>aucune clé API payante</strong> (aucun token OpenAI ou Anthropic). Choisissez simplement votre dossier : votre Agent IA (Antigravity, Claude Code, Cursor, Windsurf) navigue directement dans vos fichiers locaux via le serveur local sur le <strong>port 3030</strong> sans aucun intermédiaire cloud !</div>
+        </div>
+        <div id="ai-first-open-pill" style="display:none; background:rgba(16, 185, 129, 0.15); border:1px solid #10b981; color:#6ee7b7; padding:8px 12px; border-radius:8px; font-size:0.75rem; font-weight:700;">
+          ✨ Première ouverture de ce projet : voici vos Directives Système Copilote préconfigurées avec le chemin réel de votre projet !
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.68rem; font-weight:700; color:#94a3b8; font-family:var(--font-mono);">PROMPT SYSTÈME AGENT / COPILOT (REST API LIVE) :</label>
+            <span class="token-pill" style="color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3);">Axum REST Engine</span>
+          </div>
+          <textarea id="ai-sysprompt-textarea" style="width:100%; height:320px; background:rgba(2, 6, 23, 0.95); border:1px solid rgba(56, 189, 248, 0.3); border-radius:8px; padding:12px; color:#e2e8f0; font-family:var(--font-mono); font-size:0.72rem; line-height:1.45; resize:vertical; outline:none;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(56, 189, 248, 0.2);">
+        <button class="aether-btn primary" id="btn-copy-ai-sysprompt" style="background:#38bdf8; color:#02040a; font-weight:800;">📋 Copier le Prompt Système</button>
+        <button class="aether-btn export" id="btn-download-ai-sysprompt">💾 Télécharger system_prompt.md</button>
+        <button class="aether-btn" id="btn-dismiss-ai-sysprompt-modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connect MCP Configuration Modal (Claude, Cursor, Antigravity) -->
+  <div id="ai-mcp-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 840px; max-width: 95vw; border-color: #38bdf8; box-shadow: 0 0 50px rgba(56, 189, 248, 0.35);">
+      <div class="modal-header" style="border-bottom-color: rgba(56, 189, 248, 0.3);">
+        <div class="modal-title">
+          <span style="color:#38bdf8; font-size:1.15rem;">🔌</span>
+          <strong>Configuration MCP (Model Context Protocol) en 1 Clic</strong>
+        </div>
+        <button class="modal-close" id="btn-close-ai-mcp-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 12px; max-height: 80vh; overflow-y: auto;">
+        <div style="background:rgba(56, 189, 248, 0.12); border:1px solid rgba(56, 189, 248, 0.35); border-radius:8px; padding:10px 14px; font-size:0.75rem; line-height:1.55; color:#cbd5e1;">
+          <div>Le protocole <strong>MCP</strong> relie AetherScope directement à <strong>Claude Desktop</strong>, <strong>Cursor</strong> ou <strong>Google Antigravity</strong> via le protocole standard <code>stdio JSON-RPC 2.0</code>.</div>
+        </div>
+
+        <!-- Preset selector tabs -->
+        <div style="display:flex; gap:8px;">
+          <button class="task-btn active" id="tab-mcp-antigravity" style="border-color:#38bdf8;">🪐 Antigravity (Local)</button>
+          <button class="task-btn" id="tab-mcp-claude">🤖 Claude Desktop</button>
+          <button class="task-btn" id="tab-mcp-cursor">⚡ Cursor / Windsurf</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.68rem; font-weight:700; color:#94a3b8; font-family:var(--font-mono);" id="mcp-config-label">FICHIER : ~/.gemini/config/mcp_config.json</label>
+            <span class="token-pill" style="color:#38bdf8; background:rgba(56,189,248,0.12);">JSON Configuration</span>
+          </div>
+          <textarea id="mcp-config-textarea" style="width:100%; height:200px; background:rgba(2, 6, 23, 0.95); border:1px solid rgba(56, 189, 248, 0.3); border-radius:8px; padding:12px; color:#e2e8f0; font-family:var(--font-mono); font-size:0.75rem; line-height:1.45; resize:none; outline:none;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(56, 189, 248, 0.2);">
+        <button class="aether-btn primary" id="btn-copy-mcp-config" style="background:#38bdf8; color:#02040a; font-weight:800;">📋 Copier la Config MCP</button>
+        <button class="aether-btn" id="btn-dismiss-ai-mcp-modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Instant File & Component Creation Modal (Supernova Birth) -->
+  <div id="ai-create-file-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 820px; max-width: 95vw; border-color: #c084fc; box-shadow: 0 0 55px rgba(192, 132, 252, 0.38);">
+      <div class="modal-header" style="border-bottom-color: rgba(192, 132, 252, 0.3);">
+        <div class="modal-title">
+          <span style="color:#c084fc; font-size:1.15rem;">✨</span>
+          <strong>Création de Fichier & Naissance Stellaire par l'IA (Supernova)</strong>
+        </div>
+        <button class="modal-close" id="btn-close-create-file-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 12px; max-height: 80vh; overflow-y: auto;">
+        <div style="background:rgba(15, 23, 42, 0.85); border:1px solid rgba(192, 132, 252, 0.25); border-radius:8px; padding:10px 14px; font-size:0.75rem; line-height:1.5; color:#cbd5e1;">
+          <div style="color:#c084fc; font-weight:800; margin-bottom:4px; font-size:0.78rem;">🪐 NAISSANCE STELLAIRE INSTANTANÉE :</div>
+          <div>L'IA écrit le code sur le disque local, le moteur Rust recalcule l'AST en &lt; 200 ms, et une onde de choc Supernova fait naître la nouvelle planète en direct au milieu de la galaxie.</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.68rem; font-weight:700; color:#94a3b8; font-family:var(--font-mono);">📁 DOSSIER DU PROJET CIBLE :</label>
+          <input type="text" id="create-file-project-path" class="cosmo-input" style="width:100%;" placeholder="C:\Users\1234\Desktop\Projets\TestProjetWeb3Hotel" />
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.68rem; font-weight:700; color:#38bdf8; font-family:var(--font-mono);">📄 CHEMIN RELATIF DU FICHIER À CRÉER :</label>
+            <span style="font-size:0.65rem; color:#64748b;">(Ex: src/ui/components/RoomHeroCard.jsx)</span>
+          </div>
+          <input type="text" id="create-file-rel-path" class="cosmo-input" style="width:100%;" placeholder="src/ui/components/RoomHeroCard.jsx" />
+          <!-- Quick Suggestion Pills -->
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:2px;">
+            <button class="cat-pill" id="pill-suggest-ui" style="border-color:#ec4899; color:#f472b6;">🎨 src/ui/components/RoomHeroCard.jsx</button>
+            <button class="cat-pill" id="pill-suggest-domain" style="border-color:#fbbf24; color:#fde047;">🏛️ src/domain/models/RoomBooking.js</button>
+            <button class="cat-pill" id="pill-suggest-service" style="border-color:#38bdf8; color:#7dd3fc;">⚙️ src/application/services/BookingEngine.js</button>
+            <button class="cat-pill" id="pill-suggest-doc" style="border-color:#10b981; color:#6ee7b7;">📖 src/domain/README.md</button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.68rem; font-weight:700; color:#c084fc; font-family:var(--font-mono);">💻 CODE SOURCE DU FICHIER :</label>
+            <span style="font-size:0.68rem; color:#94a3b8;">Format UTF-8, syntaxe analysée en temps réel</span>
+          </div>
+          <textarea id="create-file-code-content" style="width:100%; height:220px; background:rgba(2, 6, 23, 0.95); border:1px solid rgba(192, 132, 252, 0.3); border-radius:8px; padding:12px; color:#e2e8f0; font-family:var(--font-mono); font-size:0.72rem; line-height:1.45; resize:vertical; outline:none;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(192, 132, 252, 0.2);">
+        <button class="aether-btn primary" id="btn-submit-create-file" style="background:linear-gradient(135deg, #c084fc, #38bdf8); color:#02040a; font-weight:800;">🚀 Générer & Faire Naître dans AetherScope</button>
+        <button class="aether-btn" id="btn-dismiss-create-file-modal">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks & Quests Manager Modal (Model & User) -->
+  <div id="ai-tasks-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 920px; max-width: 95vw; border-color: #38bdf8; box-shadow: 0 0 55px rgba(56, 189, 248, 0.35);">
+      <div class="modal-header" style="border-bottom-color: rgba(56, 189, 248, 0.3);">
+        <div class="modal-title">
+          <span style="color:#38bdf8; font-size:1.15rem;">📋</span>
+          <strong>Gestionnaire de Tâches & Quêtes Copilote</strong>
+          <span class="token-pill" id="tasks-count-pill" style="color:#38bdf8; background:rgba(56,189,248,0.12);">0 tâche(s)</span>
+        </div>
+        <button class="modal-close" id="btn-close-tasks-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 12px; max-height: 80vh; overflow-y: auto;">
+        <!-- Top Toolbar: Filters and New Task Button -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div class="task-selector" id="tasks-filter-tabs">
+            <button class="task-btn active" data-filter="active">⚡ Actives</button>
+            <button class="task-btn" data-filter="all">📂 Toutes</button>
+            <button class="task-btn" data-filter="done">✅ Terminées</button>
+          </div>
+          <button class="aether-btn primary" id="btn-toggle-new-task-form" style="background:#38bdf8; color:#02040a; font-weight:800; font-size:0.75rem; padding:6px 14px;">
+            ➕ Nouvelle Tâche
+          </button>
+        </div>
+
+        <!-- Inline Creation Form (hidden by default) -->
+        <div id="new-task-form-panel" style="display:none; background:rgba(15, 23, 42, 0.95); border:1px solid rgba(56, 189, 248, 0.4); border-radius:8px; padding:12px; flex-direction:column; gap:8px;">
+          <div style="font-weight:700; color:#38bdf8; font-size:0.75rem;">📝 CRÉER UNE NOUVELLE TÂCHE (MODÈLE / UTILISATEUR)</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="text" id="task-input-title" class="cosmo-input" style="flex:2; min-width:220px;" placeholder="Titre de la tâche (ex: Refactorer la validation des tokens)" />
+            <select id="task-select-kind" class="cosmo-input" style="flex:1; min-width:140px; background:#0f172a; color:#e2e8f0;">
+              <option value="function">⚙️ Fonction / Code</option>
+              <option value="research">🔍 Recherche & Audit</option>
+              <option value="security_fix">🛡️ Sécurité / Linter</option>
+              <option value="arch_refactor">🏛️ Architecture</option>
+              <option value="documentation">📖 Documentation</option>
+              <option value="test">🧪 Tests</option>
+              <option value="other">📌 Autre</option>
+            </select>
+            <select id="task-select-priority" class="cosmo-input" style="width:110px; background:#0f172a; color:#e2e8f0;">
+              <option value="medium">Moyenne</option>
+              <option value="high">Haute</option>
+              <option value="critical">Critique</option>
+              <option value="low">Basse</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="task-input-symbol" class="cosmo-input" style="flex:1;" placeholder="Symbole AST cible (optionnel, ex: BookingService)" />
+            <input type="text" id="task-input-file" class="cosmo-input" style="flex:1;" placeholder="Fichier cible (optionnel, ex: src/auth.rs)" />
+          </div>
+          <textarea id="task-input-readme" class="cosmo-input" style="width:100%; height:90px; resize:vertical;" placeholder="Mini-README d'avancement initial (objectifs, étapes [ ] / [x] ... si vide, un modèle sera généré automatiquement)"></textarea>
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button class="aether-btn" id="btn-cancel-new-task" style="font-size:0.72rem;">Annuler</button>
+            <button class="aether-btn primary" id="btn-submit-new-task" style="background:#38bdf8; color:#02040a; font-weight:800; font-size:0.72rem;">Créer la Tâche</button>
+          </div>
+        </div>
+
+        <!-- Task List Container -->
+        <div id="tasks-list-container" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Dynamically filled by ui_ai_modals.js -->
+        </div>
+
+        <!-- Task README Details / Editor Drawer (visible when a task is clicked) -->
+        <div id="task-readme-panel" style="display:none; background:rgba(2, 6, 23, 0.95); border:1px solid rgba(56, 189, 248, 0.35); border-radius:8px; padding:12px; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:#38bdf8; font-size:0.75rem;" id="task-detail-title">📖 MINI-README D'AVANCEMENT</span>
+            <button class="modal-close" id="btn-close-task-detail" style="font-size:1.1rem; padding:0 4px;">&times;</button>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <label style="font-size:0.68rem; color:#94a3b8;">Statut :</label>
+            <select id="task-detail-status" class="cosmo-input" style="font-size:0.72rem; padding:3px 6px; background:#0f172a; color:#e2e8f0;">
+              <option value="pending">⏳ En attente</option>
+              <option value="in_progress">⚡ En cours</option>
+              <option value="blocked">⛔ Bloqué</option>
+              <option value="done">✅ Terminé</option>
+            </select>
+            <label style="font-size:0.68rem; color:#94a3b8; margin-left:10px;">Progrès :</label>
+            <input type="range" id="task-detail-progress-range" min="0" max="100" value="0" style="width:120px;" />
+            <span id="task-detail-progress-label" style="font-size:0.72rem; font-weight:700; color:#38bdf8;">0%</span>
+            <button class="aether-btn" id="btn-teleport-task-target" style="margin-left:auto; font-size:0.68rem; padding:3px 8px; border-color:#c084fc; color:#c084fc;">🎯 Cible 3D</button>
+          </div>
+          <textarea id="task-detail-readme-textarea" style="width:100%; height:200px; background:rgba(15, 23, 42, 0.9); border:1px solid rgba(56, 189, 248, 0.25); border-radius:6px; padding:10px; color:#e2e8f0; font-family:var(--font-mono); font-size:0.72rem; line-height:1.45; resize:vertical; outline:none;"></textarea>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="aether-btn" id="btn-delete-task" style="border-color:#ef4444; color:#f87171; font-size:0.68rem;">🗑️ Supprimer</button>
+            <button class="aether-btn primary" id="btn-save-task-detail" style="background:#38bdf8; color:#02040a; font-weight:800; font-size:0.72rem;">💾 Enregistrer l'avancement</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(56, 189, 248, 0.2);">
+        <button class="aether-btn" id="btn-refresh-tasks">🔄 Rafraîchir</button>
+        <button class="aether-btn" id="btn-dismiss-tasks-modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       🎯 PRÉPARATEUR DE PROMPT CVE & SCOPE BUG BOUNTY (IN-SCOPE / OUT-OF-SCOPE)
+       ========================================================================= -->
+  <div id="bounty-scope-modal" class="modal-overlay">
+    <div class="modal-card" style="width: 960px; max-width: 96vw; border-color: #f59e0b; box-shadow: 0 0 55px rgba(245, 158, 11, 0.32);">
+      <div class="modal-header" style="border-bottom-color: rgba(245, 158, 11, 0.3);">
+        <div class="modal-title" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="font-size:1.2rem;">🎯</span>
+          <strong>Générateur Auto de Prompt PoC CVE & Scope Bug Bounty (In / Out Scope)</strong>
+          <span id="bounty-filtered-badge" class="token-pill" style="color:#fbbf24; background:rgba(245,158,11,0.16); border:1px solid rgba(245,158,11,0.45); font-weight:800;">0 CVE In-Scope</span>
+        </div>
+        <button class="modal-close" id="btn-close-bounty-modal" onclick="closeBountyScopeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="gap: 10px; max-height: 82vh; overflow-y: auto;">
+        <!-- 1. Presets Rapides & Sélection Cible CVE -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:rgba(15, 23, 42, 0.85); border:1px solid rgba(245, 158, 11, 0.25); border-radius:8px; padding:8px 12px;">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span style="font-size:0.68rem; font-weight:800; color:#fbbf24; font-family:var(--font-mono);">⚡ PRESETS SCOPE :</span>
+            <button class="cat-pill" onclick="applyBountyScopePreset('auto')" style="border-color:#38bdf8; color:#7dd3fc;">✨ Auto (Projet Actif)</button>
+            <button class="cat-pill" onclick="applyBountyScopePreset('l1_consensus')" style="border-color:#f59e0b; color:#fde047;">⛓️ L1 / Consensus (Aptos/Near/Solana)</button>
+            <button class="cat-pill" onclick="applyBountyScopePreset('web3_defi')" style="border-color:#c084fc; color:#e9d5ff;">🌐 Smart Contracts & DeFi</button>
+            <button class="cat-pill" onclick="applyBountyScopePreset('rust_lowlevel')" style="border-color:#10b981; color:#6ee7b7;">🦀 Rust Deep-Core & Unsafe</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <select id="bounty-target-cve-select" class="cosmo-select" style="max-width:260px; border-color:rgba(245,158,11,0.5); color:#fde047; font-family:var(--font-mono); font-size:0.66rem;" onchange="onBountyTargetCveChange(this.value)" title="Cibler toutes les CVE In-Scope ou une CVE spécifique pour générer son PoC">
+              <option value="all">📂 Toutes les CVE In-Scope (Triage & PoC)</option>
+            </select>
+            <label style="font-size:0.66rem; color:#cbd5e1; display:flex; align-items:center; gap:4px; cursor:pointer;">
+              <input type="checkbox" id="bounty-only-crit-high" checked onchange="updateBountyPromptPreview()" style="accent-color:#f59e0b;" />
+              <span>Critical & High uniquement</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. Sélecteur Interactif des Dossiers du Projet (1-Click In-Scope / Out-of-Scope) -->
+        <div style="background:rgba(6, 11, 25, 0.88); border:1px solid rgba(56, 189, 248, 0.22); border-radius:8px; padding:8px 12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+            <span style="font-size:0.68rem; font-weight:800; color:#38bdf8; font-family:var(--font-mono);">
+              📁 DOSSIERS DÉTECTÉS DANS LE PROJET (Cliquer : <span style="color:#34d399;">✅ In-Scope</span> ➔ <span style="color:#f87171;">🚫 Out-of-Scope</span>) :
+            </span>
+            <div style="display:flex; gap:5px;">
+              <button class="synth-mini-btn" onclick="setAllBountyFoldersScope(true)">Tout In-Scope</button>
+              <button class="synth-mini-btn off" onclick="autoExcludeTestAndToolFolders()">Exclure Tests / Outils / Docs</button>
+            </div>
+          </div>
+          <div id="bounty-folders-pills" style="display:flex; flex-wrap:wrap; gap:5px; max-height:95px; overflow-y:auto;"></div>
+        </div>
+
+        <!-- 3. Grille 2 Colonnes : IN-SCOPE vs OUT-OF-SCOPE -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <!-- Colonne IN-SCOPE -->
+          <div style="background:rgba(6, 78, 59, 0.14); border:1px solid rgba(16, 185, 129, 0.4); border-radius:8px; padding:9px 11px; display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label style="font-size:0.70rem; font-weight:800; color:#34d399; font-family:var(--font-mono);">
+                ✅ IN-SCOPE (Cibles, Dossiers & Impacts Éligibles) :
+              </label>
+              <span style="font-size:0.60rem; color:#6ee7b7; font-family:var(--font-mono);">1 par ligne ou virgule</span>
+            </div>
+            <textarea id="bounty-inscope-input" oninput="updateBountyPromptPreview()" style="width:100%; height:92px; background:rgba(2, 6, 23, 0.92); border:1px solid rgba(16, 185, 129, 0.35); border-radius:6px; padding:7px 9px; color:#d1fae5; font-family:var(--font-mono); font-size:0.68rem; line-height:1.4; resize:vertical; outline:none;" placeholder="Ex:&#10;consensus/&#10;execution/&#10;aptos-move/&#10;[Impact] Loss of Funds, Consensus Split, RCE, Memory Corruption (UB)"></textarea>
+            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+              <button class="cat-pill" style="font-size:0.58rem; padding:1px 6px; border-color:rgba(16,185,129,0.4); color:#6ee7b7;" onclick="appendBountyScopeLine('bounty-inscope-input', '[Impact Critique] Vol ou Gel Permanent des Fonds (Loss/Freeze of Funds)')">+ Loss of Funds</button>
+              <button class="cat-pill" style="font-size:0.58rem; padding:1px 6px; border-color:rgba(16,185,129,0.4); color:#6ee7b7;" onclick="appendBountyScopeLine('bounty-inscope-input', '[Impact Critique] Partition de Consensus / Arrêt de Nœud Validateur (Network Halt)')">+ Consensus Split</button>
+              <button class="cat-pill" style="font-size:0.58rem; padding:1px 6px; border-color:rgba(16,185,129,0.4); color:#6ee7b7;" onclick="appendBountyScopeLine('bounty-inscope-input', '[Impact Critique] Corruption Mémoire Rust Unsafe / LLVM UB / FFI Unwind / RCE')">+ Rust UB & RCE</button>
+            </div>
+          </div>
+
+          <!-- Colonne OUT-OF-SCOPE -->
+          <div style="background:rgba(127, 29, 29, 0.14); border:1px solid rgba(239, 68, 68, 0.4); border-radius:8px; padding:9px 11px; display:flex; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label style="font-size:0.70rem; font-weight:800; color:#f87171; font-family:var(--font-mono);">
+                🚫 OUT-OF-SCOPE (Dossiers Exclus & Règles Non-Éligibles) :
+              </label>
+              <button class="synth-mini-btn off" onclick="syncBountyOutScopeToScanner()" title="Envoyer les dossiers Out-of-Scope dans les exclusions du scanner AetherScope">🔄 Sync Scanner</button>
+            </div>
+            <textarea id="bounty-outscope-input" oninput="updateBountyPromptPreview()" style="width:100%; height:92px; background:rgba(2, 6, 23, 0.92); border:1px solid rgba(239, 68, 68, 0.35); border-radius:6px; padding:7px 9px; color:#fee2e2; font-family:var(--font-mono); font-size:0.68rem; line-height:1.4; resize:vertical; outline:none;" placeholder="Ex:&#10;tests/&#10;testsuite/&#10;examples/&#10;devtools/&#10;security-linter/&#10;[Exclu] DoS volumétrique réseau, Social Engineering, Dépendances tiers sans PoC"></textarea>
+            <div style="display:flex; gap:4px; flex-wrap:wrap;">
+              <button class="cat-pill" style="font-size:0.58rem; padding:1px 6px; border-color:rgba(239,68,68,0.4); color:#fca5a5;" onclick="appendBountyScopeLine('bounty-outscope-input', 'tests/, testsuite/, benches/, examples/, fixtures/, testdata/')">+ Tests & Benchmarks</button>
+              <button class="cat-pill" style="font-size:0.58rem; padding:1px 6px; border-color:rgba(239,68,68,0.4); color:#fca5a5;" onclick="appendBountyScopeLine('bounty-outscope-input', '[Exclu] DoS volumétrique ou épuisement nécessitant des privilèges Admin/Root locaux')">+ DoS Volumétrique / Admin</button>
+              <button class="cat-pill" style="font-size:0.58rem; padding:1px 6px; border-color:rgba(239,68,68,0.4); color:#fca5a5;" onclick="appendBountyScopeLine('bounty-outscope-input', '[Exclu] Rapports théoriques sans PoC reproductible ou code expérimental désactivé en mainnet')">+ Sans PoC / Expérimental</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Mode d'Objectif du Prompt & Résumé des CVE Filtrées -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div class="task-selector" id="bounty-mode-selector">
+            <button class="task-btn active" data-bmode="triage_poc" onclick="setBountyPromptMode('triage_poc', this)">🧪 Auto PoC CVE & Rapport Bug Bounty (Zéro Modif Code)</button>
+            <button class="task-btn" data-bmode="deep_hunt" onclick="setBountyPromptMode('deep_hunt', this)">🔬 Chasse Zero-Day & PoC Rust Bas-Niveau</button>
+            <button class="task-btn" data-bmode="surgical_fix" onclick="setBountyPromptMode('surgical_fix', this)">🛡️ Patch Minimal (Optionnel)</button>
+          </div>
+          <span class="token-pill" id="bounty-token-count" style="color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3);">~0 tokens</span>
+        </div>
+
+        <!-- 5. Aperçu / Édition Directe du Prompt Généré -->
+        <textarea id="bounty-prompt-textarea" style="width:100%; height:240px; background:rgba(2, 6, 23, 0.96); border:1px solid rgba(245, 158, 11, 0.4); border-radius:8px; padding:12px; color:#f1f5f9; font-family:var(--font-mono); font-size:0.71rem; line-height:1.45; resize:vertical; outline:none;" placeholder="Le prompt PoC CVE structuré avec votre In-Scope et Out-of-Scope apparaît ici..."></textarea>
+      </div>
+
+      <div class="modal-footer" style="border-top-color: rgba(245, 158, 11, 0.25); justify-content:space-between;">
+        <div style="font-size:0.68rem; color:#94a3b8; font-family:var(--font-mono);" id="bounty-footer-stats">
+          Mode Bug Bounty : génère un Proof of Concept (PoC) reproductible sans modifier le code source
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="aether-btn ai" onclick="sendBountyPromptToCopilot()" title="Envoyer directement ce prompt PoC au Copilote IA intégré">⚡ Envoyer au Copilote IA</button>
+          <button class="aether-btn primary" onclick="copyBountyScopePrompt()" style="background:linear-gradient(135deg, #f59e0b, #ef4444); border-color:#fbbf24; color:#02040a; font-weight:800;">📋 Copier le Prompt PoC Bug Bounty</button>
+          <button class="aether-btn" onclick="closeBountyScopeModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <script src="state_api.js"></script>
+
+  <script src="webgl_shaders_physics.js"></script>
+  <script src="webgl_renderer.js"></script>
+  <script src="ui_navigation.js"></script>
+  <script src="ui_inspector_docs.js"></script>
+  <script src="ui_vision_modes.js"></script>
+  <script src="ui_ai_modals.js"></script>
+</body>
+</html>
