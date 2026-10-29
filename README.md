@@ -636,6 +636,17 @@ Contrairement aux scanners par expressions régulières classiques qui génèren
 
 ## 🕹️ API REST Locale (24 Routes), Options CLI, Raccourcis & Compilation
 
+### 🚀 Démarrage Rapide & Utilitaires Windows 1-Clic
+
+AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'archive Release :
+
+- **`Start-Cockpit.bat` :** Double-clic direct. Nettoie les anciens processus orphelins sur le port `3030` et lance instantanément le Cockpit Spatial 3D.
+- **`AetherScope-Launcher.bat` :** Centre de contrôle interactif avec menu (Lancement Cockpit, Serveur headless, Scan SAST en ligne de commande, Libération de port, Configuration MCP).
+- **`setup-mcp.ps1` :** Détecte et configure automatiquement le serveur MCP dans **Claude Desktop**, **Cursor** et **Antigravity / Gemini** sans édition manuelle de JSON.
+- **`install.ps1` :** Installe l'application dans `%LOCALAPPDATA%\AetherScope\bin`, ajoute les commandes au `PATH` Windows et crée un raccourci Bureau.
+
+---
+
 ### Options en Ligne de Commande (CLI)
 
 ```powershell
