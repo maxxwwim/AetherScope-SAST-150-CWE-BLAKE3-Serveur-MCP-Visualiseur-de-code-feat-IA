@@ -496,9 +496,9 @@ function renderNodeDebrief(n, incoming, outgoing) {
             } else if (a.rule_id === 'DEFI-ORACLE-L2-SEQUENCER-RACE' || (a.cve_id && a.cve_id.includes('L2_SEQUENCER_ORACLE_RACE'))) {
               defiLaserBadge = `<div class="defi-laser-badge" style="margin:4px 0;">☣️ [LOGIC-CRITICAL] L2_SEQUENCER_ORACLE_RACE</div>`;
               defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="if(window.copyDefiPatchPrompt)window.copyDefiPatchPrompt('${escapeForBacktick(n.file_path)}', ${a.line_number}, 'DEFI-ORACLE-L2-SEQUENCER-RACE')">🛡️ Patch Sequencer Grace Period</button>`;
-            } else if (a.rule_id === 'DEFI-UNISWAP-TWAP-SHORT-WINDOW' || (a.cve_id && a.cve_id.includes('UNISWAP_TWAP_SHORT_WINDOW'))) {
-              defiLaserBadge = `<div class="defi-laser-badge" style="margin:4px 0;">☣️ [LOGIC-CRITICAL] UNISWAP_TWAP_SHORT_WINDOW</div>`;
-              defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="if(window.copyDefiPatchPrompt)window.copyDefiPatchPrompt('${escapeForBacktick(n.file_path)}', ${a.line_number}, 'DEFI-UNISWAP-TWAP-SHORT-WINDOW')">🛡️ Patch TWAP Safe Window (>= 30m)</button>`;
+            } else if (a.rule_id === 'DEFI-TWAP-SHORT-WINDOW' || (a.cve_id && a.cve_id.includes('TWAP_SHORT_WINDOW'))) {
+              defiLaserBadge = `<div class="defi-laser-badge" style="margin:4px 0;">☣️ [LOGIC-CRITICAL] TWAP_SHORT_WINDOW</div>`;
+              defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="if(window.copyDefiPatchPrompt)window.copyDefiPatchPrompt('${escapeForBacktick(n.file_path)}', ${a.line_number}, 'DEFI-TWAP-SHORT-WINDOW')">🛡️ Patch TWAP Safe Window (>= 30m)</button>`;
             }
 
             return `
@@ -2165,7 +2165,7 @@ function checkVaultStatus() external view override {
     }
 }`;
   } else if (ruleId === 'DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER') {
-    patchTitle = 'Contrôle Bornes Min/Max Oracle & Circuit Breaker (LOGIC-CRITICAL / LUNA Hack Vector)';
+    patchTitle = 'Contrôle Bornes Min/Max Oracle & Circuit Breaker (LOGIC-CRITICAL / Oracle Bounds Vector)';
     patchInstructions = `1. Interroger les bornes matérielles minAnswer et maxAnswer de l'agrégateur Chainlink via AggregatorV2V3Interface.
 2. Rejeter ou basculer sur un circuit breaker / oracle secondaire si answer <= minAnswer ou answer >= maxAnswer afin de bloquer les collatéraux effondrés valorisés à un plancher factice.`;
     patchCode = `// 🛡️ Pattern Sécurisé Bornes Min/Max Chainlink :
@@ -2174,7 +2174,7 @@ require(answer > 0, "Prix invalide");
 
 int256 minAnswer = AggregatorV2V3Interface(feed).minAnswer();
 int256 maxAnswer = AggregatorV2V3Interface(feed).maxAnswer();
-require(answer > minAnswer, "Prix au plancher: possible krach LUNA");
+require(answer > minAnswer, "Prix au plancher: possible krach de prix");
 require(answer < maxAnswer, "Prix au plafond artificiel");`;
   } else if (ruleId === 'DEFI-ORACLE-L2-SEQUENCER-RACE') {
     patchTitle = 'Contrôle Uptime Séquenceur L2 & Période de Grâce (LOGIC-CRITICAL / Arbitrum-Base)';
@@ -2184,7 +2184,7 @@ require(answer < maxAnswer, "Prix au plafond artificiel");`;
 (, int256 answer, uint256 startedAt, , ) = sequencerUptimeFeed.latestRoundData();
 require(answer == 0, "Séquenceur L2 indisponible");
 require(block.timestamp - startedAt > GRACE_PERIOD_TIME, "Période de grâce L2 active");`;
-  } else if (ruleId === 'DEFI-UNISWAP-TWAP-SHORT-WINDOW') {
+  } else if (ruleId === 'DEFI-TWAP-SHORT-WINDOW') {
     patchTitle = 'Plancher Sécurisé Fenêtre TWAP >= 30 Minutes (LOGIC-CRITICAL / MEV Attack)';
     patchInstructions = `1. Bannir toute fenêtre TWAP inférieure à 1800 secondes (30 minutes).
 2. Ajouter une contrainte stricte require(twapWindow >= 1800) dans les constructeurs et setters pour neutraliser la rentabilité des attaques MEV multi-blocs.`;

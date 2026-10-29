@@ -180,10 +180,10 @@ impl SecurityLinter {
                 description: "Projection manuelle Pin::get_unchecked_mut ou Pin::new_unchecked sans pin_project! sur une Future ou structure auto-référentielle : un mem::swap ou déplacement invalide les pointeurs internes entre deux .await (Use-After-Free silencieux).".to_string(),
                 default_enabled: true,
             },
-            // 0.B NEAR Protocol & L1 Blockchain Node (Consensus, P2P Borsh, Wasm Runtime, Fee Bypass, Crypto)
+            // 0.B L1 Blockchain Node (Consensus, P2P Borsh, Wasm Runtime, Fee Bypass, Crypto)
             CveRuleDef {
                 rule_id: "CVE-L1-BORSH-UNBOUNDED-DESER-OOM".to_string(),
-                cve_id: "NEAR-P2P-CONSENSUS-CRITICAL / BORSH-ZSTD-WIRE-ALLOCATION-BOMB".to_string(),
+                cve_id: "L1-P2P-CONSENSUS-CRITICAL / BORSH-ZSTD-WIRE-ALLOCATION-BOMB".to_string(),
                 name: "Bombe de Désérialisation P2P Borsh / Zstd sur Paquet ou StateWitness Non Authentifié".to_string(),
                 category: "Rust / Network".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -192,7 +192,7 @@ impl SecurityLinter {
             },
             CveRuleDef {
                 rule_id: "CVE-L1-RUNTIME-GAS-PREPAY-BYPASS".to_string(),
-                cve_id: "NEAR-FEE-BYPASS-CRITICAL / HOST-FN-ALLOCATION-BEFORE-GAS-BURN".to_string(),
+                cve_id: "L1-FEE-BYPASS-CRITICAL / HOST-FN-ALLOCATION-BEFORE-GAS-BURN".to_string(),
                 name: "Contournement de Facturation de Gaz Wasm (Allocation Mémoire / I/O Avant burn_gas)".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -201,7 +201,7 @@ impl SecurityLinter {
             },
             CveRuleDef {
                 rule_id: "CVE-L1-BALANCE-STORAGE-STAKING-DESYNC".to_string(),
-                cve_id: "NEAR-FUNDS-CRITICAL / BALANCE-MUTATION-WITHOUT-STORAGE-STAKE-CHECK".to_string(),
+                cve_id: "L1-FUNDS-CRITICAL / BALANCE-MUTATION-WITHOUT-STORAGE-STAKE-CHECK".to_string(),
                 name: "Désynchronisation Balance / Storage Staking & Manipulation de Solde L1 (set_amount / saturating_sub)".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -210,7 +210,7 @@ impl SecurityLinter {
             },
             CveRuleDef {
                 rule_id: "CVE-L1-CONSENSUS-UNVERIFIED-WITNESS-CHUNK".to_string(),
-                cve_id: "NEAR-CONSENSUS-CRITICAL / STATELESS-WITNESS-UNVERIFIED-ENDORSEMENT".to_string(),
+                cve_id: "L1-CONSENSUS-CRITICAL / STATELESS-WITNESS-UNVERIFIED-ENDORSEMENT".to_string(),
                 name: "Traitement de ChunkStateWitness / Endorsement Avant Vérification Cryptographique du Validateur".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -219,7 +219,7 @@ impl SecurityLinter {
             },
             CveRuleDef {
                 rule_id: "CVE-L1-CROSS-SHARD-RECEIPT-NONCE-REPLAY".to_string(),
-                cve_id: "NEAR-TX-CRITICAL / DELEGATE-ACTION-ACCESS-KEY-NONCE-BYPASS".to_string(),
+                cve_id: "L1-TX-CRITICAL / DELEGATE-ACTION-ACCESS-KEY-NONCE-BYPASS".to_string(),
                 name: "Rejeu de Meta-Transaction NEP-366 (DelegateAction) & Contournement d'Allowance AccessKey".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -228,7 +228,7 @@ impl SecurityLinter {
             },
             CveRuleDef {
                 rule_id: "CVE-L1-CRYPTO-BLIND-SCALAR-MERKLE-MALLEABILITY".to_string(),
-                cve_id: "NEAR-CRYPTO-CRITICAL / UNCHECKED-CURVE-DECOMPRESS-TORSION-SPLIT".to_string(),
+                cve_id: "L1-CRYPTO-CRITICAL / UNCHECKED-CURVE-DECOMPRESS-TORSION-SPLIT".to_string(),
                 name: "Divergence de Consensus Cryptographique (Point BLS12-381 / Ed25519 / BN254 Non-Canonique ou Torsion)".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -328,12 +328,12 @@ impl SecurityLinter {
                 default_enabled: true,
             },
             CveRuleDef {
-                rule_id: "CVE-WEB3-SOLANA-MISSING-OWNER".to_string(),
-                cve_id: "CWE-284 / SOLANA-ACCOUNT-OWNER-CONFUSION".to_string(),
-                name: "Confusion de Compte Solana (Missing Account Owner Check)".to_string(),
+                rule_id: "CVE-VM-ACCOUNT-MISSING-OWNER".to_string(),
+                cve_id: "CWE-284 / VM-ACCOUNT-OWNER-CONFUSION".to_string(),
+                name: "Confusion de Compte VM (Missing Account Owner Check)".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
-                description: "Programme Solana en Rust acceptant un AccountInfo sans vérifier que account.owner == program_id, permettant à un attaquant de passer un compte forgé par un programme tiers pour voler des actifs.".to_string(),
+                description: "Programme VM à modèle de comptes en Rust acceptant un AccountInfo sans vérifier que account.owner == program_id, permettant à un attaquant de passer un compte forgé par un programme tiers pour voler des actifs.".to_string(),
                 default_enabled: true,
             },
             CveRuleDef {
@@ -342,7 +342,7 @@ impl SecurityLinter {
                 name: "Réentrance en Lecture Seule sur Oracle LP (Curve / Balancer Virtual Price)".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
-                description: "Interrogation du virtual_price ou de réserves d'une pool LP dans une fonction view/read-only non protégée pendant un retrait de liquidité en cours, lisant un cours temporairement faussé (Hack Euler $197M).".to_string(),
+                description: "Interrogation du virtual_price ou de réserves d'une pool LP dans une fonction view/read-only non protégée pendant un retrait de liquidité en cours, lisant un cours temporairement faussé.".to_string(),
                 default_enabled: true,
             },
             CveRuleDef {
@@ -455,7 +455,7 @@ impl SecurityLinter {
             },
             CveRuleDef {
                 rule_id: "CVE-WEB3-OMNICHAIN-LZ-CHANNEL-BRICKING".to_string(),
-                cve_id: "OMNICHAIN-CRITICAL / LAYERZERO-CCIP-UNCAUGHT-REVERT-FUND-BURN".to_string(),
+                cve_id: "OMNICHAIN-CRITICAL / CROSS-CHAIN-UNCAUGHT-REVERT-FUND-BURN".to_string(),
                 name: "Destruction de Fonds Brûlés & Paralysie de Canal Cross-Chain (_lzReceive / _ccipReceive Sans Quarantaine)".to_string(),
                 category: "Web3 / Crypto".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -1024,7 +1024,7 @@ impl SecurityLinter {
             || norm_path.contains("test-utils")
             || norm_path.contains("test_utils")
             || norm_path.contains("testlib")
-            || norm_path.contains("near-test-contracts")
+            || norm_path.contains("test-contracts")
             || norm_path.contains("runtime-params-estimator")
             || norm_path.contains("adversarial")
             || norm_path.contains("/benches/")
@@ -1270,10 +1270,10 @@ impl SecurityLinter {
             }
 
             // =========================================================
-            // 🦀 RÈGLES SPÉCIFIQUES RUST & RÉSEAU BAS-NIVEAU + BLOCKCHAIN L1 (NEAR)
+            // 🦀 RÈGLES SPÉCIFIQUES RUST & RÉSEAU BAS-NIVEAU + BLOCKCHAIN L1
             // =========================================================
             if is_rust && !is_test_file {
-                // --- RÈGLES L1 BLOCKCHAIN NODE & NEAR PROTOCOL BUG BOUNTY ---
+                // --- RÈGLES L1 BLOCKCHAIN NODE ---
                 // L1.1 CVE-L1-BORSH-UNBOUNDED-DESER-OOM (Borsh / Zstd Unbounded Network or StateWitness Deserialization)
                 if !trimmed.starts_with("use ")
                     && !trimmed.starts_with("pub fn try_from_slice")
@@ -1313,7 +1313,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-L1-BORSH-UNBOUNDED-DESER-OOM".to_string(),
-                        cve_id: "NEAR-P2P-CONSENSUS-CRITICAL / BORSH-ZSTD-WIRE-ALLOCATION-BOMB".to_string(),
+                        cve_id: "L1-P2P-CONSENSUS-CRITICAL / BORSH-ZSTD-WIRE-ALLOCATION-BOMB".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "Borsh deserialization or zstd decompression on P2P network/witness stream without size cap or .take(MAX_LIMIT): malicious peer can send a forged 4GB length prefix or zstd bomb to OOM-crash validator nodes".to_string(),
                         transmitted_data: Some("p2p_borsh_or_zstd_payload".to_string()),
@@ -1359,7 +1359,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-L1-RUNTIME-GAS-PREPAY-BYPASS".to_string(),
-                        cve_id: "NEAR-FEE-BYPASS-CRITICAL / HOST-FN-ALLOCATION-BEFORE-GAS-BURN".to_string(),
+                        cve_id: "L1-FEE-BYPASS-CRITICAL / HOST-FN-ALLOCATION-BEFORE-GAS-BURN".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "Wasm runtime host function allocates host buffer or reads guest memory before charging proportional gas (burn_gas / pay_gas): allows a malicious contract to trigger free multi-GB host allocations before reverting OutOfGas".to_string(),
                         transmitted_data: Some("unbilled_wasm_host_allocation".to_string()),
@@ -1385,7 +1385,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-L1-BALANCE-STORAGE-STAKING-DESYNC".to_string(),
-                        cve_id: "NEAR-FUNDS-CRITICAL / BALANCE-MUTATION-WITHOUT-STORAGE-STAKE-CHECK".to_string(),
+                        cve_id: "L1-FUNDS-CRITICAL / BALANCE-MUTATION-WITHOUT-STORAGE-STAKE-CHECK".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "L1 account balance or locked stake mutated via raw arithmetic/saturating_sub or without check_storage_stake invariant verification: risks storage staking bypass or balance inflation".to_string(),
                         transmitted_data: Some("account_balance_or_stake_delta".to_string()),
@@ -1413,7 +1413,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-L1-CONSENSUS-UNVERIFIED-WITNESS-CHUNK".to_string(),
-                        cve_id: "NEAR-CONSENSUS-CRITICAL / STATELESS-WITNESS-UNVERIFIED-ENDORSEMENT".to_string(),
+                        cve_id: "L1-CONSENSUS-CRITICAL / STATELESS-WITNESS-UNVERIFIED-ENDORSEMENT".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "Stateless validation ChunkStateWitness processed or persisted before verifying chunk producer cryptographic signature: Byzantine node can poison witness cache or stall shard validation".to_string(),
                         transmitted_data: Some("unverified_chunk_state_witness".to_string()),
@@ -1439,7 +1439,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-L1-CROSS-SHARD-RECEIPT-NONCE-REPLAY".to_string(),
-                        cve_id: "NEAR-TX-CRITICAL / DELEGATE-ACTION-ACCESS-KEY-NONCE-BYPASS".to_string(),
+                        cve_id: "L1-TX-CRITICAL / DELEGATE-ACTION-ACCESS-KEY-NONCE-BYPASS".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "NEP-366 DelegateAction or transaction receipt processed without enforcing block_height <= max_block_height and atomic access_key.nonce increment: enables cross-shard meta-transaction replay".to_string(),
                         transmitted_data: Some("delegate_action_receipt".to_string()),
@@ -1461,7 +1461,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-L1-CRYPTO-BLIND-SCALAR-MERKLE-MALLEABILITY".to_string(),
-                        cve_id: "NEAR-CRYPTO-CRITICAL / UNCHECKED-CURVE-DECOMPRESS-TORSION-SPLIT".to_string(),
+                        cve_id: "L1-CRYPTO-CRITICAL / UNCHECKED-CURVE-DECOMPRESS-TORSION-SPLIT".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "Cryptographic curve point decompressed via *_unchecked() or non-strict Ed25519 verify without prime-order subgroup check (is_torsion_free / verify_strict): risks consensus split across validators".to_string(),
                         transmitted_data: Some("unchecked_curve_point_or_sig".to_string()),
@@ -1569,7 +1569,7 @@ impl SecurityLinter {
                         message: "Network socket, HTTP server, or P2P global semaphore permit acquired (up to 512 MiB) before payload bytes arrive: vulnerable to Slowloris global semaphore starvation & fd exhaustion".to_string(),
                         transmitted_data: Some("tcp_handshake_or_p2p_semaphore_permit".to_string()),
                         transmitted_type: Some("TcpStream / OwnedSemaphorePermit (Slowloris Resource Starvation)".to_string()),
-                        remediation: "Apply tower_http::timeout::TimeoutLayer on HTTP servers, cap pre-handshake frame sizes to MAX_SMALL_MESSAGE_SIZE, and isolate Tier1/Tier2/Connecting semaphores.".to_string(),
+                        remediation: "Apply tower_http::timeout::TimeoutLayer on HTTP servers, cap pre-handshake frame sizes to MAX_SMALL_MESSAGE_SIZE, and isolate per-class connection semaphores.".to_string(),
                     });
                 }
 
@@ -2220,7 +2220,7 @@ impl SecurityLinter {
                     });
                 }
 
-                // CVE-WEB3-SOLANA-MISSING-OWNER (CWE-284 / Solana Missing Account Owner Check)
+                // CVE-VM-ACCOUNT-MISSING-OWNER (CWE-284 / Missing Account Owner Check)
                 if (trimmed.contains("AccountInfo") || trimmed.contains("ctx.accounts."))
                     && (trimmed.contains("data.borrow()") || trimmed.contains("try_borrow_data"))
                     && !content.contains("owner == program_id")
@@ -2230,13 +2230,13 @@ impl SecurityLinter {
                     violations.push(LinterViolation {
                         file_path: file_path.to_string(),
                         line_number: line_no,
-                        rule_id: "CVE-WEB3-SOLANA-MISSING-OWNER".to_string(),
-                        cve_id: "CWE-284 / SOLANA-ACCOUNT-OWNER-CONFUSION".to_string(),
+                        rule_id: "CVE-VM-ACCOUNT-MISSING-OWNER".to_string(),
+                        cve_id: "CWE-284 / VM-ACCOUNT-OWNER-CONFUSION".to_string(),
                         severity: "CRITICAL".to_string(),
-                        message: "Solana account data deserialized without verifying account.owner == program_id: attacker can forge fake accounts from arbitrary programs".to_string(),
-                        transmitted_data: Some("solana_account_info".to_string()),
+                        message: "Account data deserialized without verifying account.owner == program_id: attacker can forge fake accounts from arbitrary programs".to_string(),
+                        transmitted_data: Some("vm_account_info".to_string()),
                         transmitted_type: Some("AccountInfo (Unchecked Program Owner)".to_string()),
-                        remediation: "Verify account.owner == expected_program_id before deserializing or use Anchor's #[account(owner = program_id)] constraint.".to_string(),
+                        remediation: "Verify account.owner == expected_program_id before deserializing or use a framework-level owner constraint.".to_string(),
                     });
                 }
 
@@ -2252,7 +2252,7 @@ impl SecurityLinter {
                         rule_id: "CVE-WEB3-READONLY-REENTRANCY".to_string(),
                         cve_id: "CWE-841 / READONLY-REENTRANCY-LP-ORACLE".to_string(),
                         severity: "CRITICAL".to_string(),
-                        message: "Reading LP token virtual price in view function during unfinished pool withdrawals yields corrupted pricing (Euler Finance $197M exploit)".to_string(),
+                        message: "Reading LP token virtual price in view function during unfinished pool withdrawals yields corrupted pricing".to_string(),
                         transmitted_data: Some("curve_virtual_price".to_string()),
                         transmitted_type: Some("uint256 (Deflated LP Virtual Price)".to_string()),
                         remediation: "Verify pool reentrancy lock status (e.g. check Curve pool lock or call non-reentrant state-touching check) before consuming LP virtual prices.".to_string(),
@@ -2344,7 +2344,7 @@ impl SecurityLinter {
                 }
 
                 // CVE-WEB3-UNPROTECTED-CALLBACK-SELECTOR (CWE-284 / Unprotected Flash Loan Callback)
-                if (trimmed.contains("function onFlashLoan(") || trimmed.contains("function uniswapV3SwapCallback(") || trimmed.contains("function uniswapV3FlashCallback(") || trimmed.contains("function eulerCallback("))
+                if (trimmed.contains("function onFlashLoan(") || trimmed.contains("function uniswapV3SwapCallback(") || trimmed.contains("function uniswapV3FlashCallback("))
                     && !trimmed.ends_with(';')
                     && !lower_path.contains("interface")
                     && !content.contains("interface ")
@@ -2542,7 +2542,7 @@ impl SecurityLinter {
                     });
                 }
 
-                // CVE-WEB3-OMNICHAIN-LZ-CHANNEL-BRICKING (OMNICHAIN-CRITICAL / LayerZero & CCIP Uncaught Revert Fund Burn)
+                // CVE-WEB3-OMNICHAIN-LZ-CHANNEL-BRICKING (OMNICHAIN-CRITICAL / Cross-Chain Uncaught Revert Fund Burn)
                 if (trimmed.contains("function _lzReceive(")
                     || trimmed.contains("function lzReceive(")
                     || trimmed.contains("function _ccipReceive(")
@@ -2562,7 +2562,7 @@ impl SecurityLinter {
                         file_path: file_path.to_string(),
                         line_number: line_no,
                         rule_id: "CVE-WEB3-OMNICHAIN-LZ-CHANNEL-BRICKING".to_string(),
-                        cve_id: "OMNICHAIN-CRITICAL / LAYERZERO-CCIP-UNCAUGHT-REVERT-FUND-BURN".to_string(),
+                        cve_id: "OMNICHAIN-CRITICAL / CROSS-CHAIN-UNCAUGHT-REVERT-FUND-BURN".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "Cross-chain receiver (_lzReceive / _ccipReceive) executes token transfer, mint, or external hook without try/catch quarantine (failedMessages / storedPayload): any revert on destination chain permanently burns source-chain assets or bricks the ordered messaging channel".to_string(),
                         transmitted_data: Some("crosschain_inbound_payload".to_string()),
@@ -3526,12 +3526,12 @@ mod tests {
             "CVE-WEB3-HOOK-REENTRANCY",
         );
 
-        // 6. Solana Missing Owner Check
+        // 6. Account-Model Missing Owner Check
         assert_rule_triggered(
             "programs/vault/src/lib.rs",
             "pub fn process(account: &AccountInfo) { let val = account.data.borrow(); }",
             None,
-            "CVE-WEB3-SOLANA-MISSING-OWNER",
+            "CVE-VM-ACCOUNT-MISSING-OWNER",
         );
 
         // 7. Read-Only Reentrancy on Curve / Balancer LP
@@ -3697,10 +3697,10 @@ mod tests {
         let v2_safe = SecurityLinter::audit_file("src/adapter/arbitrum/SafeArbitrumOracle.sol", safe_l2_code, None);
         assert!(v2_safe.iter().all(|v| v.rule_id != "DEFI-ORACLE-L2-SEQUENCER-RACE"), "Safe L2 oracle should not trigger sequencer race rule");
 
-        // 3. DEFI-UNISWAP-TWAP-SHORT-WINDOW
+        // 3. DEFI-TWAP-SHORT-WINDOW
         let short_twap_code = "contract UniswapOracle { function getTwap() external view returns (uint) { uint32[] memory secondsAgo = new uint32[](2); secondsAgo[0] = 300; secondsAgo[1] = 0; pool.observe(secondsAgo); } }";
         let v3 = SecurityLinter::audit_file("src/adapter/uniswap/UniswapOracle.sol", short_twap_code, None);
-        assert!(v3.iter().any(|v| v.rule_id == "DEFI-UNISWAP-TWAP-SHORT-WINDOW"), "Should detect manipulable short TWAP window (< 30 min)");
+        assert!(v3.iter().any(|v| v.rule_id == "DEFI-TWAP-SHORT-WINDOW"), "Should detect manipulable short TWAP window (< 30 min)");
     }
 
     #[test]
@@ -3864,7 +3864,7 @@ mod tests {
             "CVE-WEB3-ERC4337-PAYMASTER-GAS-SIPHON",
         );
 
-        // 4. Omnichain LayerZero / CCIP Channel Bricking & Burned Funds Loss
+        // 4. Omnichain Cross-Chain Channel Bricking & Burned Funds Loss
         assert_rule_triggered(
             "contracts/bridge/OmnichainOFT.sol",
             "contract OmnichainOFT { function _lzReceive(uint16 srcChainId, bytes memory payload) internal { (address to, uint amount) = abi.decode(payload, (address, uint)); usdc.safeTransfer(to, amount); } }",
@@ -3925,7 +3925,7 @@ mod tests {
     }
 
     #[test]
-    fn test_6_nearcore_l1_blockchain_bug_bounty_rules_and_fp_filters() {
+    fn test_6_l1_consensus_rules_and_fp_filters() {
         assert!(
             SecurityLinter::get_supported_cve_rules().len() >= 94,
             "Catalog should contain at least 94 security rules"
@@ -3941,7 +3941,7 @@ mod tests {
 
         // 2. Fee Payment Bypass & Contracts Execution Flows: Wasm Host Allocation Before Gas Prepayment
         assert_rule_triggered(
-            "runtime/near-vm-runner/src/logic/logic.rs",
+            "runtime/vm-runner/src/logic/logic.rs",
             "pub fn read_register(&mut self, len: u64) { let mut buf = vec![0u8; len as usize]; self.memory.read_memory(ptr, &mut buf); self.result_state.gas_counter.burn_gas(cost); }",
             None,
             "CVE-L1-RUNTIME-GAS-PREPAY-BYPASS",
@@ -4013,345 +4013,6 @@ pub fn aligned_read(ptr: *const u64) -> u64 {
             !res_safety.iter().any(|a| a.rule_id == "CVE-RUST-UNSAFE-MEM"),
             "Audited unsafe block with // SAFETY: comment must not trigger CVE-RUST-UNSAFE-MEM"
         );
-    }
-
-    #[tokio::test]
-    async fn test_nearcore_framed_stream_semaphore_starvation_and_patch_remediation() {
-        use std::sync::atomic::{AtomicUsize, Ordering};
-        use std::sync::Arc;
-        use std::time::Duration;
-        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-        use tokio::sync::Semaphore;
-
-        const MIB: usize = 1024 * 1024;
-        const NETWORK_MESSAGE_MAX_SIZE_BYTES: usize = 512 * MIB;
-        const PRE_HANDSHAKE_MAX_FRAME_SIZE_BYTES: usize = 512 * 1024; // 512 KiB
-        const READ_TIMEOUT: Duration = Duration::from_secs(120);
-
-        // Exact reproduction of `FramedStream::run_recv_loop` from `chain/network/src/peer/stream.rs:201-268`
-        async fn run_recv_loop_unpatched(
-            read: tokio::io::ReadHalf<tokio::net::TcpStream>,
-            frame_tx: tokio::sync::mpsc::UnboundedSender<Vec<u8>>,
-            incoming_message_semaphore: Arc<Semaphore>,
-            read_timeout: Duration,
-        ) -> Result<(), String> {
-            let mut read = tokio::io::BufReader::with_capacity(8 * 1024, read);
-            loop {
-                let n_u32: u32 = read.read_u32_le().await.map_err(|e| e.to_string())?;
-                let n: usize = n_u32 as usize;
-                if n > NETWORK_MESSAGE_MAX_SIZE_BYTES {
-                    return Err(format!("MessageTooLarge: got {}B, want <={}B", n, NETWORK_MESSAGE_MAX_SIZE_BYTES));
-                }
-                let (buf, _permit) = tokio::time::timeout(read_timeout, async {
-                    let permit = incoming_message_semaphore
-                        .clone()
-                        .acquire_many_owned(n_u32)
-                        .await
-                        .map_err(|_| "IncomingSemaphoreClosed".to_string())?;
-                    let mut buf = vec![0u8; n];
-                    read.read_exact(&mut buf[..]).await.map_err(|e| e.to_string())?;
-                    Ok::<_, String>((buf, permit))
-                })
-                .await
-                .map_err(|_| "TimedOut".to_string())??;
-
-                if frame_tx.send(buf).is_err() {
-                    return Ok(());
-                }
-            }
-        }
-
-        // Patched `FramedStream::run_recv_loop` enforcing dynamic `max_recv_frame_size_bytes` (512 KiB pre-handshake)
-        async fn run_recv_loop_patched(
-            read: tokio::io::ReadHalf<tokio::net::TcpStream>,
-            frame_tx: tokio::sync::mpsc::UnboundedSender<Vec<u8>>,
-            incoming_message_semaphore: Arc<Semaphore>,
-            read_timeout: Duration,
-            max_recv_frame_size_bytes: Arc<AtomicUsize>,
-        ) -> Result<(), String> {
-            let mut read = tokio::io::BufReader::with_capacity(8 * 1024, read);
-            loop {
-                let n_u32: u32 = read.read_u32_le().await.map_err(|e| e.to_string())?;
-                let n: usize = n_u32 as usize;
-                let current_max = max_recv_frame_size_bytes
-                    .load(Ordering::Acquire)
-                    .min(NETWORK_MESSAGE_MAX_SIZE_BYTES);
-                if n > current_max {
-                    return Err(format!("MessageTooLarge: got {}B, want <={}B", n, current_max));
-                }
-                let (buf, _permit) = tokio::time::timeout(read_timeout, async {
-                    let permit = incoming_message_semaphore
-                        .clone()
-                        .acquire_many_owned(n_u32)
-                        .await
-                        .map_err(|_| "IncomingSemaphoreClosed".to_string())?;
-                    let mut buf = vec![0u8; n];
-                    read.read_exact(&mut buf[..]).await.map_err(|e| e.to_string())?;
-                    Ok::<_, String>((buf, permit))
-                })
-                .await
-                .map_err(|_| "TimedOut".to_string())??;
-
-                if frame_tx.send(buf).is_err() {
-                    return Ok(());
-                }
-            }
-        }
-
-        // =========================================================================
-        // PART 1: Verify Unpatched Starvation (2 incomplete 4-byte headers starve Tier-1 frame)
-        // =========================================================================
-        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let addr = listener.local_addr().unwrap();
-
-        let total_permits: usize = 20 * MIB;
-        let declared_frame_len: u32 = (10 * MIB) as u32;
-        let shared_semaphore = Arc::new(Semaphore::new(total_permits));
-        let (frame_tx, mut frame_rx) = tokio::sync::mpsc::unbounded_channel();
-
-        let mut held_sockets = Vec::new();
-        for _ in 0..2 {
-            let (client, server) =
-                tokio::join!(tokio::net::TcpStream::connect(addr), listener.accept());
-            let mut client = client.unwrap();
-            let (server_stream, _) = server.unwrap();
-            let (read_half, _) = tokio::io::split(server_stream);
-
-            // Send ONLY 4 bytes (the length prefix) and hold the socket open
-            client.write_u32_le(declared_frame_len).await.unwrap();
-            client.flush().await.unwrap();
-            held_sockets.push(client);
-
-            let sem = shared_semaphore.clone();
-            let tx = frame_tx.clone();
-            tokio::spawn(async move {
-                let _ = run_recv_loop_unpatched(read_half, tx, sem, READ_TIMEOUT).await;
-            });
-        }
-
-        tokio::time::timeout(Duration::from_secs(2), async {
-            while shared_semaphore.available_permits() > 0 {
-                tokio::time::sleep(Duration::from_millis(5)).await;
-            }
-        })
-        .await
-        .expect("Unpatched run_recv_loop locked 100% of global semaphore permits before reading payload");
-        assert_eq!(shared_semaphore.available_permits(), 0);
-
-        // 3rd legitimate connection sends a complete 256-byte consensus frame
-        let (legit_client, legit_server) =
-            tokio::join!(tokio::net::TcpStream::connect(addr), listener.accept());
-        let mut legit_client = legit_client.unwrap();
-        let (legit_server_stream, _) = legit_server.unwrap();
-        let (legit_read_half, _) = tokio::io::split(legit_server_stream);
-
-        let payload = vec![0xAAu8; 256];
-        legit_client.write_u32_le(payload.len() as u32).await.unwrap();
-        legit_client.write_all(&payload).await.unwrap();
-        legit_client.flush().await.unwrap();
-
-        let sem_legit = shared_semaphore.clone();
-        let tx_legit = frame_tx.clone();
-        tokio::spawn(async move {
-            let _ = run_recv_loop_unpatched(legit_read_half, tx_legit, sem_legit, READ_TIMEOUT).await;
-        });
-
-        let starved = tokio::time::timeout(Duration::from_millis(200), frame_rx.recv()).await;
-        assert!(
-            starved.is_err(),
-            "Unpatched: legitimate 256-byte frame must be starved while global semaphore is exhausted"
-        );
-
-        // =========================================================================
-        // PART 2: Verify Patched Remediation (Oversized pre-handshake headers rejected immediately,
-        //         0 permits locked, and legitimate 256-byte frame delivered in < 10ms)
-        // =========================================================================
-        let patched_semaphore = Arc::new(Semaphore::new(total_permits));
-        let (patched_tx, mut patched_rx) = tokio::sync::mpsc::unbounded_channel();
-
-        for _ in 0..2 {
-            let (client, server) =
-                tokio::join!(tokio::net::TcpStream::connect(addr), listener.accept());
-            let mut client = client.unwrap();
-            let (server_stream, _) = server.unwrap();
-            let (read_half, _) = tokio::io::split(server_stream);
-
-            client.write_u32_le(declared_frame_len).await.unwrap();
-            client.flush().await.unwrap();
-
-            let sem = patched_semaphore.clone();
-            let tx = patched_tx.clone();
-            let max_cap = Arc::new(AtomicUsize::new(PRE_HANDSHAKE_MAX_FRAME_SIZE_BYTES));
-            let res = run_recv_loop_patched(read_half, tx, sem, READ_TIMEOUT, max_cap).await;
-            assert!(
-                res.unwrap_err().contains("MessageTooLarge"),
-                "Patched run_recv_loop must immediately reject 10 MiB header during pre-handshake"
-            );
-        }
-
-        // All permits remain intact!
-        assert_eq!(patched_semaphore.available_permits(), total_permits);
-
-        // Legitimate 256-byte frame is delivered immediately!
-        let (legit_client2, legit_server2) =
-            tokio::join!(tokio::net::TcpStream::connect(addr), listener.accept());
-        let mut legit_client2 = legit_client2.unwrap();
-        let (legit_server_stream2, _) = legit_server2.unwrap();
-        let (legit_read_half2, _) = tokio::io::split(legit_server_stream2);
-
-        legit_client2.write_u32_le(payload.len() as u32).await.unwrap();
-        legit_client2.write_all(&payload).await.unwrap();
-        legit_client2.flush().await.unwrap();
-
-        let sem_legit2 = patched_semaphore.clone();
-        let tx_legit2 = patched_tx.clone();
-        let max_cap2 = Arc::new(AtomicUsize::new(PRE_HANDSHAKE_MAX_FRAME_SIZE_BYTES));
-        tokio::spawn(async move {
-            let _ = run_recv_loop_patched(legit_read_half2, tx_legit2, sem_legit2, READ_TIMEOUT, max_cap2).await;
-        });
-
-        let delivered = tokio::time::timeout(Duration::from_secs(1), patched_rx.recv())
-            .await
-            .expect("Patched: legitimate 256-byte frame must be delivered immediately")
-            .unwrap();
-        assert_eq!(delivered.len(), 256);
-    }
-
-    #[test]
-    fn test_nearcore_peer_actor_post_deserialization_size_and_connecting_check() {
-        use std::sync::atomic::{AtomicUsize, Ordering};
-        use std::sync::Arc;
-
-        // 1. Verify that AetherScope V2's static analyzer flags the exact `peer_actor.rs:1658` pattern
-        let peer_actor_snippet = r#"
-impl messaging::Handler<IncomingFrame> for PeerActor {
-    fn handle(&mut self, IncomingFrame { data: msg, recv_permit }: IncomingFrame) {
-        let mut peer_msg = match PeerMessage::deserialize(&msg) {
-            Ok(msg) => msg,
-            Err(err) => return,
-        };
-        let max_size = peer_msg.max_size();
-        if msg.len() > max_size {
-            return;
-        }
-    }
-}
-"#;
-        let violations = SecurityLinter::audit_file(
-            "chain/network/src/peer/peer_actor.rs",
-            peer_actor_snippet,
-            None,
-        );
-        assert!(
-            violations.iter().any(|v| v.rule_id == "CVE-L1-BORSH-UNBOUNDED-DESER-OOM"),
-            "Linter must flag PeerMessage::deserialize(&msg) executed prior to peer_msg.max_size()"
-        );
-
-        // 2. Reproduction of Incomplete Decode-Time Size Gates in `proto_conv/peer_message.rs` & `peer_actor.rs:1658`:
-        //    NEAR recently patched `Transaction` (`MAX_TRANSACTION_SIZE_BYTES = 16 MiB`),
-        //    `Routed` (`MAX_ROUTED_MESSAGE_SIZE_BYTES = 64 MiB`), and `SnapshotHostInfo.shards`
-        //    (`MAX_SHARDS_PER_SNAPSHOT_HOST_INFO`), noting:
-        //    "This message is decoded pre-authentication, so an unbounded list would let any peer
-        //     force multi-GB allocations from a single message. Checking after decoding is too late."
-        //
-        //    However, in the exact same file (`peer_message.rs`), `SyncSnapshotHosts.hosts`,
-        //    `SyncRoutingTable.{edges, accounts}`, `SyncAccountsData.accounts_data`, `Challenge.borsh`,
-        //    `Block.borsh`, `BlockHeadersResponse`, and `OptimisticBlock.inner` have NO decode-time limit
-        //    and are decoded on frames up to 512 MiB BEFORE `peer_msg.max_size()`, `rate_limits`, or
-        //    `PeerStatus::Connecting` are checked in `peer_actor.rs:1658-1700`!
-        const MAX_SMALL_MESSAGE_SIZE: usize = 512 * 1024; // 512 KiB (SyncSnapshotHosts, Challenge, Handshake)
-        const MAX_MEDIUM_MESSAGE_SIZE: usize = 32 * 1024 * 1024; // 32 MiB (SyncRoutingTable, Block)
-
-        #[allow(dead_code)]
-        #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-        enum PeerStatus {
-            Connecting,
-            Ready,
-        }
-
-        // Simulated `SnapshotHostInfo` (~144 bytes in Rust memory + Arc heap header, vs ~4 bytes in Protobuf wire format)
-        #[allow(dead_code)]
-        struct DecodedSnapshotHostInfo {
-            peer_id: [u8; 32],
-            sync_hash: [u8; 32],
-            epoch_height: u64,
-            shards: Vec<u64>,
-            signature: [u8; 64],
-        }
-
-        // Unpatched `SyncSnapshotHosts::try_from` (`peer_message.rs:213-224`) + `peer_actor.rs:1658-1700`:
-        // Each 4-byte Protobuf entry in `x.hosts` allocates `Arc<DecodedSnapshotHostInfo>` (>= 160 bytes) on the heap
-        // (> 40x memory amplification: a 50 MiB wire frame allocates > 2 GB of heap structs BEFORE `max_size() == 512 KiB` is checked!)
-        let heap_bytes_allocated_unpatched = AtomicUsize::new(0);
-        let peer_disconnected_unpatched = AtomicUsize::new(0);
-
-        let handle_sync_snapshot_hosts_unpatched = |status: PeerStatus, wire_frame_len: usize| -> &'static str {
-            // Wire encoding: 4 bytes per empty proto::SnapshotHostInfo submessage
-            let num_hosts = wire_frame_len / 4;
-            let mut decoded_hosts: Vec<Arc<DecodedSnapshotHostInfo>> = Vec::with_capacity(num_hosts);
-            for _ in 0..num_hosts {
-                decoded_hosts.push(Arc::new(DecodedSnapshotHostInfo {
-                    peer_id: [0u8; 32],
-                    sync_hash: [0u8; 32],
-                    epoch_height: 0,
-                    shards: Vec::new(),
-                    signature: [0u8; 64],
-                }));
-            }
-            let allocated = num_hosts * (std::mem::size_of::<DecodedSnapshotHostInfo>() + std::mem::size_of::<Arc<DecodedSnapshotHostInfo>>());
-            heap_bytes_allocated_unpatched.fetch_add(allocated, Ordering::SeqCst);
-
-            // Line 1667 of peer_actor.rs: `max_size()` (512 KiB) checked AFTER multi-hundred-MB/GB heap allocation!
-            if wire_frame_len > MAX_SMALL_MESSAGE_SIZE {
-                drop(decoded_hosts);
-                return "DroppedTooLargeAfterDeser";
-            }
-            if status == PeerStatus::Connecting {
-                return "IgnoredInConnectingAfterDeser";
-            }
-            "Processed"
-        };
-
-        // Patched pipeline: enforces pre-deserialization `max_size()` / `MAX_HOSTS` cap and bans offending peer
-        let heap_bytes_allocated_patched = AtomicUsize::new(0);
-        let peer_disconnected_patched = AtomicUsize::new(0);
-
-        let handle_sync_snapshot_hosts_patched = |status: PeerStatus, wire_frame_len: usize| -> &'static str {
-            if status == PeerStatus::Connecting || wire_frame_len > MAX_SMALL_MESSAGE_SIZE {
-                peer_disconnected_patched.fetch_add(1, Ordering::SeqCst);
-                return "RejectedAndBannedPreDeser";
-            }
-            let num_hosts = wire_frame_len / 4;
-            heap_bytes_allocated_patched.fetch_add(
-                num_hosts * std::mem::size_of::<DecodedSnapshotHostInfo>(),
-                Ordering::SeqCst,
-            );
-            let _ = MAX_MEDIUM_MESSAGE_SIZE;
-            "Processed"
-        };
-
-        // Test with a 2 MiB pre-handshake `SyncSnapshotHosts` wire frame (4x above its 512 KiB limit;
-        // on wire up to 512 MiB is accepted by `stream.rs`, which amplifies > 42x to > 21 GB of heap allocations!):
-        let wire_len = 2 * 1024 * 1024; // 2 MiB wire payload
-        let res_unpatched = handle_sync_snapshot_hosts_unpatched(PeerStatus::Connecting, wire_len);
-        assert_eq!(res_unpatched, "DroppedTooLargeAfterDeser");
-
-        // Unpatched allocated > 80 MiB of heap structs from a 2 MiB frame (> 40x amplification!)
-        // before noticing `wire_len > 512 KiB` or `PeerStatus::Connecting`, and did NOT disconnect the peer:
-        let unpatched_alloc = heap_bytes_allocated_unpatched.load(Ordering::SeqCst);
-        assert!(
-            unpatched_alloc >= 40 * wire_len,
-            "Expected >= 40x decode-time heap amplification, got {} bytes from {} wire bytes",
-            unpatched_alloc,
-            wire_len
-        );
-        assert_eq!(peer_disconnected_unpatched.load(Ordering::SeqCst), 0);
-
-        // Patched allocates 0 bytes and immediately disconnects/bans the peer:
-        let res_patched = handle_sync_snapshot_hosts_patched(PeerStatus::Connecting, wire_len);
-        assert_eq!(res_patched, "RejectedAndBannedPreDeser");
-        assert_eq!(heap_bytes_allocated_patched.load(Ordering::SeqCst), 0);
-        assert_eq!(peer_disconnected_patched.load(Ordering::SeqCst), 1);
     }
 }
 

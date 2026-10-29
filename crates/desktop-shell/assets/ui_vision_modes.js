@@ -924,9 +924,9 @@ function renderCveAnomaliesPanel(lang = null) {
     } else if (a.rule_id === 'DEFI-ORACLE-L2-SEQUENCER-RACE' || (a.cve_id && a.cve_id.includes('L2_SEQUENCER_ORACLE_RACE'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [LOGIC-CRITICAL] L2_SEQUENCER_ORACLE_RACE</div>`;
       defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ORACLE-L2-SEQUENCER-RACE');">🛡️ Patch Sequencer Grace Period</button>`;
-    } else if (a.rule_id === 'DEFI-UNISWAP-TWAP-SHORT-WINDOW' || (a.cve_id && a.cve_id.includes('UNISWAP_TWAP_SHORT_WINDOW'))) {
-      defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [LOGIC-CRITICAL] UNISWAP_TWAP_SHORT_WINDOW</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-UNISWAP-TWAP-SHORT-WINDOW');">🛡️ Patch TWAP Safe Window (>= 30m)</button>`;
+    } else if (a.rule_id === 'DEFI-TWAP-SHORT-WINDOW' || (a.cve_id && a.cve_id.includes('TWAP_SHORT_WINDOW'))) {
+      defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [LOGIC-CRITICAL] TWAP_SHORT_WINDOW</div>`;
+      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-TWAP-SHORT-WINDOW');">🛡️ Patch TWAP Safe Window (>= 30m)</button>`;
     }
 
     return `
@@ -1043,12 +1043,12 @@ const CVE_ATTACK_EXPLANATIONS = {
     attack: "Réentrance invisible par hook de token (ERC-777 / ERC-1363) : le callback tokensReceived() est exécuté automatiquement lors d'un simple transfer(), permettant de ré-entrer avant la mise à jour des états.",
     shield: "Appliquer ReentrancyGuard nonReentrant sur TOUTES les opérations de transferts de tokens, pas seulement sur l'ETH."
   },
-  'CVE-WEB3-SOLANA-MISSING-OWNER': {
-    attack: "Confusion de compte Solana : accepter un AccountInfo sans vérifier account.owner == program_id permet à l'attaquant de forger de faux comptes depuis un programme externe pour voler les coffres.",
-    shield: "Vérifier formellement account.owner == expected_program_id ou contraindre avec Anchor #[account(owner = program)]."
+  'CVE-VM-ACCOUNT-MISSING-OWNER': {
+    attack: "Confusion de compte (modèle de comptes) : accepter un AccountInfo sans vérifier account.owner == program_id permet à l'attaquant de forger de faux comptes depuis un programme externe pour voler les coffres.",
+    shield: "Vérifier formellement account.owner == expected_program_id ou contraindre avec un type de compte validé par le framework."
   },
   'CVE-WEB3-READONLY-REENTRANCY': {
-    attack: "Réentrance en lecture seule sur Oracle LP (Hack Euler 197M$) : lire le get_virtual_price() de Curve ou les réserves Balancer dans une fonction view pendant un retrait en cours renvoie un cours faussé.",
+    attack: "Réentrance en lecture seule sur Oracle LP : lire le get_virtual_price() de Curve ou les réserves Balancer dans une fonction view pendant un retrait en cours renvoie un cours faussé.",
     shield: "Vérifier le verrou de réentrance de la pool externe ou appeler une fonction d'état protégée avant de consommer le cours LP."
   },
   'CVE-WEB3-DIRTY-MEMORY-ASSEMBLY': {
@@ -1100,14 +1100,14 @@ const CVE_ATTACK_EXPLANATIONS = {
     shield: "Protéger par nonReentrant et vérifier formellement l'état de l'EVC via require(!evc.isChecksDeferred(account) || evc.areChecksInProgress(), 'ChecksDeferred active')."
   },
   'DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER': {
-    attack: "Plancher artificiel d'oracle lors d'un crash de token (Hack Venus $11M / Blizz $8M) : Chainlink clamp les flux à minAnswer en cas d'effondrement extrême (ex: 0.10$ au lieu de 0.00001$). L'absence de contrôle de bornes permet d'emprunter tous les fonds du coffre avec un collatéral sans valeur.",
+    attack: "Plancher artificiel d'oracle lors d'un crash de token : Chainlink clamp les flux à minAnswer en cas d'effondrement extrême (ex: 0.10$ au lieu de 0.00001$). L'absence de contrôle de bornes permet d'emprunter tous les fonds du coffre avec un collatéral sans valeur.",
     shield: "Interroger les bornes minAnswer/maxAnswer de l'agrégateur et basculer sur un circuit breaker ou oracle de secours dès que le prix percute ces bornes."
   },
   'DEFI-ORACLE-L2-SEQUENCER-RACE': {
     attack: "Course à la liquidation après panne de séquenceur L2 (Arbitrum/Base/Optimism) : après une panne de séquenceur, les prix ont divergé hors-chaîne. Exécuter les liquidations immédiatement au premier bloc de reprise sans période de grâce liquide massivement des utilisateurs innocents.",
     shield: "Interroger le sequencerUptimeFeed et exiger formellement require(answer == 0 && block.timestamp - startedAt > GRACE_PERIOD_TIME, 'Période de grâce L2 active')."
   },
-  'DEFI-UNISWAP-TWAP-SHORT-WINDOW': {
+  'DEFI-TWAP-SHORT-WINDOW': {
     attack: "Manipulation d'oracle TWAP AMM par MEV multi-blocs : une fenêtre TWAP inférieure à 30 minutes (< 1800s) permet à des attaquants avec pots-de-vin aux builders d'altérer la moyenne géométrique des prix sur 2 ou 3 blocs consécutifs pour liquider un vault à bas coût.",
     shield: "Imposer un plancher strict twapWindow >= 1800 (au minimum 30 minutes) pour rendre la manipulation économique mathématiquement déficitaire."
   },
@@ -1352,7 +1352,7 @@ const CVE_ATTACK_EXPLANATIONS = {
     shield: "Remplacer Buffer.allocUnsafe par Buffer.alloc(size) et utiliser Atomics.load() avant de copier dans un ArrayBuffer privé."
   },
 
-  // ⛓️ 6 Règles L1 Blockchain & NEAR Protocol Bug Bounty (nearcore)
+  // ⛓️ 6 Règles L1 Blockchain & Consensus Distribué
   'CVE-L1-BORSH-UNBOUNDED-DESER-OOM': {
     attack: "[P2P & Consensus Flaws] Bombe OOM par désérialisation Borsh / décompression Zstd non bornée : un pair P2P malveillant envoie une trame contenant un préfixe de longueur u32 forgé (ex: Vec::with_capacity(4 Go)) ou une bombe zstd. L'allocateur Rust/Jemalloc tente d'allouer la mémoire avant la fin du parsing et tue instantanément le nœud validateur (OOM Crash).",
     shield: "Vérifier raw_bytes.len() <= MAX_NETWORK_FRAME_BYTES avant BorshDeserialize::try_from_slice et utiliser zstd::stream::read::Decoder borné par .take(MAX_DECOMPRESSED_SIZE)."
@@ -1678,16 +1678,16 @@ function withdrawTokens(uint amount) external nonReentrant {
     token.safeTransfer(msg.sender, amount);
 }`
   },
-  'CVE-WEB3-SOLANA-MISSING-OWNER': {
-    root_cause: "Désérialiser un AccountInfo Solana sans vérifier account.owner == program_id permet à un attaquant d'injecter des comptes forgés par un programme malveillant tiers.",
-    gold_pattern: `// Vérification stricte du propriétaire du compte dans les programmes Solana / Anchor :
+  'CVE-VM-ACCOUNT-MISSING-OWNER': {
+    root_cause: "Désérialiser un AccountInfo sans vérifier account.owner == program_id permet à un attaquant d'injecter des comptes forgés par un programme malveillant tiers.",
+    gold_pattern: `// Vérification stricte du propriétaire du compte dans les programmes à modèle de comptes :
 if account.owner != &expected_program_id {
     return Err(ProgramError::IllegalOwner.into());
 }
-// Ou en Anchor : #[account(has_one = authority, owner = my_program::ID)]`
+// Ou via la contrainte d'owner équivalente de votre framework`
   },
   'CVE-WEB3-READONLY-REENTRANCY': {
-    root_cause: "Les fonctions view/read-only interrogeant get_virtual_price() sur Curve ou les réserves Balancer pendant un retrait de liquidité en cours renvoient des cours faussés (Hack Euler 197M$).",
+    root_cause: "Les fonctions view/read-only interrogeant get_virtual_price() sur Curve ou les réserves Balancer pendant un retrait de liquidité en cours renvoient des cours faussés.",
     gold_pattern: `// Vérifier le verrou de réentrance de la pool avant de consommer son virtual_price :
 ICurvePool pool = ICurvePool(poolAddress);
 // Ou forcer une interaction non-reentrante d'état pour valider l'absence de reentrancy active
@@ -1819,7 +1819,7 @@ require(answer > 0, "Prix invalide");
 // Récupérer les bornes de l'agrégateur sous-jacent :
 int256 minAnswer = AggregatorV2V3Interface(feed).minAnswer();
 int256 maxAnswer = AggregatorV2V3Interface(feed).maxAnswer();
-require(answer > minAnswer, "Prix au plancher: possible crash LUNA");
+require(answer > minAnswer, "Prix au plancher: possible crash de prix");
 require(answer < maxAnswer, "Prix au plafond artificiel");`
   },
   'DEFI-ORACLE-L2-SEQUENCER-RACE': {
@@ -1831,7 +1831,7 @@ require(answer == 0, "Sequencer down");
 // Période de grâce obligatoire (ex: 3600 secondes = 1 heure) :
 require(block.timestamp - startedAt > GRACE_PERIOD_TIME, "Grace period not over");`
   },
-  'DEFI-UNISWAP-TWAP-SHORT-WINDOW': {
+  'DEFI-TWAP-SHORT-WINDOW': {
     root_cause: "Fenêtre TWAP inférieure à 30 minutes vulnérable à la manipulation MEV multi-blocs.",
     gold_pattern: `// Imposer une fenêtre TWAP minimale de 30 minutes (1800 secondes) :
 uint32 constant MIN_TWAP_WINDOW = 1800; // 30 minutes
@@ -2131,8 +2131,8 @@ function _postOp(PostOpMode /*mode*/, bytes calldata context, uint256 actualGasC
 }`
   },
   'CVE-WEB3-OMNICHAIN-LZ-CHANNEL-BRICKING': {
-    root_cause: "Dans LayerZero (_lzReceive) ou CCIP (_ccipReceive), les tokens ont déjà été brûlés sur la chaîne de départ. Si la livraison sur la chaîne d'arrivée revert (ex: destinataire blacklisté par USDC, hook externe qui échoue), les fonds brûlés sont perdus à jamais ou le canal inter-chaînes est paralysé.",
-    gold_pattern: `// Patron de Remédiation Certifié (Quarantaine Non-Bloquante LayerZero / CCIP) :
+    root_cause: "Dans un récepteur inter-chaînes (_lzReceive / _ccipReceive), les tokens ont déjà été brûlés sur la chaîne de départ. Si la livraison sur la chaîne d'arrivée revert (ex: destinataire blacklisté par USDC, hook externe qui échoue), les fonds brûlés sont perdus à jamais ou le canal inter-chaînes est paralysé.",
+    gold_pattern: `// Patron de Remédiation Certifié (Quarantaine Non-Bloquante Inter-Chaînes) :
 mapping(bytes32 => bytes32) public failedMessages;
 
 function _lzReceive(Origin calldata _origin, bytes32 _guid, bytes calldata _message, address, bytes calldata) internal override {
@@ -2980,7 +2980,7 @@ function applyBountyScopePreset(preset) {
     inEl.value = [
       'consensus/',
       'execution/',
-      'aptos-move/',
+      'vm/',
       'vm-validator/',
       'network/',
       'storage/',

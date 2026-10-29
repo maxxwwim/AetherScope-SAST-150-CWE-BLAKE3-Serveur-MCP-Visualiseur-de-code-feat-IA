@@ -1,6 +1,6 @@
 use crate::linter::{CveRuleDef, LinterViolation};
 
-/// Règles de sécurité d'élite / ultra-spécialisées (ZK-SNARKs, Solana/Anchor, Rust UB & Async, DeFi Read-Only, Rollup L2, ERC-4337, CosmWasm).
+/// Règles de sécurité d'élite / ultra-spécialisées (ZK-SNARKs, Account-Model VMs, Rust UB & Async, DeFi Read-Only, Rollup L2, ERC-4337, Wasm contracts).
 pub struct DeepSecurityRules;
 
 impl DeepSecurityRules {
@@ -34,19 +34,19 @@ impl DeepSecurityRules {
                 default_enabled: true,
             },
             CveRuleDef {
-                rule_id: "CVE-SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
-                cve_id: "CWE-843 / SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
-                name: "Solana / Anchor: Missing 8-Byte Discriminator Validation (Account Cosplay)".to_string(),
-                category: "Solana / Smart Contracts".to_string(),
+                rule_id: "CVE-VM-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
+                cve_id: "CWE-843 / VM-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
+                name: "Account-Model VM: Missing 8-Byte Discriminator Validation (Account Cosplay)".to_string(),
+                category: "Account-Model VM / Smart Contracts".to_string(),
                 severity: "CRITICAL".to_string(),
-                description: "Manual deserialization with try_from_slice() or raw account access without validating Anchor 8-byte discriminator or account owner: allows arbitrary account structure substitution.".to_string(),
+                description: "Manual deserialization with try_from_slice() or raw account access without validating 8-byte type discriminator or account owner: allows arbitrary account structure substitution.".to_string(),
                 default_enabled: true,
             },
             CveRuleDef {
-                rule_id: "CVE-SOLANA-MISSING-SIGNER-CHECK".to_string(),
-                cve_id: "CWE-287 / SOLANA-MISSING-SIGNER-CHECK".to_string(),
-                name: "Solana: Privileged Authority Key Verification without is_signer Assertion".to_string(),
-                category: "Solana / Smart Contracts".to_string(),
+                rule_id: "CVE-VM-MISSING-SIGNER-CHECK".to_string(),
+                cve_id: "CWE-287 / VM-MISSING-SIGNER-CHECK".to_string(),
+                name: "Account-Model VM: Privileged Authority Key Verification without is_signer Assertion".to_string(),
+                category: "Account-Model VM / Smart Contracts".to_string(),
                 severity: "CRITICAL".to_string(),
                 description: "Authority or admin public key comparison (authority.key == ...) without enforcing account.is_signer check: allows unauthorized users to pass arbitrary admin public keys without signing.".to_string(),
                 default_enabled: true,
@@ -70,10 +70,10 @@ impl DeepSecurityRules {
                 default_enabled: true,
             },
             CveRuleDef {
-                rule_id: "CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION".to_string(),
-                cve_id: "CWE-400 / COSMWASM-SUBSTRATE-STORAGE-BOMB".to_string(),
-                name: "CosmWasm / Substrate: Unbounded KV-Storage Prefix Iteration (Gas Freeze DoS)".to_string(),
-                category: "CosmWasm / Substrate".to_string(),
+                rule_id: "CVE-WASM-UNBOUNDED-STORAGE-ITERATION".to_string(),
+                cve_id: "CWE-400 / WASM-STORAGE-BOMB".to_string(),
+                name: "Wasm Contracts: Unbounded KV-Storage Prefix Iteration (Gas Freeze DoS)".to_string(),
+                category: "Wasm Contracts / Storage".to_string(),
                 severity: "HIGH".to_string(),
                 description: "Iterating storage map or prefix with .range() or .prefix() without strict .take(LIMIT) pagination: state spam causes block gas limit exhaustion, permanently freezing smart contract state.".to_string(),
                 default_enabled: true,
@@ -133,12 +133,12 @@ impl DeepSecurityRules {
                 default_enabled: true,
             },
             CveRuleDef {
-                rule_id: "CVE-MOVE-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
-                cve_id: "CWE-787 / MOVE-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
+                rule_id: "CVE-VM-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
+                cve_id: "CWE-787 / VM-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
                 name: "Move VM Native Extension: Manipulation Mémoire Unsafe sans Contrôle de Bornes".to_string(),
                 category: "Move VM / Memory Safety & RCE".to_string(),
                 severity: "CRITICAL".to_string(),
-                description: "Dans une fonction native Move en Rust (aptos_framework / native), manipulation de pointeurs bruts (copy_nonoverlapping, .offset()) avec des longueurs ou indices issus de transactions Move sans clamp ni validation stricte : faille d'évasion de sandbox VM vers RCE host.".to_string(),
+                description: "Dans une fonction native Move en Rust (VM framework / native), manipulation de pointeurs bruts (copy_nonoverlapping, .offset()) avec des longueurs ou indices issus de transactions Move sans clamp ni validation stricte : faille d'évasion de sandbox VM vers RCE host.".to_string(),
                 default_enabled: true,
             },
             CveRuleDef {
@@ -390,9 +390,9 @@ impl DeepSecurityRules {
         }
 
         // ---------------------------------------------------------------------
-        // 4. CVE-SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR (CWE-843)
+        // 4. CVE-VM-ACCOUNT-CONFUSION-DISCRIMINATOR (CWE-843)
         // ---------------------------------------------------------------------
-        if is_rust && (lower_path.contains("solana") || lower_path.contains("program") || lower_path.contains("processor") || content.contains("AccountInfo")) {
+        if is_rust && (lower_path.contains("program") || lower_path.contains("processor") || content.contains("AccountInfo")) {
             for (idx, &line) in lines.iter().enumerate() {
                 let line_no = idx + 1;
                 let trimmed = line.trim();
@@ -414,22 +414,22 @@ impl DeepSecurityRules {
                     violations.push(LinterViolation {
                         file_path: file_path.to_string(),
                         line_number: line_no,
-                        rule_id: "CVE-SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
-                        cve_id: "CWE-843 / SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
+                        rule_id: "CVE-VM-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
+                        cve_id: "CWE-843 / VM-ACCOUNT-CONFUSION-DISCRIMINATOR".to_string(),
                         severity: "CRITICAL".to_string(),
-                        message: "☣️ [CWE-843] SOLANA_ACCOUNT_CONFUSION : Manual account deserialization without verifying 8-byte Anchor discriminator or account owner: vulnerable to account cosplay / type confusion attack".to_string(),
-                        transmitted_data: Some("unvalidated_solana_account".to_string()),
+                        message: "☣️ [CWE-843] VM_ACCOUNT_CONFUSION : Manual account deserialization without verifying 8-byte type discriminator or account owner: vulnerable to account cosplay / type confusion attack".to_string(),
+                        transmitted_data: Some("unvalidated_vm_account".to_string()),
                         transmitted_type: Some("AccountInfo (Missing 8-Byte Type Discriminator Check)".to_string()),
-                        remediation: "Enforce discriminator verification: require!(account.data.borrow()[..8] == ExpectedStruct::DISCRIMINATOR) or use Anchor's Account<'info, T> wrapper.".to_string(),
+                        remediation: "Enforce discriminator verification: require!(account.data.borrow()[..8] == ExpectedStruct::DISCRIMINATOR) or use a typed, validated account wrapper.".to_string(),
                     });
                 }
             }
         }
 
         // ---------------------------------------------------------------------
-        // 5. CVE-SOLANA-MISSING-SIGNER-CHECK (CWE-287)
+        // 5. CVE-VM-MISSING-SIGNER-CHECK (CWE-287)
         // ---------------------------------------------------------------------
-        if is_rust && (lower_path.contains("solana") || lower_path.contains("instruction") || lower_path.contains("processor") || content.contains("AccountInfo")) {
+        if is_rust && (lower_path.contains("instruction") || lower_path.contains("processor") || content.contains("AccountInfo")) {
             for (idx, &line) in lines.iter().enumerate() {
                 let line_no = idx + 1;
                 let trimmed = line.trim();
@@ -448,13 +448,13 @@ impl DeepSecurityRules {
                     violations.push(LinterViolation {
                         file_path: file_path.to_string(),
                         line_number: line_no,
-                        rule_id: "CVE-SOLANA-MISSING-SIGNER-CHECK".to_string(),
-                        cve_id: "CWE-287 / SOLANA-MISSING-SIGNER-CHECK".to_string(),
+                        rule_id: "CVE-VM-MISSING-SIGNER-CHECK".to_string(),
+                        cve_id: "CWE-287 / VM-MISSING-SIGNER-CHECK".to_string(),
                         severity: "CRITICAL".to_string(),
-                        message: "☣️ [CWE-287] SOLANA_MISSING_SIGNER : Authority key comparison without verifying account.is_signer: an attacker can supply the admin public key without providing a cryptographic signature".to_string(),
-                        transmitted_data: Some("unsigned_solana_authority".to_string()),
+                        message: "☣️ [CWE-287] VM_MISSING_SIGNER : Authority key comparison without verifying account.is_signer: an attacker can supply the admin public key without providing a cryptographic signature".to_string(),
+                        transmitted_data: Some("unsigned_vm_authority".to_string()),
                         transmitted_type: Some("AccountInfo.key (Unsigned Key Match Authorization)".to_string()),
-                        remediation: "Assert account.is_signer: require!(authority.is_signer, ProgramError::MissingRequiredSignature) or use Anchor's Signer<'info> account type.".to_string(),
+                        remediation: "Assert account.is_signer: require!(authority.is_signer, ProgramError::MissingRequiredSignature) or use a typed signer account wrapper.".to_string(),
                     });
                     break;
                 }
@@ -549,9 +549,9 @@ impl DeepSecurityRules {
         }
 
         // ---------------------------------------------------------------------
-        // 8. CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION (CWE-400) - Fenêtre chaînée rustfmt
+        // 8. CVE-WASM-UNBOUNDED-STORAGE-ITERATION (CWE-400) - Fenêtre chaînée rustfmt
         // ---------------------------------------------------------------------
-        if is_rust && (content.contains("cw_storage_plus") || content.contains("cosmwasm_std") || lower_path.contains("contract")) {
+        if is_rust && (content.contains("storage_plus") || content.contains("wasm_std") || lower_path.contains("contract")) {
             for (idx, &line) in lines.iter().enumerate() {
                 let line_no = idx + 1;
                 let trimmed = line.trim();
@@ -589,10 +589,10 @@ impl DeepSecurityRules {
                         violations.push(LinterViolation {
                             file_path: file_path.to_string(),
                             line_number: line_no,
-                            rule_id: "CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION".to_string(),
-                            cve_id: "CWE-400 / COSMWASM-SUBSTRATE-STORAGE-BOMB".to_string(),
+                            rule_id: "CVE-WASM-UNBOUNDED-STORAGE-ITERATION".to_string(),
+                            cve_id: "CWE-400 / WASM-STORAGE-BOMB".to_string(),
                             severity: "HIGH".to_string(),
-                            message: "☣️ [CWE-400] COSMWASM_STORAGE_BOMB : Storage range iteration without mandatory .take(LIMIT) bounds: state spam forces transaction gas exhaustion, permanently locking contract state".to_string(),
+                            message: "☣️ [CWE-400] WASM_STORAGE_BOMB : Storage range iteration without mandatory .take(LIMIT) bounds: state spam forces transaction gas exhaustion, permanently locking contract state".to_string(),
                             transmitted_data: Some("unbounded_storage_range".to_string()),
                             transmitted_type: Some("StorageIterator (Uncapped Block Gas Consumption)".to_string()),
                             remediation: "Always apply .take(limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT)) to all storage range iterations.".to_string(),
@@ -850,7 +850,7 @@ impl DeepSecurityRules {
         }
 
         // ---------------------------------------------------------------------
-        // 15. CVE-MOVE-NATIVE-UNSAFE-BUFFER-BOUNDS (CWE-787)
+        // 15. CVE-VM-NATIVE-UNSAFE-BUFFER-BOUNDS (CWE-787)
         // ---------------------------------------------------------------------
         if is_rust && (lower_path.contains("native") || lower_path.contains("framework") || content.contains("NativeResult") || content.contains("NativeContext")) {
             for (idx, &line) in lines.iter().enumerate() {
@@ -867,8 +867,8 @@ impl DeepSecurityRules {
                     violations.push(LinterViolation {
                         file_path: file_path.to_string(),
                         line_number: line_no,
-                        rule_id: "CVE-MOVE-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
-                        cve_id: "CWE-787 / MOVE-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
+                        rule_id: "CVE-VM-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
+                        cve_id: "CWE-787 / VM-NATIVE-UNSAFE-BUFFER-BOUNDS".to_string(),
                         severity: "CRITICAL".to_string(),
                         message: "☣️ [CWE-787] MOVE_NATIVE_MEM_CORRUPTION : Manipulation de mémoire brute dans une fonction native Move sans vérification des bornes : évasion de sandbox VM vers RCE de l'hôte".to_string(),
                         transmitted_data: Some("move_native_raw_buffer".to_string()),

@@ -1455,8 +1455,8 @@ function render(now) {
           labelText = `☣️ [LOGIC-CRITICAL] ORACLE_MIN_MAX_CIRCUIT_BREAKER ➔ ${t.name || 'target'}`;
         } else if (ruleId === 'DEFI-ORACLE-L2-SEQUENCER-RACE' || cveId.includes('L2_SEQUENCER_ORACLE_RACE')) {
           labelText = `☣️ [LOGIC-CRITICAL] L2_SEQUENCER_ORACLE_RACE ➔ ${t.name || 'target'}`;
-        } else if (ruleId === 'DEFI-UNISWAP-TWAP-SHORT-WINDOW' || cveId.includes('UNISWAP_TWAP_SHORT_WINDOW')) {
-          labelText = `☣️ [LOGIC-CRITICAL] UNISWAP_TWAP_SHORT_WINDOW ➔ ${t.name || 'target'}`;
+        } else if (ruleId === 'DEFI-TWAP-SHORT-WINDOW' || cveId.includes('TWAP_SHORT_WINDOW')) {
+          labelText = `☣️ [LOGIC-CRITICAL] TWAP_SHORT_WINDOW ➔ ${t.name || 'target'}`;
         }
 
         const tw = ctx.measureText(labelText).width;

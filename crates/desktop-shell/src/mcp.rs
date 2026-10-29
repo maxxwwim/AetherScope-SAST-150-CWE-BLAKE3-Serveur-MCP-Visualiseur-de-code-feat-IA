@@ -107,7 +107,7 @@ async fn handle_mcp_request(req: JsonRpcRequest, server_port: u16, default_path:
                 },
                 "serverInfo": {
                     "name": "aetherscope-mcp",
-                    "version": "2.0.0"
+                    "version": env!("CARGO_PKG_VERSION")
                 }
             })),
             error: None,

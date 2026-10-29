@@ -2131,42 +2131,39 @@ document.getElementById('btn-export')?.addEventListener('click', async () => {
 
 // --- Connect MCP Configuration Modal & CLI Bridge Handlers ---
 const currentMcpPort = window.location.port || '3030';
-const mcpBinaryPath = "C:\\Users\\1234\\Desktop\\Projets\\aether-engine\\target\\release\\aetherscope-mcp.exe";
-const mcpConfigs = {
-  antigravity: {
-    label: "FICHIER : ~/.gemini/config/mcp_config.json (ou Antigravity MCP Settings)",
-    json: JSON.stringify({
-      mcpServers: {
-        aetherscope: {
-          command: mcpBinaryPath,
-          args: ["--port", currentMcpPort]
-        }
+// Chemin par défaut générique : remplacé par le chemin réel renvoyé par /api/settings (mcp_binary_path).
+let mcpBinaryPath = "C:\\Chemin\\Vers\\AetherScope\\aetherscope-mcp.exe";
+
+function buildMcpConfigs() {
+  const json = JSON.stringify({
+    mcpServers: {
+      aetherscope: {
+        command: mcpBinaryPath,
+        args: ["--port", currentMcpPort]
       }
-    }, null, 2)
-  },
-  claude: {
-    label: "FICHIER : %APPDATA%\\Claude\\claude_desktop_config.json",
-    json: JSON.stringify({
-      mcpServers: {
-        aetherscope: {
-          command: mcpBinaryPath,
-          args: ["--port", currentMcpPort]
-        }
+    }
+  }, null, 2);
+  return {
+    antigravity: { label: "FICHIER : ~/.gemini/config/mcp_config.json (ou Antigravity MCP Settings)", json },
+    claude: { label: "FICHIER : %APPDATA%\\Claude\\claude_desktop_config.json", json },
+    cursor: { label: "FICHIER : .cursor/mcp.json ou Paramètres Cursor > Features > MCP", json }
+  };
+}
+
+let mcpConfigs = buildMcpConfigs();
+
+fetch('/api/settings')
+  .then(res => (res.ok ? res.json() : null))
+  .then(data => {
+    if (data && data.mcp_binary_path) {
+      mcpBinaryPath = data.mcp_binary_path;
+      mcpConfigs = buildMcpConfigs();
+      if (document.getElementById('ai-mcp-modal')?.classList.contains('open')) {
+        updateMcpModalView(curMcpTab);
       }
-    }, null, 2)
-  },
-  cursor: {
-    label: "FICHIER : .cursor/mcp.json ou Paramètres Cursor > Features > MCP",
-    json: JSON.stringify({
-      mcpServers: {
-        aetherscope: {
-          command: mcpBinaryPath,
-          args: ["--port", currentMcpPort]
-        }
-      }
-    }, null, 2)
-  }
-};
+    }
+  })
+  .catch(() => { /* chemin générique conservé */ });
 
 let curMcpTab = 'antigravity';
 function updateMcpModalView(tab) {

@@ -1,6 +1,7 @@
 #![windows_subsystem = "windows"]
 
 mod api_routes;
+mod local_guard;
 mod mcp;
 mod viewer;
 
@@ -1024,6 +1025,7 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         exclusions,
                         active_cve_rules: Some(active_rules),
                         cve_catalogue: Some(catalogue),
+                        mcp_binary_path: resolve_mcp_binary_path(),
                     })
                 }
             })
@@ -1072,7 +1074,12 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
             "/favicon.ico",
             axum::routing::get(|| async { axum::http::StatusCode::NO_CONTENT }),
         )
-        .layer(tower_http::cors::CorsLayer::permissive());
+        // Pas de CORS permissif : le cockpit est servi par ce même serveur (same-origin) et le pont MCP
+        // n'envoie pas d'Origin. Toute requête cross-origin / DNS-rebinding est refusée par le garde.
+        .layer(axum::middleware::from_fn_with_state(
+            local_guard::LocalGuard::new(args.port),
+            local_guard::enforce_local_only,
+        ));
 
     let addr = format!("127.0.0.1:{}", args.port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;

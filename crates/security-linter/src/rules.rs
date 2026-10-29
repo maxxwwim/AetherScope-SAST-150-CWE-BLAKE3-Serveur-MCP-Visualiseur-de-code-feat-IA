@@ -35,7 +35,7 @@ impl AdvancedDefiRules {
             CveRuleDef {
                 rule_id: "DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER".to_string(),
                 cve_id: "LOGIC-CRITICAL / ORACLE_MIN_MAX_CIRCUIT_BREAKER".to_string(),
-                name: "Absence de Contrôle des Bornes Min/Max d'Oracle (Effondrement de Prix / Hack LUNA)".to_string(),
+                name: "Absence de Contrôle des Bornes Min/Max d'Oracle (Effondrement de Prix)".to_string(),
                 category: "DeFi / Oracles".to_string(),
                 severity: "CRITICAL".to_string(),
                 description: "Interrogation d'un flux d'oracle sans vérification que le prix retourné ne percute pas les bornes matérielles minAnswer ou maxAnswer de l'agrégateur (ou absence de circuit breaker / oracle de secours), permettant de valoriser un token effondré à son plancher artificiel pour siphonner les vaults.".to_string(),
@@ -51,8 +51,8 @@ impl AdvancedDefiRules {
                 default_enabled: true,
             },
             CveRuleDef {
-                rule_id: "DEFI-UNISWAP-TWAP-SHORT-WINDOW".to_string(),
-                cve_id: "LOGIC-CRITICAL / UNISWAP_TWAP_SHORT_WINDOW".to_string(),
+                rule_id: "DEFI-TWAP-SHORT-WINDOW".to_string(),
+                cve_id: "LOGIC-CRITICAL / TWAP_SHORT_WINDOW".to_string(),
                 name: "Fenêtre TWAP AMM Inférieure à 30 Minutes Manipulable par MEV Multi-Blocs".to_string(),
                 category: "DeFi / Oracles".to_string(),
                 severity: "CRITICAL".to_string(),
@@ -319,7 +319,7 @@ impl AdvancedDefiRules {
                         rule_id: "DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER".to_string(),
                         cve_id: "LOGIC-CRITICAL / ORACLE_MIN_MAX_CIRCUIT_BREAKER".to_string(),
                         severity: "CRITICAL".to_string(),
-                        message: "☣️ [LOGIC-CRITICAL] ORACLE_MIN_MAX_CIRCUIT_BREAKER : Chainlink latestRoundData() queried without minAnswer/maxAnswer bound check or fallback circuit breaker: extreme price drop will cap price artificially (LUNA/Venus attack vector)".to_string(),
+                        message: "☣️ [LOGIC-CRITICAL] ORACLE_MIN_MAX_CIRCUIT_BREAKER : Chainlink latestRoundData() queried without minAnswer/maxAnswer bound check or fallback circuit breaker: extreme price drop will cap price artificially (oracle bounds attack vector)".to_string(),
                         transmitted_data: Some("oracle_answer_unbounded".to_string()),
                         transmitted_type: Some("int256 (Hardcoded Feed Bound Clamping)".to_string()),
                         remediation: "Query aggregator minAnswer / maxAnswer bounds and revert or trigger fallback oracle if answer <= minAnswer || answer >= maxAnswer.".to_string(),
@@ -370,7 +370,7 @@ impl AdvancedDefiRules {
         }
 
         // ---------------------------------------------------------------------
-        // 6. DEFI-UNISWAP-TWAP-SHORT-WINDOW (AMM Multi-Block MEV Manipulation)
+        // 6. DEFI-TWAP-SHORT-WINDOW (AMM Multi-Block MEV Manipulation)
         // ---------------------------------------------------------------------
         if is_sol && (content.contains(".observe(") || content.contains("OracleLibrary.consult") || content.contains("observeSingle") || lower_path.contains("uniswap") || lower_path.contains("twap")) {
             for (idx, &line) in lines.iter().enumerate() {
@@ -404,10 +404,10 @@ impl AdvancedDefiRules {
                     violations.push(LinterViolation {
                         file_path: file_path.to_string(),
                         line_number: line_no,
-                        rule_id: "DEFI-UNISWAP-TWAP-SHORT-WINDOW".to_string(),
-                        cve_id: "LOGIC-CRITICAL / UNISWAP_TWAP_SHORT_WINDOW".to_string(),
+                        rule_id: "DEFI-TWAP-SHORT-WINDOW".to_string(),
+                        cve_id: "LOGIC-CRITICAL / TWAP_SHORT_WINDOW".to_string(),
                         severity: "CRITICAL".to_string(),
-                        message: "☣️ [LOGIC-CRITICAL] UNISWAP_TWAP_SHORT_WINDOW : AMM TWAP window is shorter than 1800s (30 minutes) or lacks strict minimum floor: vulnerable to multi-block MEV geometric mean manipulation".to_string(),
+                        message: "☣️ [LOGIC-CRITICAL] TWAP_SHORT_WINDOW : AMM TWAP window is shorter than 1800s (30 minutes) or lacks strict minimum floor: vulnerable to multi-block MEV geometric mean manipulation".to_string(),
                         transmitted_data: Some("amm_twap_seconds_ago".to_string()),
                         transmitted_type: Some("uint32 (Manipulable Short TWAP Window)".to_string()),
                         remediation: "Enforce twapWindow >= 1800 (at least 30 minutes) to make multi-block MEV pool manipulation economically unfeasible.".to_string(),

@@ -1,7 +1,7 @@
 //! Tests de validation pour les 10 règles d'élite de sécurité (DeepSecurityRules)
 //! Couvre : ZK Frozen Heart, Circom Underconstrained, DeFi Read-Only Reentrancy,
-//! Solana Discriminator & Signer, Rust Transmute UB & Async select! cancellation,
-//! CosmWasm Storage Bomb, L2 Calldata Fee Theft, ERC-4337 Paymaster Mempool DoS.
+//! Account-Model Discriminator & Signer, Rust Transmute UB & Async select! cancellation,
+//! Wasm Storage Bomb, L2 Calldata Fee Theft, ERC-4337 Paymaster Mempool DoS.
 
 use security_linter::SecurityLinter;
 
@@ -127,17 +127,17 @@ contract LendingOracle is ReentrancyGuard {
 }
 
 #[test]
-fn test_solana_account_confusion_discriminator_and_safe_case() {
-    let vuln_solana = r#"
+fn test_account_model_confusion_discriminator_and_safe_case() {
+    let vuln_acct = r#"
 pub fn process_instruction(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
     let vault_info = &accounts[0];
     let vault_data = VaultConfig::try_from_slice(&vault_info.data.borrow())?;
     withdraw_funds(vault_data)
 }
 "#;
-    assert_rule_triggers("programs/vault/src/processor.rs", vuln_solana, "CVE-SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR");
+    assert_rule_triggers("programs/vault/src/processor.rs", vuln_acct, "CVE-VM-ACCOUNT-CONFUSION-DISCRIMINATOR");
 
-    let safe_solana = r#"
+    let safe_acct = r#"
 pub fn process_instruction(program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
     let vault_info = &accounts[0];
     assert_eq!(&vault_info.data.borrow()[..8], VaultConfig::DISCRIMINATOR);
@@ -145,11 +145,11 @@ pub fn process_instruction(program_id: &Pubkey, accounts: &[AccountInfo], data: 
     withdraw_funds(vault_data)
 }
 "#;
-    assert_rule_passes("programs/vault/src/processor.rs", safe_solana, "CVE-SOLANA-ACCOUNT-CONFUSION-DISCRIMINATOR");
+    assert_rule_passes("programs/vault/src/processor.rs", safe_acct, "CVE-VM-ACCOUNT-CONFUSION-DISCRIMINATOR");
 }
 
 #[test]
-fn test_solana_missing_signer_check_and_safe_case() {
+fn test_account_model_missing_signer_check_and_safe_case() {
     let vuln_auth = r#"
 pub fn update_admin(accounts: &[AccountInfo], new_admin: Pubkey) -> ProgramResult {
     let admin_info = &accounts[0];
@@ -159,7 +159,7 @@ pub fn update_admin(accounts: &[AccountInfo], new_admin: Pubkey) -> ProgramResul
     Ok(())
 }
 "#;
-    assert_rule_triggers("programs/vault/src/processor.rs", vuln_auth, "CVE-SOLANA-MISSING-SIGNER-CHECK");
+    assert_rule_triggers("programs/vault/src/processor.rs", vuln_auth, "CVE-VM-MISSING-SIGNER-CHECK");
 
     let safe_auth = r#"
 pub fn update_admin(accounts: &[AccountInfo], new_admin: Pubkey) -> ProgramResult {
@@ -170,7 +170,7 @@ pub fn update_admin(accounts: &[AccountInfo], new_admin: Pubkey) -> ProgramResul
     Ok(())
 }
 "#;
-    assert_rule_passes("programs/vault/src/processor.rs", safe_auth, "CVE-SOLANA-MISSING-SIGNER-CHECK");
+    assert_rule_passes("programs/vault/src/processor.rs", safe_auth, "CVE-VM-MISSING-SIGNER-CHECK");
 }
 
 #[test]
@@ -217,14 +217,14 @@ pub async fn send_packet(tx: &mpsc::Sender<Vec<u8>>, cancel: &mut Receiver<()>) 
 }
 
 #[test]
-fn test_cosmwasm_unbounded_storage_iteration_and_safe_case() {
+fn test_wasm_unbounded_storage_iteration_and_safe_case() {
     let vuln_cw = r#"
 pub fn query_all_balances(deps: Deps) -> StdResult<Vec<Coin>> {
     let res = BALANCES.range(deps.storage, None, None, Order::Ascending).collect::<StdResult<Vec<_>>>()?;
     Ok(res)
 }
 "#;
-    assert_rule_triggers("src/contract.rs", vuln_cw, "CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION");
+    assert_rule_triggers("src/contract.rs", vuln_cw, "CVE-WASM-UNBOUNDED-STORAGE-ITERATION");
 
     let safe_cw = r#"
 pub fn query_all_balances(deps: Deps, limit: Option<u32>) -> StdResult<Vec<Coin>> {
@@ -235,7 +235,7 @@ pub fn query_all_balances(deps: Deps, limit: Option<u32>) -> StdResult<Vec<Coin>
     Ok(res)
 }
 "#;
-    assert_rule_passes("src/contract.rs", safe_cw, "CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION");
+    assert_rule_passes("src/contract.rs", safe_cw, "CVE-WASM-UNBOUNDED-STORAGE-ITERATION");
 }
 
 #[test]
@@ -314,7 +314,7 @@ pub fn verify(transcript: &mut MerlinTranscript, proof: &Proof) -> bool {
 }
 
 #[test]
-fn test_cosmwasm_iter_rustfmt_chained_split_lines() {
+fn test_wasm_iter_rustfmt_chained_split_lines() {
     // Cas réel rustfmt : .range() suivi de .map() puis de .take() sur des lignes distinctes
     let safe_cw_chained = r#"
 pub fn query_all_balances(deps: Deps, limit: Option<u32>) -> StdResult<Vec<Coin>> {
@@ -327,7 +327,7 @@ pub fn query_all_balances(deps: Deps, limit: Option<u32>) -> StdResult<Vec<Coin>
     Ok(res)
 }
 "#;
-    assert_rule_passes("src/contract.rs", safe_cw_chained, "CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION");
+    assert_rule_passes("src/contract.rs", safe_cw_chained, "CVE-WASM-UNBOUNDED-STORAGE-ITERATION");
 
     let vuln_cw_chained = r#"
 pub fn query_all_balances(deps: Deps) -> StdResult<Vec<Coin>> {
@@ -338,7 +338,7 @@ pub fn query_all_balances(deps: Deps) -> StdResult<Vec<Coin>> {
     Ok(res)
 }
 "#;
-    assert_rule_triggers("src/contract.rs", vuln_cw_chained, "CVE-COSMWASM-UNBOUNDED-STORAGE-ITERATION");
+    assert_rule_triggers("src/contract.rs", vuln_cw_chained, "CVE-WASM-UNBOUNDED-STORAGE-ITERATION");
 }
 
 #[test]

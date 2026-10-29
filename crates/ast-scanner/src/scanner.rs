@@ -339,7 +339,7 @@ impl ProjectScanner {
             "test-loop-tests",
             "test-utils",
             "testlib",
-            "near-test-contracts",
+            "test-contracts",
             "runtime-params-estimator",
             "jsonrpc-adversarial-primitives",
             "genesis-tools",

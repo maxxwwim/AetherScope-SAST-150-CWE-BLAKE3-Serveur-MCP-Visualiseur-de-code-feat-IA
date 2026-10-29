@@ -35,6 +35,16 @@ pub struct SettingsPayload {
     pub active_cve_rules: Option<Vec<String>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cve_catalogue: Option<Vec<security_linter::CveRuleDef>>,
+    /// Chemin réel de `aetherscope-mcp` (à côté de l'exécutable en cours) pour générer la config MCP.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mcp_binary_path: Option<String>,
+}
+
+/// Chemin absolu du binaire `aetherscope-mcp`, résolu relativement à l'exécutable courant.
+pub fn resolve_mcp_binary_path() -> Option<String> {
+    let exe = std::env::current_exe().ok()?;
+    let name = if cfg!(windows) { "aetherscope-mcp.exe" } else { "aetherscope-mcp" };
+    Some(clean_path_string(&exe.parent()?.join(name)))
 }
 
 #[derive(Deserialize)]

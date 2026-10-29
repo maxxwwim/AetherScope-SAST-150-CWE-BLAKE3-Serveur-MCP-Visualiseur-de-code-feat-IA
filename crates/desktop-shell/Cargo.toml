@@ -24,7 +24,6 @@ serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true
 axum.workspace = true
-tower-http.workspace = true
 clap.workspace = true
 colored.workspace = true
 webbrowser.workspace = true
