@@ -2,12 +2,12 @@
 
 # 🪐 AetherScope V2 (`aether-engine`)
 
-### **Cockpit Spatial d'Architecture WebGL 2 (120 FPS) • Linter SAST Zero-Day (90+ CVE) • Gouvernance Cryptographique BLAKE3 • Serveur MCP & Passerelle IA "Zero-Shell"**
+### **Cockpit Spatial d'Architecture WebGL 2 (120 FPS) • Linter SAST Zero-Day (90+ Zero-Day Patterns & CWE Rules) • Gouvernance Cryptographique BLAKE3 • Serveur MCP & Passerelle IA "Zero-Shell"**
 
 [![Rust](https://img.shields.io/badge/Rust-100%25_Native_2021-orange?style=for-the-badge&logo=rust)](https://www.rust-lang.org/)
 [![WebGL 2](https://img.shields.io/badge/WebGL_2-120_FPS_Instanced_SDF-38bdf8?style=for-the-badge&logo=webgl)](https://www.khronos.org/webgl/)
 [![MCP Server](https://img.shields.io/badge/MCP-JSON--RPC_2.0_Stdio-a855f7?style=for-the-badge)](https://modelcontextprotocol.io/)
-[![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-90%2B_CVE_%2F_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-90-règles-cvecwe)
+[![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-90%2B_Zero--Day_Patterns_%26_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-90-zero-day-patterns--cwe-rules)
 [![BLAKE3](https://img.shields.io/badge/Contracts-BLAKE3_%2B_EARS_Sealed-10b981?style=for-the-badge)](#🔒-gouvernance-spec-driven-contrats-ears--sceau-blake3)
 [![License: Non-Commercial](https://img.shields.io/badge/License-Non--Commercial-ef4444?style=for-the-badge)](#📄-licence)
 
@@ -28,7 +28,7 @@
 | ADN du Moteur | Ce qu'il remplace / transcende | Ce qu'apporte AetherScope V2 |
 | :--- | :--- | :--- |
 | 🌌 **1. Graphe Spatial Vivant** *(L'ADN Obsidian)* | Graphes statiques lents, diagrammes UML figés | **Galaxie interactive 2D/3D à 120 FPS** (Shaders SDF WebGL 2), membranes cellulaires vivantes à 12 lobes, 4 layouts mathématiques, simulation physique de Coulomb/Hooke et audio procédural. |
-| 🛡️ **2. Scanner SAST & Bug Bounty** *(L'ADN Audit Zero-Day)* | Linters lents en CI/CD, bruit massif de faux positifs | **Audit statique temps réel (< 50 ms à chaque `Ctrl+S`)** avec **90+ règles CVE/CWE** (Rust/LLVM/UB, Smart Contracts & VMs Distribuées, DeFi, ZK-SNARKs, Python, Node/V8, C/C++), masquage lexical anti-faux-positifs et **Générateur de PoC & Scope Bug Bounty**. |
+| 🛡️ **2. Scanner SAST & Bug Bounty** *(L'ADN Audit Zero-Day)* | Linters lents en CI/CD, bruit massif de faux positifs | **Audit statique temps réel (< 50 ms à chaque `Ctrl+S`)** avec **90+ Zero-Day Patterns & CWE Rules** (Rust/LLVM/UB, Smart Contracts & VMs Distribuées, DeFi, ZK-SNARKs, Python, Node/V8, C/C++), masquage lexical anti-faux-positifs et **Générateur de PoC & Scope Bug Bounty**. |
 | 🏛️ **3. Cockpit IDE "Spec-Driven"** *(L'ADN Gouvernance)* | Documentation obsolète, dérive architecturale | Chaque dossier possède son contrat `README.md` (règles **EARS**, budgets de lignes, imports autorisés/interdits) **scellé cryptographiquement par BLAKE3** dans `aether.lock.toml`. Toute transgression allume un laser rouge d'alerte. |
 | 🤖 **4. Serveur MCP & Pont IA "Zero-Shell"** *(L'ADN Copilot Console)* | Context loss des LLMs, réécritures destructrices, hallucinations | **Serveur MCP natif (`aetherscope-mcp.exe`)** + **Paquets `<aether_handshake>`**. L'agent IA (Antigravity, Claude, Cursor) téléporte lui-même la caméra 3D sur les bulles qu'il édite, gère ses tâches dans `.aether/tasks/` et code par diffs chirurgicaux sans jamais perdre le contexte. |
 
@@ -54,7 +54,7 @@
    - [Console Chat Copilot (`<thought>`), Télémétrie Spatiale & `<aether_handshake>`](#console-chat-copilot-thought-télémétrie-spatiale--aether_handshake)
    - [Configuration Universelle (Antigravity, Claude Desktop, Cursor)](#configuration-universelle-antigravity-claude-desktop-cursor)
 5. [Gouvernance "Spec-Driven", Contrats EARS & Sceau BLAKE3](#-gouvernance-spec-driven-contrats-ears--sceau-blake3)
-6. [Moteur SAST, Chasse Zero-Day & Catalogue des 90+ Règles CVE/CWE](#️-moteur-sast-chasse-zero-day--catalogue-des-90-règles-cvecwe)
+6. [Moteur SAST, Chasse Zero-Day & Catalogue des 90+ Zero-Day Patterns & CWE Rules](#️-moteur-sast-chasse-zero-day--catalogue-des-90-zero-day-patterns--cwe-rules)
    - [Masquage Lexical Anti-Faux-Positifs & Préparateur de Scope Bug Bounty / PoC](#masquage-lexical-anti-faux-positifs--préparateur-de-scope-bug-bounty--poc)
    - [1. Rust Bas-Niveau, LLVM Codegen, ABI, Unwind & OS Kernel (24 règles)](#1-rust-bas-niveau-llvm-codegen-abi-unwind--os-kernel)
    - [2. Consensus L1, Runtimes Wasm & Réseaux P2P (6 règles)](#2-consensus-l1-runtimes-wasm--réseaux-p2p)
@@ -105,7 +105,7 @@ aether-engine/
     │   ├── src/lexer.rs                    # Masquage lexical des littéraux/commentaires (Anti-Faux-Positifs)
     │   ├── src/rules.rs                    # Règles avancées DeFi, Vaults, Oracles & Taint Tracking
     │   ├── src/deep_rules.rs               # Règles d'élite (Rust LLVM/UB/ABI/Kernel, ZK-SNARKs, Runtimes VM)
-    │   └── src/linter.rs                   # Catalogue central de 90+ règles CVE/CWE & orchestrateur d'audit
+    │   └── src/linter.rs                   # Catalogue central des 90+ Zero-Day Patterns & CWE Rules & orchestrateur d'audit
     │
     ├── ai-file-bridge/                     # 4. Passerelle IA Zero-Shell & Gestionnaire de Tâches
     │   ├── src/watcher.rs                  # FileWatcher réactif notify (< 50 ms)
@@ -431,7 +431,7 @@ security_rules:
 
 ---
 
-## 🛡️ Moteur SAST, Chasse Zero-Day & Catalogue des 90+ Règles CVE/CWE
+## 🛡️ Moteur SAST, Chasse Zero-Day & Catalogue des 90+ Zero-Day Patterns & CWE Rules
 
 ### Masquage Lexical Anti-Faux-Positifs & Préparateur de Scope Bug Bounty / PoC
 
@@ -693,7 +693,7 @@ AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'arc
 | `GET` / `POST /api/tasks` | Liste ou crée une tâche persistante dans `.aether/tasks/`. |
 | `POST /api/tasks/update` | Met à jour le statut, la progression (`0-100%`) et le `README.md` d'une tâche. |
 | `POST /api/tasks/delete` | Supprime une tâche et met à jour `.aether/TASKS_SUMMARY.md`. |
-| `GET` / `POST /api/settings` | Lit ou sauvegarde les exclusions et l'activation granulaire des 90+ règles CVE. |
+| `GET` / `POST /api/settings` | Lit ou sauvegarde les exclusions et l'activation granulaire des 90+ Zero-Day Patterns & CWE Rules. |
 | `POST /api/export` | Exporte le graphe interactif en un fichier autonome `aetherscope_viewer.html`. |
 
 ---
@@ -702,20 +702,20 @@ AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'arc
 
 | Touche | Action dans le Cockpit |
 | :---: | :--- |
-| <kbd>Ctrl</kbd> + <kbd>K</kbd> ou <kbd>/</kbd> | **Omnibox Deep Search :** Recherche instantanée de dossiers, fichiers, fonctions, classes et CVE. |
+| <kbd>Ctrl</kbd> + <kbd>K</kbd> ou <kbd>/</kbd> | **Omnibox Deep Search :** Recherche instantanée de dossiers, fichiers, fonctions, classes, Zero-Day patterns & CWE. |
 | <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> / <kbd>4</kbd> | **Layouts `Z-1` à `Z-4` :** Bascule entre *Obsidian Galaxy*, *Système 7 Couches*, *Flux DAG* et *Matrice UML*. |
 | <kbd>F</kbd> | **Fit View :** Recadre la caméra avec lissage inertiel pour embrasser toute la galaxie. |
 | <kbd>X</kbd> | **Mode X-Ray Focus Tunnel :** Isole la chaîne causale amont/aval du symbole sélectionné. |
 | <kbd>D</kbd> | **Mode Dead Code Scanner :** Met en surbrillance les symboles et fichiers orphelins ($\text{in-degree} = 0$). |
 | <kbd>H</kbd> | **Mode Heatmap Thermique :** Affiche le score de santé global et les Hotspots de complexité. |
 | <kbd>G</kbd> | **Gravité Quantique :** Active ou met en pause la simulation physique de Coulomb/Hooke. |
-| <kbd>I</kbd> | **Inspecteur Latéral (Droite) :** Ouvre/ferme l'inspecteur à 4 onglets (Débrief, UML, Relations, CVE). |
+| <kbd>I</kbd> | **Inspecteur Latéral (Droite) :** Ouvre/ferme l'inspecteur à 4 onglets (Débrief, UML, Relations, Zero-Day & CWE). |
 | <kbd>M</kbd> | **Lecteur / Éditeur Markdown (Gauche) :** Ouvre/ferme le panneau de documentation `README.md`. |
-| <kbd>B</kbd> | **Panneau Synthèse (Gauche) :** Déploie/replie les filtres de modules, couches, liens et CVE. |
+| <kbd>B</kbd> | **Panneau Synthèse (Gauche) :** Déploie/replie les filtres de modules, couches, liens et anomalies de sécurité. |
 | <kbd>C</kbd> | **Console Chat IA :** Ouvre/ferme la fenêtre flottante de dialogue Copilot. |
 | <kbd>T</kbd> | **Gestionnaire de Tâches & Quêtes :** Ouvre la modale des missions `.aether/tasks/`. |
 | <kbd>A</kbd> | **Télémétrie HUD :** Affiche/masque le bandeau de suivi spatial de l'agent IA. |
-| <kbd>P</kbd> | **Préférences & Catalogue CVE :** Configure les labels, les FPS, l'audio, les exclusions et les règles SAST. |
+| <kbd>P</kbd> | **Préférences & Catalogue Sécurité :** Configure les labels, FPS, audio, exclusions et les 90+ Zero-Day Patterns & CWE Rules. |
 | <kbd>S</kbd> | **Snapshot HD :** Enregistre une capture PNG haute résolution du viewport WebGL 2. |
 | <kbd>Échap</kbd> | Ferme la modale active, quitte le mode de vision spécial ou désélectionne la cible. |
 

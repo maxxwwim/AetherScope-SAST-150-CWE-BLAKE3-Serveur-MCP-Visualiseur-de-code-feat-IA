@@ -370,12 +370,12 @@
           </div>
         </div>
 
-        <!-- Option 8 : Catalogue & Règles de Sécurité CVE / SAST -->
+        <!-- Option 8 : Catalogue & Règles de Sécurité 90+ Zero-Day Patterns & CWE Rules -->
         <div class="settings-group-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.04);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <div class="hub-section-title" style="color:#ef4444; margin-bottom:0;">
-              <span>🛡️</span> 8. Règles de Sécurité & Détecteurs CVE / SAST
-              <span id="cve-rules-counter" class="cve-badge critical" style="margin-left:8px; font-size:0.65rem; padding:2px 6px;">20 règles</span>
+              <span>🛡️</span> 8. 90+ Zero-Day Patterns & CWE Rules (SAST Linter)
+              <span id="cve-rules-counter" class="cve-badge critical" style="margin-left:8px; font-size:0.65rem; padding:2px 6px;">90+ règles</span>
             </div>
             <div style="display:flex; gap:6px;">
               <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 8px; color:#38bdf8; border-color:rgba(56,189,248,0.4);" onclick="toggleAllCveRules(true)">Tout Activer</button>
@@ -383,14 +383,14 @@
             </div>
           </div>
           <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:10px;">
-            Activez ou désactivez les moteurs d'analyse AST statique pour les smart contracts Web3, MMO Rust, canaux concurrents, et injections SAST.
+            Activez ou désactivez les moteurs d'analyse AST statique pour les 90+ Zero-Day Patterns & CWE Rules (Rust, Smart Contracts, DeFi, ZK, Python, Node/V8, C/C++).
           </div>
           <div style="display:flex; gap:8px; margin-bottom:8px;">
-            <input type="text" id="setting-cve-search" class="cosmo-input" style="flex:1; padding:4px 10px; font-size:0.72rem;" placeholder="Filtrer les CVE (ex: Web3, Mutex, Nonce, SQL, Rust)..." oninput="filterCveRulesList(this.value)" />
+            <input type="text" id="setting-cve-search" class="cosmo-input" style="flex:1; padding:4px 10px; font-size:0.72rem;" placeholder="Filtrer les 90+ Zero-Day Patterns & CWE Rules..." oninput="filterCveRulesList(this.value)" />
           </div>
           <div id="settings-cve-rules-container" class="settings-cve-checklist" style="max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;">
             <!-- Dynamically populated by ui_ai_modals.js -->
-            <div style="font-size:0.75rem; color:#64748b; text-align:center; padding:12px;">Chargement du catalogue CVE...</div>
+            <div style="font-size:0.75rem; color:#64748b; text-align:center; padding:12px;">Chargement des 90+ Zero-Day Patterns & CWE Rules...</div>
           </div>
         </div>
       </div>
@@ -668,11 +668,11 @@
 
     <!-- Right Quick Actions (High Readability & Always Visible Labels) -->
     <div class="topbar-right">
-      <button id="btn-open-bounty-modal" class="aether-btn bounty-btn" onclick="openBountyScopeModal()" title="Préparer le Prompt PoC CVE avec le In-Scope et Out-of-Scope du Bug Bounty">
-        <span>🎯</span> <strong class="responsive-label">PoC CVE / Scope</strong>
+      <button id="btn-open-bounty-modal" class="aether-btn bounty-btn" onclick="openBountyScopeModal()" title="Préparer le Prompt PoC Zero-Day & CWE avec le Scope Bug Bounty">
+        <span>🎯</span> <strong class="responsive-label">PoC Zero-Day / Scope</strong>
       </button>
-      <button id="btn-topbar-cve" class="aether-btn cve-quick-btn" onclick="openCveInspectorTab()" title="Ouvrir l'Audit CVE & Violations de Sécurité">
-        <span>🚨</span> <span class="responsive-label">CVE</span> <span id="topbar-cve-badge" class="cve-mini-pill">0</span>
+      <button id="btn-topbar-cve" class="aether-btn cve-quick-btn" onclick="openCveInspectorTab()" title="Ouvrir l'Audit 90+ Zero-Day Patterns & CWE Rules">
+        <span>🚨</span> <span class="responsive-label">Zero-Day / CWE</span> <span id="topbar-cve-badge" class="cve-mini-pill">0</span>
       </button>
       <button id="btn-ai-chat-toggle" class="aether-btn ai" title="Ouvrir le Journal Chat / Déplacements IA (C)">
         <span>💬</span> <span class="responsive-label">Chat IA</span>
@@ -969,27 +969,27 @@
       </div>
     </div>
 
-    <!-- Accordion Group 5: 🚨 Sécurité & Audit CVE -->
+    <!-- Accordion Group 5: 🚨 Sécurité & Audit Zero-Day / CWE -->
     <div class="synth-accordion-item" id="synth-acc-cve">
       <div class="synth-accordion-header" onclick="toggleSynthAccordion('cve')">
         <div class="synth-acc-title">
           <span class="synth-acc-arrow" id="synth-arrow-cve">▼</span>
           <span class="synth-acc-icon">🚨</span>
-          <span>Sécurité & Anomalies CVE</span>
+          <span>Zero-Day Patterns & CWE Anomalies</span>
           <span class="synth-acc-badge red" id="synth-badge-cve">0</span>
         </div>
       </div>
       <div class="synth-accordion-body" id="synth-body-cve" style="display:flex; flex-direction:column; gap:6px;">
-        <button class="aether-btn" id="btn-open-cve-inspector" onclick="openCveInspectorTab()" style="width:100%; justify-content:space-between; padding:7px 10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); border-radius:8px; cursor:pointer;" title="Ouvrir le panneau d'audit CVE complet dans l'onglet de droite">
+        <button class="aether-btn" id="btn-open-cve-inspector" onclick="openCveInspectorTab()" style="width:100%; justify-content:space-between; padding:7px 10px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); border-radius:8px; cursor:pointer;" title="Ouvrir le panneau d'audit 90+ Zero-Day Patterns & CWE Rules dans l'onglet de droite">
           <span style="display:flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:700; color:#f87171;">
-            <span>🚨</span> Scanner CVE & Anomalies
+            <span>🚨</span> Scanner Zero-Day & CWE
           </span>
           <span id="cve-total-badge-left" class="token-pill" style="color:#f87171; background:rgba(239,68,68,0.22); border:1px solid rgba(239,68,68,0.5); font-size:0.62rem; font-weight:800; padding:2px 6px;">
             0 anomalie ➔
           </span>
         </button>
-        <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="width:100%; justify-content:center; padding:6px 10px; border-radius:8px;" title="Préparer un Prompt CVE sur-mesure avec règles In-Scope / Out-of-Scope du Bug Bounty">
-          <span>🎯</span> <strong>Préparer Prompt CVE (In / Out Scope)</strong>
+        <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="width:100%; justify-content:center; padding:6px 10px; border-radius:8px;" title="Préparer un Prompt Zero-Day / CWE sur-mesure avec règles In-Scope / Out-of-Scope du Bug Bounty">
+          <span>🎯</span> <strong>Préparer Prompt Zero-Day (In / Out Scope)</strong>
         </button>
       </div>
     </div>
@@ -1081,7 +1081,7 @@
       <button class="insp-tab active" id="tab-btn-debrief" data-tab="debrief">📋 Débrief</button>
       <button class="insp-tab" id="tab-btn-arch" data-tab="arch">🏛️ Fiche UML</button>
       <button class="insp-tab" id="tab-btn-relations" data-tab="relations">🔗 Flux</button>
-      <button class="insp-tab cve-tab" id="tab-btn-cve" data-tab="cve">🚨 Audit & CVE (<span id="cve-total-badge">0</span>)</button>
+      <button class="insp-tab cve-tab" id="tab-btn-cve" data-tab="cve">🚨 Zero-Day & CWE (<span id="cve-total-badge">0</span>)</button>
     </div>
 
     <div class="insp-body">
@@ -1108,20 +1108,20 @@
         <div id="insp-relations"></div>
       </div>
 
-      <!-- Section 4: Audit & Scanner CVE View (Onglet Droit Pleine Hauteur & Grande Lisibilité) -->
+      <!-- Section 4: Audit & Scanner Zero-Day / CWE View (Onglet Droit Pleine Hauteur & Grande Lisibilité) -->
       <div id="insp-cve-view" class="insp-view hidden">
         <div class="cve-inspector-container">
           <div class="cve-insp-header">
             <div style="display:flex; align-items:center; gap:8px;">
               <span style="font-size:1.15rem;">🚨</span>
               <div>
-                <div style="font-size:0.82rem; font-weight:800; color:#f87171; font-family:var(--font-ui);">Scanner CVE & PoC Bug Bounty</div>
+                <div style="font-size:0.82rem; font-weight:800; color:#f87171; font-family:var(--font-ui);">90+ Zero-Day Patterns & CWE Rules • Scanner & PoC</div>
                 <div style="font-size:0.67rem; color:#94a3b8;">Preuves de concept (PoC), triage In-Scope/Out-of-Scope & analyse Root Cause</div>
               </div>
             </div>
             <div style="display:flex; gap:5px; align-items:center;">
-              <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="font-size:0.65rem; padding:4px 9px;" title="Préparer un Prompt PoC CVE filtré avec In-Scope / Out-of-Scope du Bug Bounty">🎯 Scope & PoC</button>
-              <button class="aether-btn" onclick="copyAllCveHandshakes()" style="font-size:0.65rem; padding:4px 9px;" title="Copier le prompt PoC & Triage Bug Bounty pour toutes les CVE In-Scope">🧪 Tout Copier (PoC)</button>
+              <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="font-size:0.65rem; padding:4px 9px;" title="Préparer un Prompt PoC Zero-Day filtré avec In-Scope / Out-of-Scope du Bug Bounty">🎯 Scope & PoC</button>
+              <button class="aether-btn" onclick="copyAllCveHandshakes()" style="font-size:0.65rem; padding:4px 9px;" title="Copier le prompt PoC & Triage Bug Bounty pour toutes les règles In-Scope">🧪 Tout Copier (PoC)</button>
             </div>
           </div>
 
@@ -1498,32 +1498,32 @@
   </div>
 
   <!-- =========================================================================
-       🎯 PRÉPARATEUR DE PROMPT CVE & SCOPE BUG BOUNTY (IN-SCOPE / OUT-OF-SCOPE)
+       🎯 PRÉPARATEUR DE PROMPT ZERO-DAY / CWE & SCOPE BUG BOUNTY (IN-SCOPE / OUT-OF-SCOPE)
        ========================================================================= -->
   <div id="bounty-scope-modal" class="modal-overlay">
     <div class="modal-card" style="width: 960px; max-width: 96vw; border-color: #f59e0b; box-shadow: 0 0 55px rgba(245, 158, 11, 0.32);">
       <div class="modal-header" style="border-bottom-color: rgba(245, 158, 11, 0.3);">
         <div class="modal-title" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
           <span style="font-size:1.2rem;">🎯</span>
-          <strong>Générateur Auto de Prompt PoC CVE & Scope Bug Bounty (In / Out Scope)</strong>
-          <span id="bounty-filtered-badge" class="token-pill" style="color:#fbbf24; background:rgba(245,158,11,0.16); border:1px solid rgba(245,158,11,0.45); font-weight:800;">0 CVE In-Scope</span>
+          <strong>Générateur Auto de Prompt PoC (90+ Zero-Day Patterns & CWE Rules) & Scope Bug Bounty</strong>
+          <span id="bounty-filtered-badge" class="token-pill" style="color:#fbbf24; background:rgba(245,158,11,0.16); border:1px solid rgba(245,158,11,0.45); font-weight:800;">0 In-Scope</span>
         </div>
         <button class="modal-close" id="btn-close-bounty-modal" onclick="closeBountyScopeModal()">&times;</button>
       </div>
 
       <div class="modal-body" style="gap: 10px; max-height: 82vh; overflow-y: auto;">
-        <!-- 1. Presets Rapides & Sélection Cible CVE -->
+        <!-- 1. Presets Rapides & Sélection Cible Zero-Day / CWE -->
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:rgba(15, 23, 42, 0.85); border:1px solid rgba(245, 158, 11, 0.25); border-radius:8px; padding:8px 12px;">
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <span style="font-size:0.68rem; font-weight:800; color:#fbbf24; font-family:var(--font-mono);">⚡ PRESETS SCOPE :</span>
             <button class="cat-pill" onclick="applyBountyScopePreset('auto')" style="border-color:#38bdf8; color:#7dd3fc;">✨ Auto (Projet Actif)</button>
-            <button class="cat-pill" onclick="applyBountyScopePreset('l1_consensus')" style="border-color:#f59e0b; color:#fde047;">⛓️ L1 / Consensus (Aptos/Near/Solana)</button>
+            <button class="cat-pill" onclick="applyBountyScopePreset('l1_consensus')" style="border-color:#f59e0b; color:#fde047;">⛓️ L1 & Consensus Distribué</button>
             <button class="cat-pill" onclick="applyBountyScopePreset('web3_defi')" style="border-color:#c084fc; color:#e9d5ff;">🌐 Smart Contracts & DeFi</button>
             <button class="cat-pill" onclick="applyBountyScopePreset('rust_lowlevel')" style="border-color:#10b981; color:#6ee7b7;">🦀 Rust Deep-Core & Unsafe</button>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <select id="bounty-target-cve-select" class="cosmo-select" style="max-width:260px; border-color:rgba(245,158,11,0.5); color:#fde047; font-family:var(--font-mono); font-size:0.66rem;" onchange="onBountyTargetCveChange(this.value)" title="Cibler toutes les CVE In-Scope ou une CVE spécifique pour générer son PoC">
-              <option value="all">📂 Toutes les CVE In-Scope (Triage & PoC)</option>
+            <select id="bounty-target-cve-select" class="cosmo-select" style="max-width:260px; border-color:rgba(245,158,11,0.5); color:#fde047; font-family:var(--font-mono); font-size:0.66rem;" onchange="onBountyTargetCveChange(this.value)" title="Cibler toutes les règles In-Scope ou une anomalie spécifique pour générer son PoC">
+              <option value="all">📂 Tous les Zero-Day Patterns & CWE In-Scope (Triage & PoC)</option>
             </select>
             <label style="font-size:0.66rem; color:#cbd5e1; display:flex; align-items:center; gap:4px; cursor:pointer;">
               <input type="checkbox" id="bounty-only-crit-high" checked onchange="updateBountyPromptPreview()" style="accent-color:#f59e0b;" />

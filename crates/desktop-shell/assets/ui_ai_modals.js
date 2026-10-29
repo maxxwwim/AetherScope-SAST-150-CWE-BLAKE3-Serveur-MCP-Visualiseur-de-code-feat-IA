@@ -2407,7 +2407,7 @@ async function renderCveRulesSettings() {
   }
 
   if (!currentCveCatalogue || currentCveCatalogue.length === 0) {
-    container.innerHTML = '<div style="font-size:0.75rem; color:#64748b; padding:10px;">Catalogue CVE indisponible.</div>';
+    container.innerHTML = '<div style="font-size:0.75rem; color:#64748b; padding:10px;">Catalogue 90+ Zero-Day Patterns & CWE Rules indisponible.</div>';
     return;
   }
 
