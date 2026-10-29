@@ -13,6 +13,10 @@
 
 *Développé en **Rust 100% pur**, compilé en exécutables natifs autonomes ultra-légers (`~9 Mo`), sans Electron, sans runtime lourd, sans navigateur externe et sans console noire CMD.*
 
+<br/><br/>
+
+<img src="./Capture.PNG" alt="AetherScope V2 — Cockpit Spatial d'Architecture WebGL 2 & Linter SAST" width="100%" style="border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);" />
+
 </div>
 
 ---
