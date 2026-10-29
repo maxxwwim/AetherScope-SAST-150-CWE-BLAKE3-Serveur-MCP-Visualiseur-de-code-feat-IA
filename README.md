@@ -2,12 +2,12 @@
 
 # 🪐 AetherScope V2 (`aether-engine`)
 
-### **Cockpit Spatial d'Architecture WebGL 2 (120 FPS) • Linter SAST Zero-Day (90+ Zero-Day Patterns & CWE Rules) • Gouvernance Cryptographique BLAKE3 • Serveur MCP & Passerelle IA "Zero-Shell"**
+### **Cockpit Spatial d'Architecture WebGL 2 (120 FPS) • Linter SAST Zero-Day (100+ Zero-Day Patterns & CWE Rules) • Gouvernance Cryptographique BLAKE3 • Serveur MCP & Passerelle IA "Zero-Shell"**
 
 [![Rust](https://img.shields.io/badge/Rust-100%25_Native_2021-orange?style=for-the-badge&logo=rust)](https://www.rust-lang.org/)
 [![WebGL 2](https://img.shields.io/badge/WebGL_2-120_FPS_Instanced_SDF-38bdf8?style=for-the-badge&logo=webgl)](https://www.khronos.org/webgl/)
 [![MCP Server](https://img.shields.io/badge/MCP-JSON--RPC_2.0_Stdio-a855f7?style=for-the-badge)](https://modelcontextprotocol.io/)
-[![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-90%2B_Zero--Day_Patterns_%26_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-90-zero-day-patterns--cwe-rules)
+[![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-100%2B_Zero--Day_Patterns_%26_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-100-zero-day-patterns--cwe-rules)
 [![BLAKE3](https://img.shields.io/badge/Contracts-BLAKE3_%2B_EARS_Sealed-10b981?style=for-the-badge)](#🔒-gouvernance-spec-driven-contrats-ears--sceau-blake3)
 [![License: Non-Commercial](https://img.shields.io/badge/License-Non--Commercial-ef4444?style=for-the-badge)](#📄-licence)
 
@@ -28,7 +28,7 @@
 | ADN du Moteur | Ce qu'il remplace / transcende | Ce qu'apporte AetherScope V2 |
 | :--- | :--- | :--- |
 | 🌌 **1. Graphe Spatial Vivant** *(L'ADN Obsidian)* | Graphes statiques lents, diagrammes UML figés | **Galaxie interactive 2D/3D à 120 FPS** (Shaders SDF WebGL 2), membranes cellulaires vivantes à 12 lobes, 4 layouts mathématiques, simulation physique de Coulomb/Hooke et audio procédural. |
-| 🛡️ **2. Scanner SAST & Bug Bounty** *(L'ADN Audit Zero-Day)* | Linters lents en CI/CD, bruit massif de faux positifs | **Audit statique temps réel (< 50 ms à chaque `Ctrl+S`)** avec **90+ Zero-Day Patterns & CWE Rules** (Rust/LLVM/UB, Smart Contracts & VMs Distribuées, DeFi, ZK-SNARKs, Python, Node/V8, C/C++), masquage lexical anti-faux-positifs et **Générateur de PoC & Scope Bug Bounty**. |
+| 🛡️ **2. Scanner SAST & Bug Bounty** *(L'ADN Audit Zero-Day)* | Linters lents en CI/CD, bruit massif de faux positifs | **Audit statique temps réel (< 50 ms à chaque `Ctrl+S`)** avec **100+ Zero-Day Patterns & CWE Rules** (Rust/LLVM/UB, Smart Contracts & VMs Distribuées, DeFi, ZK-SNARKs, Python, Node/V8, C/C++), masquage lexical anti-faux-positifs et **Générateur de PoC & Scope Bug Bounty**. |
 | 🏛️ **3. Cockpit IDE "Spec-Driven"** *(L'ADN Gouvernance)* | Documentation obsolète, dérive architecturale | Chaque dossier possède son contrat `README.md` (règles **EARS**, budgets de lignes, imports autorisés/interdits) **scellé cryptographiquement par BLAKE3** dans `aether.lock.toml`. Toute transgression allume un laser rouge d'alerte. |
 | 🤖 **4. Serveur MCP & Pont IA "Zero-Shell"** *(L'ADN Copilot Console)* | Context loss des LLMs, réécritures destructrices, hallucinations | **Serveur MCP natif (`aetherscope-mcp.exe`)** + **Paquets `<aether_handshake>`**. L'agent IA (Antigravity, Claude, Cursor) téléporte lui-même la caméra 3D sur les bulles qu'il édite, gère ses tâches dans `.aether/tasks/` et code par diffs chirurgicaux sans jamais perdre le contexte. |
 
@@ -54,7 +54,7 @@
    - [Console Chat Copilot (`<thought>`), Télémétrie Spatiale & `<aether_handshake>`](#console-chat-copilot-thought-télémétrie-spatiale--aether_handshake)
    - [Configuration Universelle (Antigravity, Claude Desktop, Cursor)](#configuration-universelle-antigravity-claude-desktop-cursor)
 5. [Gouvernance "Spec-Driven", Contrats EARS & Sceau BLAKE3](#-gouvernance-spec-driven-contrats-ears--sceau-blake3)
-6. [Moteur SAST, Chasse Zero-Day & Catalogue des 90+ Zero-Day Patterns & CWE Rules](#️-moteur-sast-chasse-zero-day--catalogue-des-90-zero-day-patterns--cwe-rules)
+6. [Moteur SAST, Chasse Zero-Day & Catalogue des 100+ Zero-Day Patterns & CWE Rules](#️-moteur-sast-chasse-zero-day--catalogue-des-100-zero-day-patterns--cwe-rules)
    - [Masquage Lexical Anti-Faux-Positifs & Préparateur de Scope Bug Bounty / PoC](#masquage-lexical-anti-faux-positifs--préparateur-de-scope-bug-bounty--poc)
    - [1. Rust Bas-Niveau, LLVM Codegen, ABI, Unwind & OS Kernel (24 règles)](#1-rust-bas-niveau-llvm-codegen-abi-unwind--os-kernel)
    - [2. Consensus L1, Runtimes Wasm & Réseaux P2P (6 règles)](#2-consensus-l1-runtimes-wasm--réseaux-p2p)
@@ -105,7 +105,7 @@ aether-engine/
     │   ├── src/lexer.rs                    # Masquage lexical des littéraux/commentaires (Anti-Faux-Positifs)
     │   ├── src/rules.rs                    # Règles avancées DeFi, Vaults, Oracles & Taint Tracking
     │   ├── src/deep_rules.rs               # Règles d'élite (Rust LLVM/UB/ABI/Kernel, ZK-SNARKs, Runtimes VM)
-    │   └── src/linter.rs                   # Catalogue central des 90+ Zero-Day Patterns & CWE Rules & orchestrateur d'audit
+    │   └── src/linter.rs                   # Catalogue central des 100+ Zero-Day Patterns & CWE Rules & orchestrateur d'audit
     │
     ├── ai-file-bridge/                     # 4. Passerelle IA Zero-Shell & Gestionnaire de Tâches
     │   ├── src/watcher.rs                  # FileWatcher réactif notify (< 50 ms)
@@ -431,7 +431,7 @@ security_rules:
 
 ---
 
-## 🛡️ Moteur SAST, Chasse Zero-Day & Catalogue des 90+ Zero-Day Patterns & CWE Rules
+## 🛡️ Moteur SAST, Chasse Zero-Day & Catalogue des 100+ Zero-Day Patterns & CWE Rules
 
 ### Masquage Lexical Anti-Faux-Positifs & Préparateur de Scope Bug Bounty / PoC
 
@@ -626,11 +626,21 @@ Contrairement aux scanners par expressions régulières classiques qui génèren
 
 ---
 
-### 10. C / C++ & Modules Natifs FFI
+### 10. C / C++ & Modules Natifs FFI / Network Bas-Niveau (11 règles)
 
 | Identifiant Règle (`rule_id`) | Référence CWE / Classe | Gravité | Mécanisme de Faille & Vecteur d'Exploitation | Remédiation Certifiée |
 | :--- | :--- | :---: | :--- | :--- |
-| `CVE-CPP-UNBOUNDED-COPY-UAF` | CWE-120 / C/C++ Buffer Overflow| **CRITICAL** | Utilisation de primitives C non bornées (`strcpy`, `strcat`, `sprintf`, `gets`, `memcpy` sans contrôle de capacité). | Utiliser `snprintf(dest, sizeof(dest), ...)` ou des conteneurs bornés (`std::span`, `std::string`). |
+| `CVE-CPP-UNBOUNDED-COPY-UAF` | CWE-120 / C/C++ Buffer Overflow | **CRITICAL** | Utilisation de primitives C non bornées (`strcpy`, `strcat`, `sprintf`, `gets`, `memcpy` sans contrôle de capacité). | Utiliser `snprintf(dest, sizeof(dest), ...)` ou des conteneurs bornés (`std::span`, `std::string`). |
+| `CVE-CPP-NET-INTEGER-OVERFLOW-ALLOC` | CWE-190 / Integer Overflow Alloc | **CRITICAL** | Calcul arithmétique sur la taille de paquet (`len + sizeof(Header)`) sans vérification d'overflow (`UINT32_MAX`) allouant un buffer tronqué suivi d'un Heap Buffer Overflow. | Valider `len < MAX_PACKET_SIZE - sizeof(Header)` ou utiliser `__builtin_add_overflow`. |
+| `CVE-CPP-NET-TYPE-PUNNING-STRICT-ALIASING` | CWE-843 / Strict Aliasing UB | **HIGH** | `reinterpret_cast<Header*>(buf)` ou cast brut d'un buffer d'octets vers une structure violant le Strict Aliasing C++ et risquant des `SIGBUS` sur CPU ARM64. | Copier dans une struct alignée via `std::memcpy` ou `std::bit_cast` (C++20). |
+| `CVE-CPP-NET-ASYNC-CALLBACK-UAF` | CWE-416 / Async Callback UAF | **CRITICAL** | Capture de `[this]` ou `[&]` dans un handler asynchrone (`async_read`/`async_write`) sans `shared_from_this()`, déclenchant un Use-After-Free si la session se déconnecte. | Hériter de `std::enable_shared_from_this` et capturer `shared_from_this()` dans la lambda. |
+| `CVE-CPP-NET-PARTIAL-READ-SHORT-FRAME` | CWE-252 / Unchecked Short Read | **HIGH** | Appel unique `recv()` supposant l'arrivée atomique d'une trame complète sur flux TCP streaming, menant à la désynchronisation du protocole en cas de fragmentation. | Boucler jusqu'à réception de la trame (`while (total < expected)`) ou utiliser `boost::asio::read`. |
+| `CVE-CPP-NET-SOCKET-FD-LEAK-EXCEPTION` | CWE-775 / Socket FD Leak | **HIGH** | Descripteur `int sock = socket(...)` sans gestionnaire RAII dans une fonction avec `throw` ou sorties anticipées, causant la saturation des descripteurs (`EMFILE`). | Encapsuler dans un guard RAII `SocketGuard` ou `std::unique_ptr` avec deleter. |
+| `CVE-CPP-NET-HOST-BYTE-ORDER-CONFUSION` | CWE-1385 / Endianness Confusion | **HIGH** | Lecture de `header.length` sans `ntohs()` ou `ntohl()`, inversant les octets sur architecture Little-Endian et contournant les vérifications de bornes. | Convertir systématiquement les champs multi-octets réseau via `ntohs()` ou `ntohl()`. |
+| `CVE-CPP-NET-STRING-NULL-TERMINATION-OFF-BY-ONE` | CWE-170 / Missing Null-Terminator | **CRITICAL** | Buffer réseau `char buf[]` transmis à `strlen()` ou `std::string()` sans forcer `buf[n] = '\0'`, provoquant une fuite d'informations mémoires adjacentes (Heartbleed-like). | Allouer `N + 1` octets et positionner explicitement `buf[n] = '\0'`. |
+| `CVE-CPP-NET-FORMAT-STRING-LOGGING` | CWE-134 / Format String Injection | **CRITICAL** | Données réseau transmises comme format à `syslog()` ou `printf()` sans `"%s"`, conférant lecture (`%x`) et écriture arbitraire (`%n`) en mémoire (RCE). | Toujours fournir un format littéral statique : `printf("%s", net_data)`. |
+| `CVE-CPP-NET-SOCKET-RACE-DOUBLE-CLOSE` | CWE-415 / Socket Double Close Race | **HIGH** | Fermeture `close(fd)` sans opération atomique ni verrou en multi-thread, pouvant fermer un nouveau socket réattribué à une autre connexion cliente. | Utiliser `std::atomic<int>` avec `m_fd.exchange(-1)` ou un verrou `std::lock_guard`. |
+| `CVE-CPP-NET-UNBOUNDED-RECURSION-TLV-PARSER` | CWE-674 / Unbounded Recursion DoS | **HIGH** | Parseur récursif (TLV/JSON/BSON) s'appelant sans compteur ni plafond de profondeur, provoquant un épuisement de pile (`SIGSEGV`) sur trame profondément imbriquée. | Transmettre `size_t depth = 0` et rejeter la trame si `depth >= MAX_RECURSION_DEPTH`. |
 
 ---
 
@@ -693,7 +703,7 @@ AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'arc
 | `GET` / `POST /api/tasks` | Liste ou crée une tâche persistante dans `.aether/tasks/`. |
 | `POST /api/tasks/update` | Met à jour le statut, la progression (`0-100%`) et le `README.md` d'une tâche. |
 | `POST /api/tasks/delete` | Supprime une tâche et met à jour `.aether/TASKS_SUMMARY.md`. |
-| `GET` / `POST /api/settings` | Lit ou sauvegarde les exclusions et l'activation granulaire des 90+ Zero-Day Patterns & CWE Rules. |
+| `GET` / `POST /api/settings` | Lit ou sauvegarde les exclusions et l'activation granulaire des 100+ Zero-Day Patterns & CWE Rules. |
 | `POST /api/export` | Exporte le graphe interactif en un fichier autonome `aetherscope_viewer.html`. |
 
 ---
@@ -715,7 +725,7 @@ AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'arc
 | <kbd>C</kbd> | **Console Chat IA :** Ouvre/ferme la fenêtre flottante de dialogue Copilot. |
 | <kbd>T</kbd> | **Gestionnaire de Tâches & Quêtes :** Ouvre la modale des missions `.aether/tasks/`. |
 | <kbd>A</kbd> | **Télémétrie HUD :** Affiche/masque le bandeau de suivi spatial de l'agent IA. |
-| <kbd>P</kbd> | **Préférences & Catalogue Sécurité :** Configure les labels, FPS, audio, exclusions et les 90+ Zero-Day Patterns & CWE Rules. |
+| <kbd>P</kbd> | **Préférences & Catalogue Sécurité :** Configure les labels, FPS, audio, exclusions et les 100+ Zero-Day Patterns & CWE Rules. |
 | <kbd>S</kbd> | **Snapshot HD :** Enregistre une capture PNG haute résolution du viewport WebGL 2. |
 | <kbd>Échap</kbd> | Ferme la modale active, quitte le mode de vision spécial ou désélectionne la cible. |
 

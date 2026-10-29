@@ -1229,6 +1229,47 @@ const CVE_ATTACK_EXPLANATIONS = {
     attack: "Dépassement de tampon mémoire C/C++ : copier des données avec strcpy, sprintf ou gets sans vérifier la taille écrase la pile ou le tas et permet le détournement du flux d'exécution (RCE).",
     shield: "Utiliser snprintf(buf, sizeof(buf), ...) et remplacer les pointeurs bruts par std::string ou std::span."
   },
+  // ⚙️ Top 10 C++ Network & Protocol Hard-to-Find CWEs
+  'CVE-CPP-NET-INTEGER-OVERFLOW-ALLOC': {
+    attack: "Dépassement d'entier sur taille de trame réseau : additionner la taille de l'en-tête (len + sizeof(Header)) avant allocation sans garde overflow enveloppe l'entier (UINT32_MAX) allouant un buffer minuscule puis corrompt le heap lors du recv/memcpy.",
+    shield: "Valider len < MAX_PACKET_SIZE - sizeof(Header) ou utiliser __builtin_add_overflow avant allocation."
+  },
+  'CVE-CPP-NET-TYPE-PUNNING-STRICT-ALIASING': {
+    attack: "Violation de Strict Aliasing sur paquet réseau : convertir un tampon d'octets brut (char*) en pointeur de structure via reinterpret_cast provoque des optimisations destructrices du compilateur (-O3) et des crashs d'alignement SIGBUS sur ARM/x86.",
+    shield: "Désérialiser via std::memcpy(&header, buf, sizeof(Header)) ou std::bit_cast<Header> (C++20)."
+  },
+  'CVE-CPP-NET-ASYNC-CALLBACK-UAF': {
+    attack: "Use-After-Free en callback asynchrone : capturer [this] dans async_read ou async_write sans shared_from_this() déclenche un accès à un objet détruit si la connexion réseau est close avant la fin de l'opération d'I/O.",
+    shield: "Hériter de std::enable_shared_from_this et capturer auto self = shared_from_this() ou weak_from_this() dans la lambda."
+  },
+  'CVE-CPP-NET-PARTIAL-READ-SHORT-FRAME': {
+    attack: "Désynchronisation de trame streaming TCP : un appel unique recv() sans boucle d'accumulation suppose une trame complète ; la fragmentation TCP injecte des paquets partiels et entraîne la désynchronisation du protocole.",
+    shield: "Boucler tant que la trame n'est pas complète (while (total < expected)) ou utiliser boost::asio::read."
+  },
+  'CVE-CPP-NET-SOCKET-FD-LEAK-EXCEPTION': {
+    attack: "Fuite de descripteur socket sans RAII : allouer un int sock = socket() brut dans une fonction susceptible de lever une exception C++ ou d'échouer sans close() épuise la table des descripteurs de l'OS (EMFILE DoS).",
+    shield: "Encapsuler le descripteur dans un guard RAII (UniqueFd / std::unique_ptr avec SocketCloser)."
+  },
+  'CVE-CPP-NET-HOST-BYTE-ORDER-CONFUSION': {
+    attack: "Confusion d'endianness sur longueur réseau : lire un champ multi-octets (header.length) sans ntohs() ou ntohl() inverse l'ordre des octets sur machine little-endian, contournant les filtres de bornes.",
+    shield: "Convertir systématiquement les champs d'en-tête avec ntohs() (16-bit) ou ntohl() (32-bit) avant tout test."
+  },
+  'CVE-CPP-NET-STRING-NULL-TERMINATION-OFF-BY-ONE': {
+    attack: "Absence de terminateur nul sur chaîne reçue du réseau : passer un buffer recv() directement à strlen() ou std::string sans forcer buf[n] = '\0' provoque une fuite d'informations mémoires adjacentes (Heartbleed-like).",
+    shield: "Allouer 1 octet de plus et forcer buf[bytes_received] = '\0' ou construire std::string(buf, bytes_received)."
+  },
+  'CVE-CPP-NET-FORMAT-STRING-LOGGING': {
+    attack: "Format String non contrôlé sur log réseau : transmettre une chaîne issue du réseau directement à syslog() ou printf() sans format "%s" permet l'exécution de code arbitraire via %n et la fuite mémoire via %x.",
+    shield: "Toujours utiliser un littéral de format fixe : printf("%s", net_str) ou syslog(LOG_ERR, "%s", net_str)."
+  },
+  'CVE-CPP-NET-SOCKET-RACE-DOUBLE-CLOSE': {
+    attack: "Course critique et double-close de socket multi-thread : fermer close(fd) sans verrou atomique exchange(-1) permet à un thread concurrent de fermer par erreur un nouveau descripteur réalloué à un autre client.",
+    shield: "Utiliser un descripteur atomique std::atomic<int> avec m_fd.exchange(-1) ou un verrou std::lock_guard."
+  },
+  'CVE-CPP-NET-UNBOUNDED-RECURSION-TLV-PARSER': {
+    attack: "Déni de service par récursion non bornée : un parseur réseau récursif (TLV/JSON/arbre) sans compteur de profondeur maximale consomme toute la pile du thread lors de l'envoi d'une trame imbriquée (SIGSEGV).",
+    shield: "Transmettre un paramètre size_t depth = 0 et rejeter la trame si depth >= MAX_RECURSION_DEPTH."
+  },
 
   // 🐍 Nouvelles Règles Python V2
   'CVE-PY-JINJA2-SSTI-INJECTION': {
@@ -1616,6 +1657,87 @@ req.on('data', chunk => {
     gold_pattern: `// Utiliser snprintf / strncpy_s avec la taille exacte du buffer destination :
 char dest[256];
 std::snprintf(dest, sizeof(dest), "%s", untrusted_src);`
+  },
+  'CVE-CPP-NET-INTEGER-OVERFLOW-ALLOC': {
+    root_cause: "L'addition arithmétique `payload_len + sizeof(Header)` sur des types non bornés peut déborder 32-bit / 64-bit (`UINT32_MAX`), provoquant une allocation mémoire sous-dimensionnée suivie d'un dépassement de tampon massif sur le tas (Heap Overflow).",
+    gold_pattern: `// Vérifier l'overflow avant l'allocation mémoire :
+if (payload_len > MAX_PACKET_SIZE - sizeof(PacketHeader)) {
+    throw std::runtime_error("Taille de paquet excessive ou overflow potentiel");
+}
+char* buf = new char[payload_len + sizeof(PacketHeader)];`
+  },
+  'CVE-CPP-NET-TYPE-PUNNING-STRICT-ALIASING': {
+    root_cause: "Caster directement un buffer d'octets `char*` en `PacketHeader*` via `reinterpret_cast` viole la règle de Strict Aliasing de la norme C++ (UB : optimisations dévastatrices du compilateur) et risque un crash matériel SIGBUS sur architecture à alignement strict (ARM/Apple Silicon).",
+    gold_pattern: `// Copier dans une structure correctement alignée :
+PacketHeader hdr;
+std::memcpy(&hdr, raw_bytes, sizeof(PacketHeader));
+// Ou en C++20 : auto hdr = std::bit_cast<PacketHeader>(raw_array);`
+  },
+  'CVE-CPP-NET-ASYNC-CALLBACK-UAF': {
+    root_cause: "Dans un framework réseau asynchrone (Boost.Asio, libuv), capturer `[this]` dans une lambda de lecture/écriture sans prolonger la durée de vie de la session entraîne un Use-After-Free si le socket est déconnecté avant l'achèvement de l'opération.",
+    gold_pattern: `// Hériter de std::enable_shared_from_this<Session> et capturer le shared_ptr :
+auto self = shared_from_this();
+socket.async_read_some(buffer, [self](const boost::system::error_code& ec, size_t bytes) {
+    if (!ec) self->handle_read(bytes);
+});`
+  },
+  'CVE-CPP-NET-PARTIAL-READ-SHORT-FRAME': {
+    root_cause: "TCP est un flux d'octets sans délimitation de trame. Traiter le buffer d'un simple `recv()` sans boucle d'accumulation suppose une arrivée atomique impossible à garantir sur réseau réel, corrompant les paquets fragmentés.",
+    gold_pattern: `// Boucler jusqu'à accumulation de la trame complète :
+size_t total_read = 0;
+while (total_read < sizeof(FrameHeader)) {
+    ssize_t n = recv(fd, buf + total_read, sizeof(FrameHeader) - total_read, 0);
+    if (n <= 0) break;
+    total_read += n;
+}`
+  },
+  'CVE-CPP-NET-SOCKET-FD-LEAK-EXCEPTION': {
+    root_cause: "Un socket descripteur brut `int sock = socket(...)` sans destructeur automatique fuit si une exception C++ est levée ou en cas de `return` anticipé sans `close()`, saturant les descripteurs ouverts du système.",
+    gold_pattern: `// Classe RAII assurant la fermeture immédiate :
+struct SocketGuard {
+    int fd;
+    ~SocketGuard() { if (fd >= 0) close(fd); }
+};
+SocketGuard sock{ socket(AF_INET, SOCK_STREAM, 0) };`
+  },
+  'CVE-CPP-NET-HOST-BYTE-ORDER-CONFUSION': {
+    root_cause: "Les protocoles réseau transmettent les entiers en Big-Endian. Accéder à un champ `length` directement sur processeur Little-Endian (x86_64/ARM) donne une valeur erronée contournant les vérifications de sécurité.",
+    gold_pattern: `// Convertir de l'ordre réseau vers l'ordre hôte :
+uint32_t packet_len = ntohl(header.length);
+if (packet_len > MAX_ALLOWED_SIZE) return false;`
+  },
+  'CVE-CPP-NET-STRING-NULL-TERMINATION-OFF-BY-ONE': {
+    root_cause: "Les paquets réseau ne contiennent pas nécessairement d'octet nul de fin `\\0`. Utiliser `strlen()` ou `std::string(buf)` sur un tampon brut lit la mémoire adjacente non initialisée jusqu'au prochain zéro.",
+    gold_pattern: `// Allouer N + 1 et positionner le null-terminator explicitement :
+char buf[MAX_LEN + 1];
+int n = recv(sock, buf, MAX_LEN, 0);
+if (n >= 0) buf[n] = '\\0';
+std::string msg(buf);`
+  },
+  'CVE-CPP-NET-FORMAT-STRING-LOGGING': {
+    root_cause: "Passer une chaîne reçue du réseau comme chaîne de format à `syslog()` ou `printf()` permet à un attaquant d'injecter des spécificateurs `%n` (écriture mémoire arbitraire) et `%x` (lecture de la pile).",
+    gold_pattern: `// Spécifier systématiquement le format littéral "%s" :
+syslog(LOG_ERR, "%s", client_message.c_str());
+std::printf("%s", packet_str);`
+  },
+  'CVE-CPP-NET-SOCKET-RACE-DOUBLE-CLOSE': {
+    root_cause: "Fermer un socket descripteur de manière concurrente sans atomicité peut fermer par erreur un nouveau descripteur réattribué entre-temps par le noyau OS à une autre connexion cliente.",
+    gold_pattern: `// Fermeture atomique avec réinitialisation à -1 :
+std::atomic<int> m_socket_fd;
+int fd = m_socket_fd.exchange(-1);
+if (fd >= 0) {
+    ::close(fd);
+}`
+  },
+  'CVE-CPP-NET-UNBOUNDED-RECURSION-TLV-PARSER': {
+    root_cause: "L'analyse récursive de protocoles imbriqués (TLV/JSON/ASN.1) sans limite de profondeur consomme la totalité de la pile d'exécution sur trame forgée, provoquant un crash `SIGSEGV` immédiat du serveur.",
+    gold_pattern: `// Transmettre un compteur de profondeur et plafonner la récursion :
+Node parse_tlv(const uint8_t* stream, size_t depth = 0) {
+    if (depth > MAX_RECURSION_DEPTH) {
+        throw std::runtime_error("Dépassement de profondeur de récursion");
+    }
+    return parse_tlv(stream + 4, depth + 1);
+}`
   },
   'CVE-WEB3-UNVALIDATED-CHAINID': {
     root_cause: "Une signature cryptographique Web3 (EIP-191 / EIP-712) qui n'inclut pas explicitement `chain_id` et l'adresse du contrat/domaine vérificateur peut être rejouée à l'identique sur un autre réseau (Polygon, Arbitrum, Testnet, Fork).",
