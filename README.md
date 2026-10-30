@@ -426,7 +426,7 @@ aether-engine/
     │   ├── src/rules.rs                    # Règles avancées DeFi, Vaults, Oracles & Taint Tracking
     │   ├── src/deep_rules.rs               # Règles d'élite (Rust LLVM/UB/ABI/Kernel, ZK-SNARKs, Runtimes VM)
     │   ├── src/php_rules.rs                # 25 Règles PHP critiques/hautes (SQLi, RCE, Eval, Deser, LFI/RFI, SSRF, SSTI...)
-    │   └── src/linter.rs                   # Catalogue central des 120+ Zero-Day Patterns & CWE Rules, routage typé par extension & orchestrateur d'audit
+    │   └── src/linter.rs                   # Catalogue central des 150+ Zero-Day Patterns & CWE Rules, routage typé par extension & orchestrateur d'audit
     │
     ├── ai-file-bridge/                     # 4. Passerelle IA Zero-Shell & Gestionnaire de Tâches
     │   ├── src/watcher.rs                  # FileWatcher réactif notify (< 50 ms)
