@@ -80,14 +80,15 @@ mod tests {
 
     #[test]
     fn test_export_docs_index_html() {
-        let root = std::path::PathBuf::from("../../");
+        let manifest_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let root = std::fs::canonicalize(manifest_dir.join("../..")).unwrap();
         let scanner = ast_scanner::scanner::ProjectScanner::default();
         let graph = scanner.scan_project(&root);
+        println!("Exporting docs/index.html for root: {:?}, nodes: {}", root, graph.nodes.len());
+        assert!(graph.nodes.len() > 50, "Graph must contain nodes!");
         let html = generate_standalone_html(&graph);
-        let docs_path = std::path::PathBuf::from("../../docs/index.html");
-        if docs_path.parent().map(|p| p.exists()).unwrap_or(false) {
-            let _ = std::fs::write(&docs_path, &html);
-        }
+        let docs_path = root.join("docs/index.html");
+        let _ = std::fs::write(&docs_path, &html);
         assert!(html.contains("window.__AETHERSCOPE_DATA__"));
         assert!(html.contains("system_prompt"));
     }
