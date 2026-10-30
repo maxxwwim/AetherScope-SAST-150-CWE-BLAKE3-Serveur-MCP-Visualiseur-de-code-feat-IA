@@ -13,7 +13,6 @@
 [![BLAKE3](https://img.shields.io/badge/Contracts-BLAKE3_%2B_EARS_Sealed-10b981?style=for-the-badge)](#🔒-gouvernance-spec-driven-contrats-ears--sceau-blake3)
 [![License: Non-Commercial](https://img.shields.io/badge/License-Non--Commercial-ef4444?style=for-the-badge)](#📄-licence)
 
-*Développé en **Rust 100% pur**, compilé en exécutables natifs autonomes ultra-légers (`~9 Mo`), sans Electron, sans runtime lourd, sans navigateur externe et sans console noire CMD.*
 
 <br/><br/>
 
