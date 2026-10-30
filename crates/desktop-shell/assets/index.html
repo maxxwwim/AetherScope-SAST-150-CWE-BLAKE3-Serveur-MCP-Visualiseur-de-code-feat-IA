@@ -1054,11 +1054,11 @@
     <div class="insp-header">
       <div class="insp-header-top">
         <div class="insp-stereo" id="insp-stereo">«Component»</div>
-        <div style="display:flex; gap:6px; align-items:center;">
+        <div class="insp-header-actions">
           <button class="aether-btn ai" id="btn-insp-ai">🤖 Prompt IA</button>
           <button class="aether-btn" id="btn-insp-task" style="padding:4px 9px;font-size:0.68rem;border-radius:999px;border-color:rgba(56,189,248,0.4);color:#38bdf8;">📋 Tâche</button>
           <button class="aether-btn" id="btn-insp-mermaid" style="padding:4px 9px;font-size:0.68rem;border-radius:999px;">📋 Mermaid</button>
-          <button id="btn-collapse-inspector" class="insp-collapse-btn" title="Minimiser l'inspecteur (I)">›</button>
+          <button id="btn-collapse-inspector" class="insp-collapse-btn" title="Fermer l'inspecteur (I)">&times;</button>
         </div>
       </div>
       <div class="insp-name" id="insp-name">SymbolName</div>
@@ -1066,7 +1066,7 @@
 
       <!-- Quick AI Actions Bar (Click-to-Prompt ultra-rapide 1-clic) -->
       <div class="quick-ai-bar" id="quick-ai-bar">
-        <span class="quick-ai-title">⚡ 1-Click Prompt :</span>
+        <span class="quick-ai-title">⚡ 1-Click :</span>
         <div class="quick-ai-btns">
           <button class="quick-ai-btn refactor" data-action="refactor" title="Copier prompt Refactorisation & Performance">⚡ Refactor</button>
           <button class="quick-ai-btn tests" data-action="tests" title="Copier prompt Tests Unitaires">🧪 Tests</button>
@@ -1079,9 +1079,9 @@
     <!-- Inspector View Mode Tabs -->
     <div class="insp-tabs">
       <button class="insp-tab active" id="tab-btn-debrief" data-tab="debrief">📋 Débrief</button>
-      <button class="insp-tab" id="tab-btn-arch" data-tab="arch">🏛️ Fiche UML</button>
+      <button class="insp-tab" id="tab-btn-arch" data-tab="arch">🏛️ UML</button>
       <button class="insp-tab" id="tab-btn-relations" data-tab="relations">🔗 Flux</button>
-      <button class="insp-tab cve-tab" id="tab-btn-cve" data-tab="cve">🚨 Zero-Day & CWE (<span id="cve-total-badge">0</span>)</button>
+      <button class="insp-tab cve-tab" id="tab-btn-cve" data-tab="cve">🚨 Vulns & CWE (<span id="cve-total-badge">0</span>)</button>
     </div>
 
     <div class="insp-body">
@@ -1108,42 +1108,44 @@
         <div id="insp-relations"></div>
       </div>
 
-      <!-- Section 4: Audit & Scanner Zero-Day / CWE View (Onglet Droit Pleine Hauteur & Grande Lisibilité) -->
+      <!-- Section 4: Audit & Scanner Zero-Day / CWE View -->
       <div id="insp-cve-view" class="insp-view hidden">
         <div class="cve-inspector-container">
           <div class="cve-insp-header">
-            <div style="display:flex; align-items:center; gap:8px;">
+            <div class="cve-insp-title-box">
               <span style="font-size:1.15rem;">🚨</span>
               <div>
-                <div style="font-size:0.82rem; font-weight:800; color:#f87171; font-family:var(--font-ui);">90+ Zero-Day Patterns & CWE Rules • Scanner & PoC</div>
-                <div style="font-size:0.67rem; color:#94a3b8;">Preuves de concept (PoC), triage In-Scope/Out-of-Scope & analyse Root Cause</div>
+                <div class="cve-insp-title-text">Scanner SAST & Zero-Day</div>
+                <div class="cve-insp-subtitle">Triage Bug Bounty & PoC In-Scope</div>
               </div>
             </div>
-            <div style="display:flex; gap:5px; align-items:center;">
+            <div class="cve-insp-actions">
               <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="font-size:0.65rem; padding:4px 9px;" title="Préparer un Prompt PoC Zero-Day filtré avec In-Scope / Out-of-Scope du Bug Bounty">🎯 Scope & PoC</button>
-              <button class="aether-btn" onclick="copyAllCveHandshakes()" style="font-size:0.65rem; padding:4px 9px;" title="Copier le prompt PoC & Triage Bug Bounty pour toutes les règles In-Scope">🧪 Tout Copier (PoC)</button>
+              <button class="aether-btn" onclick="copyAllCveHandshakes()" style="font-size:0.65rem; padding:4px 9px;" title="Copier le prompt PoC & Triage Bug Bounty pour toutes les règles In-Scope">🧪 Tout Copier</button>
             </div>
           </div>
 
-          <!-- Bandeau KPI Rapide (Critiques / Hautes / Fichiers touchés) -->
-          <div id="cve-kpi-strip" style="display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap;"></div>
+          <!-- Bandeau KPI Rapide -->
+          <div id="cve-kpi-strip"></div>
 
-          <!-- Recherche instantanée multi-critères (CVE, CWE, fichier, symbole, donnée) -->
-          <div style="margin-bottom:6px;">
-            <input type="text" id="cve-quick-search-input" oninput="renderCveAnomaliesPanel()" placeholder="⚡ Filtrer par CVE, CWE, fichier, fonction ou donnée contaminée..." style="width:100%; box-sizing:border-box; background:rgba(15,23,42,0.85); border:1px solid rgba(248,113,113,0.3); border-radius:6px; color:#f1f5f9; font-size:0.68rem; font-family:var(--font-mono); padding:5px 8px; outline:none;" />
+          <!-- Recherche instantanée multi-critères avec bouton Clear -->
+          <div class="cve-search-box">
+            <span class="cve-search-icon">🔍</span>
+            <input type="text" id="cve-quick-search-input" oninput="renderCveAnomaliesPanel()" placeholder="Filtrer par règle, fichier, fonction ou donnée..." />
+            <button id="cve-quick-search-clear" onclick="clearCveQuickSearch()" title="Effacer la recherche">&times;</button>
           </div>
 
           <!-- Sous-filtres rapides par langage/catégorie/sévérité -->
           <div class="cve-lang-filters" id="cve-lang-filters">
-            <button class="cve-filter-btn active" data-lang="all" onclick="filterCveAnomalies('all', this)">[Tous]</button>
-            <button class="cve-filter-btn" data-lang="critical" onclick="filterCveAnomalies('critical', this)">[🔴 Critical]</button>
-            <button class="cve-filter-btn" data-lang="php" onclick="filterCveAnomalies('php', this)">[🐘 PHP]</button>
-            <button class="cve-filter-btn" data-lang="rust" onclick="filterCveAnomalies('rust', this)">[🦀 Rust]</button>
-            <button class="cve-filter-btn" data-lang="node" onclick="filterCveAnomalies('node', this)">[🟢 Node/TS]</button>
-            <button class="cve-filter-btn" data-lang="web3" onclick="filterCveAnomalies('web3', this)">[🌐 Web3]</button>
-            <button class="cve-filter-btn" data-lang="python" onclick="filterCveAnomalies('python', this)">[🐍 Python]</button>
-            <button class="cve-filter-btn" data-lang="cpp" onclick="filterCveAnomalies('cpp', this)">[⚙️ C/C++]</button>
-            <button class="cve-filter-btn" data-lang="arch" onclick="filterCveAnomalies('arch', this)">[🏛️ Arch]</button>
+            <button class="cve-filter-btn active" data-lang="all" onclick="filterCveAnomalies('all', this)">Tous</button>
+            <button class="cve-filter-btn" data-lang="critical" onclick="filterCveAnomalies('critical', this)">🔴 Critical</button>
+            <button class="cve-filter-btn" data-lang="php" onclick="filterCveAnomalies('php', this)">🐘 PHP</button>
+            <button class="cve-filter-btn" data-lang="rust" onclick="filterCveAnomalies('rust', this)">🦀 Rust</button>
+            <button class="cve-filter-btn" data-lang="node" onclick="filterCveAnomalies('node', this)">🟢 Node/TS</button>
+            <button class="cve-filter-btn" data-lang="web3" onclick="filterCveAnomalies('web3', this)">🌐 Web3</button>
+            <button class="cve-filter-btn" data-lang="python" onclick="filterCveAnomalies('python', this)">🐍 Python</button>
+            <button class="cve-filter-btn" data-lang="cpp" onclick="filterCveAnomalies('cpp', this)">⚙️ C/C++</button>
+            <button class="cve-filter-btn" data-lang="arch" onclick="filterCveAnomalies('arch', this)">🏛️ Arch</button>
           </div>
 
           <!-- Liste déroulante des anomalies triées par sévérité -->

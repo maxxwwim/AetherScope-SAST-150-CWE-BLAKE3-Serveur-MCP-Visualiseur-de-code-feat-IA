@@ -779,7 +779,7 @@ function renderCveAnomaliesPanel(lang = null) {
   // Update total badge
   const totalCount = anomalies.length;
   if (badgeEl) {
-    badgeEl.innerText = `${totalCount} anomalie${totalCount > 1 ? 's' : ''}`;
+    badgeEl.innerText = `${totalCount}`;
     badgeEl.style.color = totalCount > 0 ? '#f87171' : '#10b981';
     badgeEl.style.borderColor = totalCount > 0 ? 'rgba(239,68,68,0.5)' : 'rgba(16,185,129,0.4)';
     badgeEl.style.background = totalCount > 0 ? 'rgba(239,68,68,0.18)' : 'rgba(16,185,129,0.12)';
@@ -826,24 +826,24 @@ function renderCveAnomaliesPanel(lang = null) {
   const kpiStrip = document.getElementById('cve-kpi-strip');
   if (kpiStrip) {
     kpiStrip.innerHTML = `
-      <span style="font-size:0.62rem; font-family:var(--font-mono); padding:2px 7px; border-radius:4px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.45); color:#fca5a5;">🔴 ${critCount} CRITICAL</span>
-      <span style="font-size:0.62rem; font-family:var(--font-mono); padding:2px 7px; border-radius:4px; background:rgba(249,115,22,0.18); border:1px solid rgba(249,115,22,0.4); color:#fdba74;">🟠 ${highCount} HIGH</span>
-      ${warnCount > 0 ? `<span style="font-size:0.62rem; font-family:var(--font-mono); padding:2px 7px; border-radius:4px; background:rgba(234,179,8,0.16); border:1px solid rgba(234,179,8,0.35); color:#fde047;">🟡 ${warnCount} WARN</span>` : ''}
-      <span style="font-size:0.62rem; font-family:var(--font-mono); padding:2px 7px; border-radius:4px; background:rgba(56,189,248,0.14); border:1px solid rgba(56,189,248,0.35); color:#7dd3fc;">📄 ${uniqueFiles} fichier${uniqueFiles > 1 ? 's' : ''}</span>
+      <span class="cve-kpi-pill crit">🔴 ${critCount} CRITICAL</span>
+      <span class="cve-kpi-pill high">🟠 ${highCount} HIGH</span>
+      ${warnCount > 0 ? `<span class="cve-kpi-pill warn">🟡 ${warnCount} WARN</span>` : ''}
+      <span class="cve-kpi-pill files">📄 ${uniqueFiles} fichier${uniqueFiles > 1 ? 's' : ''}</span>
     `;
   }
 
   // Update filter button labels with live counts
   const filterLabels = {
-    all: `[Tous (${anomalies.length})]`,
-    critical: `[🔴 Critical (${critCount})]`,
-    php: `[🐘 PHP (${anomalies.filter(a => a.lang === 'php').length})]`,
-    rust: `[🦀 Rust (${anomalies.filter(a => a.lang === 'rust').length})]`,
-    node: `[🟢 Node/TS (${anomalies.filter(a => a.lang === 'node').length})]`,
-    web3: `[🌐 Web3 (${anomalies.filter(a => isWeb3Anomaly(a)).length})]`,
-    python: `[🐍 Python (${anomalies.filter(a => a.lang === 'python').length})]`,
-    cpp: `[⚙️ C/C++ (${anomalies.filter(a => a.lang === 'cpp').length})]`,
-    arch: `[🏛️ Arch (${anomalies.filter(a => a.lang === 'arch').length})]`
+    all: `Tous (${anomalies.length})`,
+    critical: `🔴 Critical (${critCount})`,
+    php: `🐘 PHP (${anomalies.filter(a => a.lang === 'php').length})`,
+    rust: `🦀 Rust (${anomalies.filter(a => a.lang === 'rust').length})`,
+    node: `🟢 Node/TS (${anomalies.filter(a => a.lang === 'node').length})`,
+    web3: `🌐 Web3 (${anomalies.filter(a => isWeb3Anomaly(a)).length})`,
+    python: `🐍 Python (${anomalies.filter(a => a.lang === 'python').length})`,
+    cpp: `⚙️ C/C++ (${anomalies.filter(a => a.lang === 'cpp').length})`,
+    arch: `🏛️ Arch (${anomalies.filter(a => a.lang === 'arch').length})`
   };
   document.querySelectorAll('#cve-lang-filters .cve-filter-btn').forEach(btn => {
     const key = btn.getAttribute('data-lang');
@@ -914,59 +914,68 @@ function renderCveAnomaliesPanel(lang = null) {
     let defiPatchBtn = '';
     if (a.rule_id === 'DEFI-ASYMMETRIC-ROUNDING' || (a.cve_id && a.cve_id.includes('ASYMMETRIC_ROUNDING_RISK'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [CWE-682] ASYMMETRIC_ROUNDING_RISK</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ASYMMETRIC-ROUNDING');">🛡️ Patch Arrondi Asymétrique</button>`;
+      defiPatchBtn = `<button class="cve-action-btn patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ASYMMETRIC-ROUNDING');">🛡️ Patch Arrondi</button>`;
     } else if (a.rule_id === 'DEFI-STALE-CACHE-AFTER-CALL' || (a.cve_id && a.cve_id.includes('STALE_CACHE_TOCTOU'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [CWE-362] STALE_CACHE_TOCTOU</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-STALE-CACHE-AFTER-CALL');">🛡️ Invalidation Cache Post-Call</button>`;
+      defiPatchBtn = `<button class="cve-action-btn patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-STALE-CACHE-AFTER-CALL');">🛡️ Invalidation Cache</button>`;
     } else if (a.rule_id === 'EVC-HOOK-BYPASS' || (a.cve_id && a.cve_id.includes('EVC_HOOK_BYPASS_RISK'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [CWE-841] EVC_HOOK_BYPASS_RISK</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'EVC-HOOK-BYPASS');">🛡️ Invariant EVC nonReentrant</button>`;
+      defiPatchBtn = `<button class="cve-action-btn patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'EVC-HOOK-BYPASS');">🛡️ Invariant EVC</button>`;
     } else if (a.rule_id === 'DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER' || (a.cve_id && a.cve_id.includes('ORACLE_MIN_MAX_CIRCUIT_BREAKER'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [LOGIC-CRITICAL] ORACLE_MIN_MAX_CIRCUIT_BREAKER</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER');">🛡️ Patch Circuit Breaker Min/Max</button>`;
+      defiPatchBtn = `<button class="cve-action-btn patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ORACLE-MIN-MAX-CIRCUIT-BREAKER');">🛡️ Patch Min/Max</button>`;
     } else if (a.rule_id === 'DEFI-ORACLE-L2-SEQUENCER-RACE' || (a.cve_id && a.cve_id.includes('L2_SEQUENCER_ORACLE_RACE'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [LOGIC-CRITICAL] L2_SEQUENCER_ORACLE_RACE</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ORACLE-L2-SEQUENCER-RACE');">🛡️ Patch Sequencer Grace Period</button>`;
+      defiPatchBtn = `<button class="cve-action-btn patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-ORACLE-L2-SEQUENCER-RACE');">🛡️ Patch Sequencer</button>`;
     } else if (a.rule_id === 'DEFI-TWAP-SHORT-WINDOW' || (a.cve_id && a.cve_id.includes('TWAP_SHORT_WINDOW'))) {
       defiLaserBadge = `<div class="defi-laser-badge" style="margin-top:4px;">☣️ [LOGIC-CRITICAL] TWAP_SHORT_WINDOW</div>`;
-      defiPatchBtn = `<button class="cve-btn-patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-TWAP-SHORT-WINDOW');">🛡️ Patch TWAP Safe Window (>= 30m)</button>`;
+      defiPatchBtn = `<button class="cve-action-btn patch defi-patch" onclick="event.stopPropagation(); if (window.copyDefiPatchPrompt) window.copyDefiPatchPrompt('${escapeFn(a.file_path)}', ${a.line_number}, 'DEFI-TWAP-SHORT-WINDOW');">🛡️ Patch TWAP Window</button>`;
     }
 
     return `
       <div class="cve-card ${sevClass}" onclick="teleportToCveAnomaly(${cacheIdx})">
         <div class="cve-card-header">
-          <span class="cve-badge ${sevClass}">
-            ${icon} [${a.severity}] ${escapeFn(a.cve_id)}
-          </span>
-          <span style="font-size:0.60rem; color:#94a3b8; font-family:var(--font-mono);">L${a.line_number}</span>
+          <div class="cve-badge-group">
+            <span class="cve-badge ${sevClass}">
+              ${icon} ${escapeFn(a.cve_id)}
+            </span>
+            <span class="cve-sev-tag ${sevClass}">${a.severity}</span>
+          </div>
+          <span class="cve-line-tag">L${a.line_number}</span>
         </div>
         ${defiLaserBadge}
         <div class="cve-target-path" title="${escapeFn(a.file_path)}">
-          📄 ${escapeFn(a.file_path)} ${a.symbol_name ? `• <code>${escapeFn(a.symbol_name)}</code>` : ''}
+          <span class="cve-file-icon">📄</span>
+          <span class="cve-file-text">${escapeFn(a.file_path)}</span>
+          ${a.symbol_name ? `<code class="cve-symbol-code">${escapeFn(a.symbol_name)}</code>` : ''}
         </div>
-        <div class="cve-msg-box" style="color:#f1f5f9; font-size:0.68rem; margin-top:3px; line-height:1.35;">
+        <div class="cve-msg-box">
           ${escapeFn(a.message)}
         </div>
-        <div style="font-size:0.65rem; color:#fee2e2; background:rgba(239,68,68,0.12); border-left:2px solid #ef4444; border-radius:4px; padding:4px 6px; margin-top:4px; line-height:1.35;">
-          <strong>💥 Attaque potentielle :</strong> ${escapeFn(expl.attack)}
-        </div>
-        <div style="font-size:0.65rem; color:#d1fae5; background:rgba(16,185,129,0.10); border-left:2px solid #10b981; border-radius:4px; padding:4px 6px; margin-top:4px; line-height:1.35;">
-          <strong>🛡️ Protection requise :</strong> ${escapeFn(expl.shield)}
+        <div class="cve-insight-grid">
+          <div class="cve-insight-box attack">
+            <div class="cve-insight-title">💥 Attaque potentielle</div>
+            <div class="cve-insight-desc">${escapeFn(expl.attack)}</div>
+          </div>
+          <div class="cve-insight-box shield">
+            <div class="cve-insight-title">🛡️ Protection requise</div>
+            <div class="cve-insight-desc">${escapeFn(expl.shield)}</div>
+          </div>
         </div>
         ${hasTainted ? `
           <div class="cve-transmitted-box">
-            <div><strong>📦 Donnée :</strong> <code>${escapeFn(a.transmitted_data || 'payload')}</code></div>
-            <div><strong>🏷️ Type :</strong> <code>${escapeFn(a.transmitted_type || 'Untyped')}</code></div>
+            <span><strong>📦 Donnée :</strong> <code>${escapeFn(a.transmitted_data || 'payload')}</code></span>
+            <span><strong>🏷️ Type :</strong> <code>${escapeFn(a.transmitted_type || 'Untyped')}</code></span>
           </div>
         ` : ''}
-        <div class="cve-card-actions" style="display:flex; gap:5px; flex-wrap:wrap;">
-          <button class="cve-btn-prompt" style="flex:1; background:linear-gradient(135deg, rgba(245,158,11,0.28), rgba(239,68,68,0.28)); border-color:#fbbf24; color:#fef08a;" onclick="event.stopPropagation(); copyCvePocBountyPrompt(${cacheIdx})" title="Copier le Prompt Proof of Concept (PoC) Bug Bounty avec Scope auto (sans modifier le code)">
-            🧪 Copier Prompt PoC Bounty
+        <div class="cve-card-actions">
+          <button class="cve-action-btn poc" onclick="event.stopPropagation(); copyCvePocBountyPrompt(${cacheIdx})" title="Copier le Prompt Proof of Concept (PoC) Bug Bounty avec Scope auto (sans modifier le code)">
+            🧪 PoC Bounty
           </button>
-          <button class="cve-btn-patch" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc; background:rgba(56,189,248,0.14);" onclick="event.stopPropagation(); openBountyScopeModalForAnomaly(${cacheIdx})" title="Ouvrir cette CVE dans le préparateur de Scope & PoC Bug Bounty">
-            🎯 Scope/PoC
+          <button class="cve-action-btn scope" onclick="event.stopPropagation(); openBountyScopeModalForAnomaly(${cacheIdx})" title="Ouvrir cette CVE dans le préparateur de Scope & PoC Bug Bounty">
+            🎯 Scope
           </button>
-          <button class="cve-btn-patch" style="opacity:0.8;" onclick="event.stopPropagation(); copyCveSinglePatchPrompt(${cacheIdx})" title="Copier un prompt de patch chirurgical (si vous souhaitez corriger le code)">
+          <button class="cve-action-btn patch" onclick="event.stopPropagation(); copyCveSinglePatchPrompt(${cacheIdx})" title="Copier un prompt de patch chirurgical (si vous souhaitez corriger le code)">
             🛡️ Patch
           </button>
           ${defiPatchBtn}
@@ -976,6 +985,16 @@ function renderCveAnomaliesPanel(lang = null) {
   }).join('');
 }
 window.renderCveAnomaliesPanel = renderCveAnomaliesPanel;
+
+function clearCveQuickSearch() {
+  const inp = document.getElementById('cve-quick-search-input');
+  if (inp) {
+    inp.value = '';
+    renderCveAnomaliesPanel();
+    inp.focus();
+  }
+}
+window.clearCveQuickSearch = clearCveQuickSearch;
 
 // --- 🛡️ Catalogue Exhaustif des Explications d'Attaques & Protections par CVE ---
 const CVE_ATTACK_EXPLANATIONS = {

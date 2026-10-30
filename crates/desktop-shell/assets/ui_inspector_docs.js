@@ -502,22 +502,25 @@ function renderNodeDebrief(n, incoming, outgoing) {
             }
 
             return `
-            <div class="cve-card ${sClass}" style="margin-bottom:4px;">
+            <div class="cve-card ${sClass}" style="margin-bottom:6px;">
               <div class="cve-card-header">
-                <span class="cve-badge ${sClass}">[${escapeHtml(a.severity)}] ${escapeHtml(a.cve_id || a.rule_id)}</span>
-                <span style="color:#94a3b8; font-family:var(--font-mono); font-size:0.64rem;">L${a.line_number}</span>
+                <div class="cve-badge-group">
+                  <span class="cve-badge ${sClass}">${escapeHtml(a.cve_id || a.rule_id)}</span>
+                  <span class="cve-sev-tag ${sClass}">${escapeHtml(a.severity)}</span>
+                </div>
+                <span class="cve-line-tag">L${a.line_number}</span>
               </div>
               ${defiLaserBadge}
-              <div class="cve-msg-box" style="margin-top:4px;">${escapeHtml(a.message)}</div>
+              <div class="cve-msg-box">${escapeHtml(a.message)}</div>
               ${a.transmitted_data ? `
                 <div class="cve-transmitted-box">
-                  <div><strong>📦 Donnée :</strong> <code>${escapeHtml(a.transmitted_data)}</code></div>
-                  <div><strong>🏷️ Type :</strong> <code>${escapeHtml(a.transmitted_type || 'Untyped')}</code></div>
+                  <span><strong>📦 Donnée :</strong> <code>${escapeHtml(a.transmitted_data)}</code></span>
+                  <span><strong>🏷️ Type :</strong> <code>${escapeHtml(a.transmitted_type || 'Untyped')}</code></span>
                 </div>
               ` : ''}
-              <div class="cve-card-actions" style="display:flex; gap:5px; flex-wrap:wrap;">
-                <button class="cve-btn-prompt" style="flex:1; background:linear-gradient(135deg, rgba(245,158,11,0.28), rgba(239,68,68,0.28)); border-color:#fbbf24; color:#fef08a;" onclick="copySingleAnomalyPrompt('${escapeForBacktick(n.file_path)}', ${a.line_number}, '${escapeForBacktick(a.rule_id)}', '${escapeForBacktick(a.cve_id)}', '${escapeForBacktick(a.severity)}', '${escapeForBacktick(a.message)}', '${escapeForBacktick(a.transmitted_data || '')}', '${escapeForBacktick(a.transmitted_type || '')}', '${escapeForBacktick(a.remediation)}')">
-                  🧪 Copier Prompt PoC Bug Bounty
+              <div class="cve-card-actions">
+                <button class="cve-action-btn poc" onclick="copySingleAnomalyPrompt('${escapeForBacktick(n.file_path)}', ${a.line_number}, '${escapeForBacktick(a.rule_id)}', '${escapeForBacktick(a.cve_id)}', '${escapeForBacktick(a.severity)}', '${escapeForBacktick(a.message)}', '${escapeForBacktick(a.transmitted_data || '')}', '${escapeForBacktick(a.transmitted_type || '')}', '${escapeForBacktick(a.remediation)}')">
+                  🧪 PoC Bug Bounty
                 </button>
                 ${defiPatchBtn}
               </div>
