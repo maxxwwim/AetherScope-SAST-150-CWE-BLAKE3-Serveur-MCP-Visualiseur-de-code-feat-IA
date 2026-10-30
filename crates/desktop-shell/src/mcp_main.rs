@@ -365,17 +365,30 @@ async fn handle_mcp_request(req: JsonRpcRequest, server_port: u16, default_path:
                 }
 
                 "aetherscope_get_graph_summary" => {
-                    let req_path = arguments.get("path").and_then(|v| v.as_str()).unwrap_or(default_path);
-                    let res = send_http_request(server_port, "GET", "/api/graph", None).await;
+                    let req_path_opt = arguments.get("path").and_then(|v| v.as_str()).map(|s| s.trim()).filter(|s| !s.is_empty());
 
-                    match res {
+                    // Si un chemin spécifique a été fourni, on ordonne au serveur de basculer et d'analyser ce projet
+                    let graph_val_res = if let Some(req_path) = req_path_opt {
+                        let analyze_res = send_http_request(server_port, "POST", "/api/analyze", Some(&json!({
+                            "path": req_path
+                        }))).await;
+                        match analyze_res {
+                            Ok(val) => Ok(val),
+                            Err(_) => send_http_request(server_port, "GET", "/api/graph", None).await,
+                        }
+                    } else {
+                        send_http_request(server_port, "GET", "/api/graph", None).await
+                    };
+
+                    match graph_val_res {
                         Ok(graph_val) => {
                             let summary = format_graph_summary(&graph_val);
                             json!([{ "type": "text", "text": summary }])
                         }
                         Err(_) => {
                             // Fallback direct AST scanner offline : scanne directement le projet sans dépendre du serveur web
-                            let p_buf = PathBuf::from(req_path);
+                            let target_path = req_path_opt.unwrap_or(default_path);
+                            let p_buf = PathBuf::from(target_path);
                             let scanner = ast_scanner::ProjectScanner::default();
                             let g = scanner.scan_project(&p_buf);
                             let summary = format_ast_summary(&g, &p_buf);
@@ -440,8 +453,24 @@ async fn handle_mcp_request(req: JsonRpcRequest, server_port: u16, default_path:
                     }))).await;
 
                     match res {
-                        Ok(val) => json!([{ "type": "text", "text": format!("⚡ Projet réanalysé avec succès : {}", serde_json::to_string_pretty(&val).unwrap_or_default()) }]),
-                        Err(e) => json!([{ "type": "text", "text": format!("⚠️ Erreur réanalyse : {}", e) }]),
+                        Ok(val) => {
+                            let summary = format_graph_summary(&val);
+                            json!([{
+                                "type": "text",
+                                "text": format!("⚡ Projet `{}` réanalysé et synchronisé avec succès dans AetherScope V2 !\n\n{}", scan_path, summary)
+                            }])
+                        }
+                        Err(e) => {
+                            // Fallback direct AST scanner offline si le serveur n'est pas joignable
+                            let p_buf = PathBuf::from(scan_path);
+                            let scanner = ast_scanner::ProjectScanner::default();
+                            let g = scanner.scan_project(&p_buf);
+                            let summary = format_ast_summary(&g, &p_buf);
+                            json!([{
+                                "type": "text",
+                                "text": format!("⚡ Projet `{}` analysé (mode autonome AST direct - serveur: {}) :\n\n{}", scan_path, e, summary)
+                            }])
+                        }
                     }
                 }
 
@@ -608,6 +637,8 @@ async fn handle_mcp_request(req: JsonRpcRequest, server_port: u16, default_path:
 }
 
 fn format_graph_summary(val: &Value) -> String {
+    let project_name = val.get("project_name").and_then(|v| v.as_str()).unwrap_or("Projet AetherScope");
+    let project_path = val.get("project_path").and_then(|v| v.as_str()).unwrap_or("");
     let nodes = val.get("nodes").and_then(|v| v.as_array());
     let edges = val.get("edges").and_then(|v| v.as_array());
     let total_nodes = nodes.map(|n| n.len()).unwrap_or(0);
@@ -623,7 +654,19 @@ fn format_graph_summary(val: &Value) -> String {
             if n.get("has_security_violation").and_then(|v| v.as_bool()).unwrap_or(false) {
                 let name = n.get("name").and_then(|v| v.as_str()).unwrap_or("inconnu");
                 let file = n.get("file_path").and_then(|v| v.as_str()).unwrap_or("");
-                violations.push(format!("- 🚨 {} ({})", name, file));
+                let cve_list = n.get("metadata").and_then(|m| m.get("cve_anomalies")).and_then(|c| c.as_array());
+                let cve_desc = if let Some(arr) = cve_list {
+                    if !arr.is_empty() {
+                        let cve_id = arr[0].get("cve_id").and_then(|i| i.as_str()).unwrap_or("CVE");
+                        let sev = arr[0].get("severity").and_then(|s| s.as_str()).unwrap_or("HIGH");
+                        format!(" [{}: {}]", sev, cve_id)
+                    } else {
+                        String::new()
+                    }
+                } else {
+                    String::new()
+                };
+                violations.push(format!("- 🚨 `{}`{} — `{}`", name, cve_desc, file));
             }
         }
     }
@@ -632,21 +675,39 @@ fn format_graph_summary(val: &Value) -> String {
     for (f, cnt) in folders.iter().take(15) {
         folders_str.push_str(&format!("  - 📁 `{}` : {} symbole(s)\n", f, cnt));
     }
+    if folders.len() > 15 {
+        folders_str.push_str(&format!("  - ... et {} autre(s) dossier(s)\n", folders.len() - 15));
+    }
 
     let violations_str = if violations.is_empty() {
         "✅ Aucune violation de sécurité ou CVE détectée.".to_string()
     } else {
-        format!("⚠️ {} Violation(s) de sécurité / CVE détectée(s) :\n{}", violations.len(), violations.join("\n"))
+        let total_v = violations.len();
+        let display_v: Vec<String> = violations.into_iter().take(15).collect();
+        let more_msg = if total_v > 15 {
+            format!("\n  ... et {} autre(s) violation(s). Rapport complet disponible dans `.aether/LIVE_AUDIT.md`", total_v - 15)
+        } else {
+            String::new()
+        };
+        format!("⚠️ {} Violation(s) de sécurité / CVE détectée(s) :\n{}{}", total_v, display_v.join("\n"), more_msg)
+    };
+
+    let path_line = if !project_path.is_empty() {
+        format!("• Emplacement : `{}`\n", project_path)
+    } else {
+        String::new()
     };
 
     format!(
         "🪐 Résumé Architectural AetherScope V2 :\n\
-         • Total Nœuds : {}\n\
+         • Projet Actif : `{}`\n\
+         {}\
+         • Total Nœuds (Bulles) : {}\n\
          • Total Relations (Arêtes) : {}\n\
          • Modules / Dossiers ({} au total) :\n{}\
          • Statut Sécurité & Règles :\n{}\n\
          • Visualiseur WebGL 2 disponible sur http://127.0.0.1:3030",
-        total_nodes, total_edges, folders.len(), folders_str, violations_str
+        project_name, path_line, total_nodes, total_edges, folders.len(), folders_str, violations_str
     )
 }
 
@@ -655,24 +716,51 @@ fn format_ast_summary(g: &core_graph::graph::AetherGraph, project_root: &Path) -
     let total_edges = g.edges.len();
 
     let mut folders = std::collections::BTreeMap::new();
+    let mut violations = Vec::new();
     for n in &g.nodes {
         let f = if n.folder.is_empty() { "root" } else { &n.folder };
         *folders.entry(f.to_string()).or_insert(0usize) += 1;
+        if n.has_security_violation {
+            let cve_desc = if !n.metadata.cve_anomalies.is_empty() {
+                format!(" [{}: {}]", n.metadata.cve_anomalies[0].severity, n.metadata.cve_anomalies[0].cve_id)
+            } else {
+                String::new()
+            };
+            violations.push(format!("- 🚨 `{}`{} — `{}`", n.name, cve_desc, n.file_path));
+        }
     }
 
     let mut folders_str = String::new();
     for (f, cnt) in folders.iter().take(15) {
         folders_str.push_str(&format!("  - 📁 `{}` : {} symbole(s)\n", f, cnt));
     }
+    if folders.len() > 15 {
+        folders_str.push_str(&format!("  - ... et {} autre(s) dossier(s)\n", folders.len() - 15));
+    }
+
+    let violations_str = if violations.is_empty() {
+        "✅ Aucune violation de sécurité ou CVE détectée.".to_string()
+    } else {
+        let total_v = violations.len();
+        let display_v: Vec<String> = violations.into_iter().take(15).collect();
+        let more_msg = if total_v > 15 {
+            format!("\n  ... et {} autre(s) violation(s). Rapport complet disponible dans `.aether/LIVE_AUDIT.md`", total_v - 15)
+        } else {
+            String::new()
+        };
+        format!("⚠️ {} Violation(s) de sécurité / CVE détectée(s) :\n{}{}", total_v, display_v.join("\n"), more_msg)
+    };
 
     format!(
         "🪐 Résumé Architectural AetherScope V2 (Mode Autonome AST) :\n\
-         • Racine : {}\n\
-         • Total Nœuds : {}\n\
-         • Total Relations : {}\n\
-         • Modules / Dossiers :\n{}\
+         • Projet Actif : `{}`\n\
+         • Emplacement : `{}`\n\
+         • Total Nœuds (Bulles) : {}\n\
+         • Total Relations (Arêtes) : {}\n\
+         • Modules / Dossiers ({} au total) :\n{}\
+         • Statut Sécurité & Règles :\n{}\n\
          • Note : Lancez `aether-engine` pour activer la vue WebGL 2 interactive en direct.",
-        project_root.display(), total_nodes, total_edges, folders_str
+        g.project_name, project_root.display(), total_nodes, total_edges, folders.len(), folders_str, violations_str
     )
 }
 
@@ -770,11 +858,11 @@ async fn send_http_request(
     let body_str = body.map(|b| serde_json::to_string(b).unwrap_or_default()).unwrap_or_default();
 
     tokio::task::spawn_blocking(move || {
-        let mut stream = TcpStream::connect_timeout(&addr, Duration::from_millis(800))
+        let mut stream = TcpStream::connect_timeout(&addr, Duration::from_millis(1500))
             .map_err(|e| format!("AetherScope non connecté sur http://127.0.0.1:{} ({})", addr.port(), e))?;
 
-        stream.set_read_timeout(Some(Duration::from_secs(5))).map_err(|e| e.to_string())?;
-        stream.set_write_timeout(Some(Duration::from_secs(5))).map_err(|e| e.to_string())?;
+        stream.set_read_timeout(Some(Duration::from_secs(45))).map_err(|e| e.to_string())?;
+        stream.set_write_timeout(Some(Duration::from_secs(30))).map_err(|e| e.to_string())?;
 
         let req = format!(
             "{} {} HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",

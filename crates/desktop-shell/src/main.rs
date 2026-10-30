@@ -345,6 +345,11 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         })
                         .await
                         .unwrap_or_else(|_| core_graph::graph::AetherGraph::new("Project"));
+
+                        let _ = AuditWriter::ensure_master_rules_file(&folder);
+                        let (violations, file_count) = extract_live_audit_from_graph(&new_graph);
+                        let _ = AuditWriter::write_live_audit(&folder, &violations, file_count);
+
                         let mut g_guard = state.graph.write().await;
                         *g_guard = new_graph.clone();
                         let mut p_guard = state.project_root.write().await;
@@ -404,6 +409,11 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         })
                         .await
                         .unwrap_or_else(|_| core_graph::graph::AetherGraph::new("Project"));
+
+                        let _ = AuditWriter::ensure_master_rules_file(&path);
+                        let (violations, file_count) = extract_live_audit_from_graph(&new_graph);
+                        let _ = AuditWriter::write_live_audit(&path, &violations, file_count);
+
                         let mut g_guard = state.graph.write().await;
                         *g_guard = new_graph.clone();
                         let mut p_guard = state.project_root.write().await;
@@ -430,6 +440,11 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         })
                         .await
                         .unwrap_or_else(|_| core_graph::graph::AetherGraph::new("Project"));
+
+                        let _ = AuditWriter::ensure_master_rules_file(&path);
+                        let (violations, file_count) = extract_live_audit_from_graph(&new_graph);
+                        let _ = AuditWriter::write_live_audit(&path, &violations, file_count);
+
                         let mut g_guard = state.graph.write().await;
                         *g_guard = new_graph.clone();
                         let mut p_guard = state.project_root.write().await;
