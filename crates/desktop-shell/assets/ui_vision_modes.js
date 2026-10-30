@@ -3324,6 +3324,26 @@ function setBountyPromptMode(mode, btnEl) {
 }
 window.setBountyPromptMode = setBountyPromptMode;
 
+let currentBountyCveSearchQuery = '';
+
+function onBountyCveSearchInput(val) {
+  currentBountyCveSearchQuery = (val || '').trim().toLowerCase();
+  const clearBtn = document.getElementById('bounty-cve-search-clear');
+  if (clearBtn) {
+    clearBtn.style.display = currentBountyCveSearchQuery ? 'block' : 'none';
+  }
+  updateBountyPromptPreview();
+}
+window.onBountyCveSearchInput = onBountyCveSearchInput;
+
+function clearBountyCveSearch() {
+  const input = document.getElementById('bounty-cve-search-input');
+  if (input) input.value = '';
+  onBountyCveSearchInput('');
+  if (input) input.focus();
+}
+window.clearBountyCveSearch = clearBountyCveSearch;
+
 function onBountyTargetCveChange(val) {
   currentBountyTargetCveIdx = val === 'all' ? 'all' : parseInt(val, 10);
   updateBountyPromptPreview();
@@ -3337,15 +3357,26 @@ function populateBountyTargetCveSelect(filteredAnomalies) {
   const list = filteredAnomalies || getFilteredBountyAnomalies();
   const prevVal = currentBountyTargetCveIdx;
 
-  let html = `<option value="all">📂 Toutes les CVE In-Scope (${list.length} cibles — Triage & PoC Auto)</option>`;
-  (currentCveAnomaliesCache || []).forEach((a, idx) => {
-    const isSelected = prevVal !== 'all' && Number(prevVal) === idx;
+  const countLabel = currentBountyCveSearchQuery 
+    ? `${list.length} filtrée${list.length > 1 ? 's' : ''}` 
+    : `${list.length} cibles`;
+
+  let html = `<option value="all">📂 Toutes les CVE In-Scope (${countLabel} — Triage & PoC Auto)</option>`;
+  list.forEach((a) => {
+    const origIdx = a._cacheIdx !== undefined ? a._cacheIdx : (currentCveAnomaliesCache || []).indexOf(a);
+    const isSelected = prevVal !== 'all' && Number(prevVal) === origIdx;
     const shortFile = (a.file_path || '').split(/[/\\]/).slice(-2).join('/');
-    html += `<option value="${idx}" ${isSelected ? 'selected' : ''}>🎯 #${idx + 1} [${a.severity}] ${a.cve_id} — ${shortFile}:${a.line_number}</option>`;
+    const funcLabel = a.symbol_name && a.symbol_name !== a.file_path ? ` [${a.symbol_name}]` : '';
+    html += `<option value="${origIdx}" ${isSelected ? 'selected' : ''}>🎯 #${origIdx + 1} [${a.severity}] ${a.cve_id}${funcLabel} — ${shortFile}:${a.line_number}</option>`;
   });
   sel.innerHTML = html;
   if (prevVal === 'all') {
     sel.value = 'all';
+  } else if (!list.some(a => (a._cacheIdx !== undefined ? a._cacheIdx : (currentCveAnomaliesCache || []).indexOf(a)) === Number(prevVal))) {
+    sel.value = 'all';
+    currentBountyTargetCveIdx = 'all';
+  } else {
+    sel.value = String(prevVal);
   }
 }
 
@@ -3382,6 +3413,29 @@ function getFilteredBountyAnomalies() {
       if (!matchesIn) return false;
     }
 
+    // 3. Check search query filter (nom de règle / fichier / fonction / sévérité / message)
+    if (currentBountyCveSearchQuery) {
+      const q = currentBountyCveSearchQuery;
+      const cveId = (a.cve_id || '').toLowerCase();
+      const ruleId = (a.rule_id || '').toLowerCase();
+      const symName = (a.symbol_name || '').toLowerCase();
+      const symId = (a.symbol_id || '').toLowerCase();
+      const msg = (a.message || '').toLowerCase();
+      const transData = (a.transmitted_data || '').toLowerCase();
+      const sevStr = sev.toLowerCase();
+
+      const matchesQuery = fp.includes(q)
+        || cveId.includes(q)
+        || ruleId.includes(q)
+        || symName.includes(q)
+        || symId.includes(q)
+        || msg.includes(q)
+        || transData.includes(q)
+        || sevStr.includes(q);
+
+      if (!matchesQuery) return false;
+    }
+
     return true;
   });
 }
@@ -3401,7 +3455,8 @@ function updateBountyPromptPreview() {
       const targetA = currentCveAnomaliesCache[currentBountyTargetCveIdx];
       badgeEl.innerText = `🎯 Focus PoC : ${targetA.cve_id} (${targetA.file_path}:${targetA.line_number})`;
     } else {
-      badgeEl.innerText = `🎯 ${filtered.length} CVE In-Scope (${excludedCount} hors-scope ignorées)`;
+      const searchInfo = currentBountyCveSearchQuery ? ` [Filtre: "${currentBountyCveSearchQuery}"]` : '';
+      badgeEl.innerText = `🎯 ${filtered.length} CVE In-Scope${searchInfo} (${excludedCount} hors-scope ignorées)`;
     }
   }
 
@@ -3487,6 +3542,14 @@ function openBountyScopeModal(targetIdx = 'all') {
   if (!modal) return;
 
   currentBountyTargetCveIdx = (targetIdx !== undefined && targetIdx !== null && targetIdx !== 'all') ? Number(targetIdx) : 'all';
+
+  if (currentBountyTargetCveIdx !== 'all') {
+    currentBountyCveSearchQuery = '';
+    const sInput = document.getElementById('bounty-cve-search-input');
+    if (sInput) sInput.value = '';
+    const sClear = document.getElementById('bounty-cve-search-clear');
+    if (sClear) sClear.style.display = 'none';
+  }
 
   const inEl = document.getElementById('bounty-inscope-input');
   const outEl = document.getElementById('bounty-outscope-input');

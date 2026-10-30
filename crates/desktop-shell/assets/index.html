@@ -1524,7 +1524,17 @@
             <button class="cat-pill" onclick="applyBountyScopePreset('rust_lowlevel')" style="border-color:#10b981; color:#6ee7b7;">🦀 Rust Deep-Core & Unsafe</button>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <select id="bounty-target-cve-select" class="cosmo-select" style="max-width:260px; border-color:rgba(245,158,11,0.5); color:#fde047; font-family:var(--font-mono); font-size:0.66rem;" onchange="onBountyTargetCveChange(this.value)" title="Cibler toutes les règles In-Scope ou une anomalie spécifique pour générer son PoC">
+            <div style="position:relative; display:flex; align-items:center;">
+              <input type="text" id="bounty-cve-search-input" 
+                     placeholder="🔍 Filtrer CWE (nom, fichier, fonction)..." 
+                     oninput="onBountyCveSearchInput(this.value)" 
+                     style="width:235px; background:rgba(2, 6, 23, 0.92); border:1px solid rgba(245,158,11,0.5); border-radius:6px; padding:4px 22px 4px 8px; color:#fde047; font-family:var(--font-mono); font-size:0.66rem; outline:none;" 
+                     title="Rechercher par nom de règle CWE (ex: CWE-78, SQL-INJECTION), nom de fichier, symbole/fonction ou sévérité" />
+              <button id="bounty-cve-search-clear" onclick="clearBountyCveSearch()" 
+                      style="position:absolute; right:5px; background:none; border:none; color:#94a3b8; font-size:0.8rem; cursor:pointer; display:none; padding:0; line-height:1;" 
+                      title="Effacer la recherche">&times;</button>
+            </div>
+            <select id="bounty-target-cve-select" class="cosmo-select" style="max-width:280px; border-color:rgba(245,158,11,0.5); color:#fde047; font-family:var(--font-mono); font-size:0.66rem;" onchange="onBountyTargetCveChange(this.value)" title="Cibler toutes les règles In-Scope ou une anomalie spécifique pour générer son PoC">
               <option value="all">📂 Tous les Zero-Day Patterns & CWE In-Scope (Triage & PoC)</option>
             </select>
             <label style="font-size:0.66rem; color:#cbd5e1; display:flex; align-items:center; gap:4px; cursor:pointer;">
