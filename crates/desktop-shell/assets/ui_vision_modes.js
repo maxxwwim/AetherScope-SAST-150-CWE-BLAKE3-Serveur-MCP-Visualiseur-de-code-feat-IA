@@ -1262,8 +1262,8 @@ const CVE_ATTACK_EXPLANATIONS = {
     shield: "Allouer 1 octet de plus et forcer buf[bytes_received] = '\0' ou construire std::string(buf, bytes_received)."
   },
   'CVE-CPP-NET-FORMAT-STRING-LOGGING': {
-    attack: "Format String non contrôlé sur log réseau : transmettre une chaîne issue du réseau directement à syslog() ou printf() sans format "%s" permet l'exécution de code arbitraire via %n et la fuite mémoire via %x.",
-    shield: "Toujours utiliser un littéral de format fixe : printf("%s", net_str) ou syslog(LOG_ERR, "%s", net_str)."
+    attack: "Format String non contrôlé sur log réseau : transmettre une chaîne issue du réseau directement à syslog() ou printf() sans format \"%s\" permet l'exécution de code arbitraire via %n et la fuite mémoire via %x.",
+    shield: "Toujours utiliser un littéral de format fixe : printf(\"%s\", net_str) ou syslog(LOG_ERR, \"%s\", net_str)."
   },
   'CVE-CPP-NET-SOCKET-RACE-DOUBLE-CLOSE': {
     attack: "Course critique et double-close de socket multi-thread : fermer close(fd) sans verrou atomique exchange(-1) permet à un thread concurrent de fermer par erreur un nouveau descripteur réalloué à un autre client.",
