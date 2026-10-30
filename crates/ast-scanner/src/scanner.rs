@@ -222,6 +222,11 @@ impl ProjectScanner {
         let mut graph = AetherGraph::new(&project_name);
         graph.project_path = Some(root_path.to_string_lossy().to_string());
 
+        let rules_file = root_path.join("AETHER_AI_RULES.md");
+        if let Ok(rules_txt) = std::fs::read_to_string(&rules_file) {
+            graph.system_prompt = Some(rules_txt);
+        }
+
         let matches_wildcard = |pattern: &str, text: &str| -> bool {
             let tokens: Vec<&str> = pattern.split('*').collect();
             if tokens.len() == 1 {

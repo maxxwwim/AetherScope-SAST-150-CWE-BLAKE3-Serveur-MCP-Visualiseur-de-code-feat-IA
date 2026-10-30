@@ -644,8 +644,25 @@ const AetherAPI = {
     return res.json();
   },
   async fetchSystemPrompt() {
-    const res = await fetch('/api/ai/system_prompt');
-    return res.json();
+    try {
+      const res = await fetch('/api/ai/system_prompt');
+      if (res.ok) {
+        const d = await res.json();
+        if (d && d.system_prompt) return d;
+      }
+    } catch (e) {
+      // Mode offline / standalone / GitHub Pages
+    }
+    const embedded = state.data?.system_prompt || window.__AETHERSCOPE_DATA__?.system_prompt;
+    if (embedded) {
+      return {
+        status: 'ok',
+        project_name: state.data?.project_name || window.__AETHERSCOPE_DATA__?.project_name || 'aether-engine',
+        project_path: state.data?.project_path || window.__AETHERSCOPE_DATA__?.project_path || '',
+        system_prompt: embedded
+      };
+    }
+    return { status: 'error', message: 'No system prompt' };
   },
   async createFile(projectPath, filePath, content) {
     const res = await fetch('/api/ai/create_file', {

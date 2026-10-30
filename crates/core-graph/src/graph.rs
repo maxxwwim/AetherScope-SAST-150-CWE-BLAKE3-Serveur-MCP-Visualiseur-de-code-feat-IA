@@ -30,6 +30,8 @@ pub struct AetherGraph {
     pub project_path: Option<String>,
     #[serde(default)]
     pub generated_at: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub system_prompt: Option<String>,
     pub nodes: Vec<SymbolBubble>,
     pub edges: Vec<AffiliationEdge>,
     pub stats: GraphStats,
@@ -44,6 +46,7 @@ impl AetherGraph {
             project_name: project_name.to_string(),
             project_path: None,
             generated_at: format!("Unix: {}s", dur.as_secs()),
+            system_prompt: None,
             nodes: Vec::new(),
             edges: Vec::new(),
             stats: GraphStats::default(),

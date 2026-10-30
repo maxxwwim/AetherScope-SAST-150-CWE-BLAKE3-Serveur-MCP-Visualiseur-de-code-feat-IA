@@ -11,7 +11,20 @@ pub const UI_VISION_MODES_JS: &str = include_str!("../assets/ui_vision_modes.js"
 pub const UI_AI_MODALS_JS: &str = include_str!("../assets/ui_ai_modals.js");
 
 pub fn generate_standalone_html(graph: &AetherGraph) -> String {
-    let json_data = serde_json::to_string(graph).unwrap_or_default();
+    let mut graph_clone = graph.clone();
+    if graph_clone.system_prompt.is_none() {
+        let p_path = graph_clone.project_path.as_deref().unwrap_or(&graph_clone.project_name);
+        let p_buf = std::path::PathBuf::from(p_path);
+        let stack_str = ai_file_bridge::audit_writer::AuditWriter::detect_project_stack(&p_buf);
+        let prompt = ai_file_bridge::audit_writer::AuditWriter::generate_optimized_system_prompt(
+            &p_buf,
+            &graph_clone.project_name,
+            stack_str,
+            3030,
+        );
+        graph_clone.system_prompt = Some(prompt);
+    }
+    let json_data = serde_json::to_string(&graph_clone).unwrap_or_default();
     let injection = format!("<script>window.__AETHERSCOPE_DATA__ = {};</script>", json_data);
 
     let combined_js = format!(
@@ -51,6 +64,7 @@ mod tests {
         let html = generate_standalone_html(&graph);
 
         assert!(html.contains("window.__AETHERSCOPE_DATA__"));
+        assert!(html.contains("system_prompt"));
         assert!(html.contains("AetherAPI"));
         assert!(html.contains("aether-canvas"));
         assert!(!html.contains("href=\"styles.css\""));
@@ -62,5 +76,19 @@ mod tests {
         assert!(!html.contains("src=\"ui_vision_modes.js\""));
         assert!(!html.contains("src=\"ui_ai_modals.js\""));
         assert!(html.len() > 100_000);
+    }
+
+    #[test]
+    fn test_export_docs_index_html() {
+        let root = std::path::PathBuf::from("../../");
+        let scanner = ast_scanner::scanner::ProjectScanner::default();
+        let graph = scanner.scan_project(&root);
+        let html = generate_standalone_html(&graph);
+        let docs_path = std::path::PathBuf::from("../../docs/index.html");
+        if docs_path.parent().map(|p| p.exists()).unwrap_or(false) {
+            let _ = std::fs::write(&docs_path, &html);
+        }
+        assert!(html.contains("window.__AETHERSCOPE_DATA__"));
+        assert!(html.contains("system_prompt"));
     }
 }
