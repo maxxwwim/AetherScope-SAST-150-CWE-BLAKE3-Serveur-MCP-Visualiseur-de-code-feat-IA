@@ -2056,6 +2056,7 @@ Utilise systématiquement les outils MCP mis à disposition :
 - **Règle d'Atomicité (< 35 lignes) :** Découpe le code en fonctions atomiques pures de moins de 35 lignes maximum (particulièrement dans \`domain/\`).
 - **Preuve de Lecture [AETHER_ACK] :** Démarre tes propositions techniques par :
   \`[AETHER_ACK: cible=<symbole>, couche=<layer>, imports_interdits=<liste>]\`;
+`;
 }
 
 async function openSystemPromptModal(isFirstOpen = false) {
