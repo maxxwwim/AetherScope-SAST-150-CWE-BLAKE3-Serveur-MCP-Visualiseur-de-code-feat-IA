@@ -663,6 +663,7 @@ function getLanguageForAnomaly(filePath, ruleId) {
   const p = (filePath || '').toLowerCase();
   const r = (ruleId || '').toUpperCase();
   if (r.startsWith('RULE_') || r.includes('ARCH') || r.includes('BLAKE3') || r === 'SAST_DIRECT_ENV_ACCESS') return 'arch';
+  if (p.endsWith('.php') || p.endsWith('.phtml') || p.endsWith('.php3') || p.endsWith('.php4') || p.endsWith('.php5') || p.endsWith('.php7') || p.endsWith('.phps') || r.includes('-PHP-') || r.includes('PHP')) return 'php';
   if (p.endsWith('.c') || p.endsWith('.cpp') || p.endsWith('.cc') || p.endsWith('.h') || p.endsWith('.hpp') || r.includes('-CPP-')) return 'cpp';
   if (p.endsWith('.sol')) return 'web3';
   if (p.endsWith('.rs')) return 'rust';
@@ -836,6 +837,7 @@ function renderCveAnomaliesPanel(lang = null) {
   const filterLabels = {
     all: `[Tous (${anomalies.length})]`,
     critical: `[🔴 Critical (${critCount})]`,
+    php: `[🐘 PHP (${anomalies.filter(a => a.lang === 'php').length})]`,
     rust: `[🦀 Rust (${anomalies.filter(a => a.lang === 'rust').length})]`,
     node: `[🟢 Node/TS (${anomalies.filter(a => a.lang === 'node').length})]`,
     web3: `[🌐 Web3 (${anomalies.filter(a => isWeb3Anomaly(a)).length})]`,
@@ -884,6 +886,7 @@ function renderCveAnomaliesPanel(lang = null) {
   }
 
   const langIcons = {
+    php: '🐘',
     rust: '🦀',
     python: '🐍',
     node: '🟢',
@@ -1446,6 +1449,107 @@ const CVE_ATTACK_EXPLANATIONS = {
   'CVE-RUST-MMAP-EXTERNAL-TRUNCATION-SIGBUS': {
     attack: "Crash matériel SIGBUS par troncature externe de fichier mappé (Mmap) : exposer un memmap2::Mmap sous forme de tranche &[u8] sur un fichier non verrouillé permet à un processus externe de tronquer le fichier, déclenchant un signal kernel SIGBUS fatal (non interceptable par catch_unwind) à la lecture.",
     shield: "Acquérir un verrou exclusif OS (flock / FileExt::lock_exclusive) avant Mmap::map et valider la taille avant chaque accès."
+  },
+  // 🐘 PHP & Web Security CWE Rules
+  'CVE-PHP-SQL-INJECTION': {
+    attack: "Injection SQL directe dans une requête non préparée : un attaquant injecte des clauses SQL (' OR '1'='1, UNION SELECT, DROP TABLE) pour court-circuiter l'authentification ou siphonner l'intégralité de la base de données.",
+    shield: "Utiliser impérativement une requête préparée paramétrée ($pdo->prepare() avec execute([$param]) ou bindParam)."
+  },
+  'CVE-PHP-COMMAND-INJECTION': {
+    attack: "Exécution de commandes système OS arbitraires : un attaquant injecte des séparateurs shell (; & | ` $) pour faire exécuter des commandes par le serveur web avec les privilèges de www-data.",
+    shield: "Échapper chaque argument individuellement via escapeshellarg($arg) ou proscrire l'exécution shell au profit de fonctions natives PHP."
+  },
+  'CVE-PHP-EVAL-CODE-INJECTION': {
+    attack: "Exécution de code PHP arbitraire à distance (RCE) via eval() ou create_function() : un attaquant soumet du code PHP brut qui est exécuté immédiatement par le moteur Zend.",
+    shield: "Bannir tout appel à eval(), create_function() ou preg_replace('/.../e'). Utiliser des parseurs dédiés ou preg_replace_callback()."
+  },
+  'CVE-PHP-UNSERIALIZE-RCE': {
+    attack: "Désérialisation non sécurisée d'objets (PHP Object Injection) : un attaquant fournit un flux d'objets sérialisés forgé déclenchant des méthodes magiques (__destruct, __wakeup) menant à un RCE par chaîne de gadgets POP.",
+    shield: "Remplacer par json_decode($json, true) ou forcer unserialize($data, ['allowed_classes' => false])."
+  },
+  'CVE-PHP-FILE-INCLUSION-RFI-LFI': {
+    attack: "Inclusion dynamique locale ou distante (LFI/RFI) : inclusion de fichiers arbitraires du serveur (/etc/passwd) ou de code externe via wrappers php://filter ou URLs distantes.",
+    shield: "Restreindre strictement les fichiers inclus à une liste blanche statique fermée : in_array($module, ALLOWED_MODULES, true)."
+  },
+  'CVE-PHP-PATH-TRAVERSAL': {
+    attack: "Traversée de répertoire (Path Traversal) : séquences ../../ permettant d'accéder, lire ou écraser des fichiers système en dehors de la racine web autorisée.",
+    shield: "Appliquer basename($filename) pour éliminer les répertoires ou vérifier str_starts_with(realpath($path), realpath($base_dir))."
+  },
+  'CVE-PHP-XSS-UNESCAPED-OUTPUT': {
+    attack: "Cross-Site Scripting (XSS) réfléchi ou stocké : injection de scripts JavaScript malveillants exécutés dans le navigateur des utilisateurs pour voler leurs cookies et jetons de session.",
+    shield: "Neutraliser la sortie avec htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')."
+  },
+  'CVE-PHP-SSRF-CURL-STREAM': {
+    attack: "Server-Side Request Forgery (SSRF) : forcer le serveur à émettre des requêtes vers des services internes non exposés (127.0.0.1, réseau privé RFC 1918) ou métadonnées cloud (169.254.169.254).",
+    shield: "Résoudre l'adresse IP de destination et valider avec filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)."
+  },
+  'CVE-PHP-UNRESTRICTED-FILE-UPLOAD': {
+    attack: "Téléversement de fichier non restreint : dépôt direct d'un webshell .php dans un dossier public exécutable, permettant la prise de contrôle totale du serveur.",
+    shield: "Valider l'extension dans une liste blanche stricte (.jpg, .png) et générer un nom aléatoire sécurisé : bin2hex(random_bytes(16)) . '.' . $ext."
+  },
+  'CVE-PHP-XXE-LIBXML-INJECTION': {
+    attack: "Injection d'entités externes XML (XXE) : inclusion d'entités SYSTEM menant à l'exfiltration de fichiers locaux ou au déni de service (Billion Laughs).",
+    shield: "Désactiver les entités externes via libxml_disable_entity_loader(true) ou utiliser le flag LIBXML_NONET."
+  },
+  'CVE-PHP-SESSION-FIXATION-NO-REGEN': {
+    attack: "Fixation de session : un attaquant force la victime à utiliser un identifiant de session connu d'avance pour s'approprier sa session une fois celle-ci authentifiée.",
+    shield: "Appeler systématiquement session_regenerate_id(true) lors de l'authentification ou de l'élévation de privilèges."
+  },
+  'CVE-PHP-COOKIE-SENSITIVE-PLAINTEXT': {
+    attack: "Émission de cookie sensible sans protection : cookie de session accessible via JavaScript (vol XSS) ou transmis en clair sur réseau non sécurisé.",
+    shield: "Définir les attributs de sécurité : ['secure' => true, 'httponly' => true, 'samesite' => 'Strict']."
+  },
+  'CVE-PHP-FILE-LOCKING-TOCTOU': {
+    attack: "Condition de course temporelle (TOCTOU) sur manipulation de fichier sensible : écriture concurrente menant à la corruption ou l'écrasement de données critiques.",
+    shield: "Utiliser un verrouillage exclusif OS via flock($fp, LOCK_EX) ou le mode atomique fopen($path, 'x')."
+  },
+  'CVE-PHP-BROKEN-CRYPTO-MD5-SHA1': {
+    attack: "Algorithme de hachage rapide cassé (MD5/SHA1) : vulnérable aux attaques par dictionnaire et collisions GPU permettant de retrouver les mots de passe en clair.",
+    shield: "Employer l'API native password_hash($password, PASSWORD_ARGON2ID) ou PASSWORD_BCRYPT."
+  },
+  'CVE-PHP-HEADER-INJECTION-CRLF': {
+    attack: "Injection CRLF et Open Redirect : caractères \r\n permettant de diviser la réponse HTTP (Response Splitting) ou de rediriger l'utilisateur vers un site de phishing.",
+    shield: "Supprimer les caractères CRLF str_replace(['\r', '\n'], '', $url) et valider l'URL de redirection avec filter_var($url, FILTER_VALIDATE_URL)."
+  },
+  'CVE-PHP-VARIABLE-OVERWRITE-EXTRACT': {
+    attack: "Écrasement arbitraire de variables (Variable Overwrite) : utilisation d'extract() sans EXTR_SKIP ou assignation dynamique $$ permettant d'écraser des variables internes critiques ($is_admin, $role).",
+    shield: "Bannir extract() sur les entrées externes ou forcer le drapeau extract($_POST, EXTR_SKIP)."
+  },
+  'CVE-PHP-MAIL-PARAM-INJECTION': {
+    attack: "Injection de paramètres Sendmail (RCE via mail()) : le 5ème argument de mail() non assaini permet d'injecter des drapeaux MTA (-X) pour déposer un webshell sur le serveur.",
+    shield: "Échapper le 5ème paramètre via escapeshellcmd($extra) ou utiliser une bibliothèque SMTP moderne (Symfony Mailer)."
+  },
+  'CVE-PHP-TEMPLATE-INJECTION-SSTI': {
+    attack: "Injection de modèle côté serveur (SSTI) : rendu dynamique de template Twig/Blade/Smarty avec une chaîne utilisateur permettant l'exécution de code arbitraire à distance (RCE).",
+    shield: "Ne jamais compiler de code utilisateur en template ; transmettre les données en variables de contexte."
+  },
+  'CVE-PHP-DISABLED-SSL-VERIFY': {
+    attack: "Désactivation du contrôle SSL/TLS (CURLOPT_SSL_VERIFYPEER à false) : expose toutes les requêtes réseau sortantes vers des APIs ou passerelles de paiement aux attaques Man-in-the-Middle (MitM).",
+    shield: "Maintenir CURLOPT_SSL_VERIFYPEER à true et spécifier un bundle CA valide avec CURLOPT_CAINFO."
+  },
+  'CVE-PHP-TYPE-JUGGLING-AUTH': {
+    attack: "Comparaison faible (Type Juggling) : comparaison non stricte (== ou strcmp == 0) sur un secret, mot de passe ou jeton permettant de contourner l'authentification (magic hashes 0e...).",
+    shield: "Utiliser la comparaison à temps constant hash_equals($secret, $input) ou l'opérateur strict ===."
+  },
+  'CVE-PHP-WEAK-PRNG-SECRETS': {
+    attack: "Générateur pseudo-aléatoire prévisible (rand, mt_rand, uniqid) pour des jetons sensibles : un attaquant peut reconstituer la graine et forger des tokens de réinitialisation de mot de passe.",
+    shield: "Utiliser les fonctions CSPRNG sécurisées random_bytes(32) ou random_int()."
+  },
+  'CVE-PHP-LDAP-INJECTION': {
+    attack: "Injection LDAP : concaténation d'entrées externes dans des filtres ldap_search() permettant le contournement d'authentification et l'exfiltration d'annuaires d'entreprise.",
+    shield: "Échapper rigoureusement les filtres avec ldap_escape($input, null, LDAP_ESCAPE_FILTER)."
+  },
+  'CVE-PHP-NOSQL-INJECTION': {
+    attack: "Injection NoSQL MongoDB : passage direct de tableaux associatifs superglobaux sans cast strict permettant l'injection d'opérateurs BSON ($ne, $gt) pour court-circuiter l'authentification.",
+    shield: "Transtyper obligatoirement en chaîne scalaire : ['password' => (string)$_POST['password']]."
+  },
+  'CVE-PHP-ZIP-SLIP-EXTRACTION': {
+    attack: "Décompression Zip Slip : extraction d'archive via ZipArchive::extractTo() sans validation de confinement des chemins relatifs (../../) écrasant des fichiers système hors cible.",
+    shield: "Résoudre realpath() de chaque entrée et vérifier qu'elle commence strictement par le répertoire cible."
+  },
+  'CVE-PHP-EXPOSED-DEBUG-CONFIG': {
+    attack: "Exposition de configuration de débogage : ini_set('display_errors', '1') ou phpinfo() révélant les variables d'environnement, secrets et chemins du serveur.",
+    shield: "Forcer display_errors à 0 en production, journaliser via error_log() et supprimer tout appel à phpinfo()."
   }
 };
 window.CVE_ATTACK_EXPLANATIONS = CVE_ATTACK_EXPLANATIONS;
@@ -3098,6 +3202,33 @@ function applyBountyScopePreset(preset) {
     autoExcludeTestAndToolFolders();
     appendBountyScopeLine('bounty-inscope-input', '[Impact Critique] Vol/Gel de Fonds, Corruption Mémoire (UB), RCE, Partition de Consensus');
     appendBountyScopeLine('bounty-outscope-input', '[Exclu] Rapports théoriques sans PoC reproductible, DoS volumétrique réseau, Dépendances tiers non exploitables');
+  } else if (preset === 'php_web') {
+    inEl.value = [
+      'src/',
+      'app/',
+      'controllers/',
+      'models/',
+      'api/',
+      'routes/',
+      'includes/',
+      'config/',
+      '[Impact Critique] RCE (Command Injection, Eval, Unserialize POP Gadgets)',
+      '[Impact Critique] SQL Injection directe (Vol / Altération BDD)',
+      '[Impact Critique] Arbitrary File Upload (Webshell .php)',
+      '[Impact High] Server-Side Request Forgery (SSRF) & XXE Injection',
+      '[Impact High] Path Traversal, Session Fixation, XSS'
+    ].join('\n');
+    outEl.value = [
+      'vendor/',
+      'tests/',
+      'test/',
+      'cache/',
+      'var/cache/',
+      'storage/logs/',
+      'storage/framework/',
+      '[Exclu] Dépendances vendor/ non modifiables directement',
+      '[Exclu] Attaques par force brute volumétrique sans impact de bypass logique'
+    ].join('\n');
   } else if (preset === 'l1_consensus') {
     inEl.value = [
       'consensus/',

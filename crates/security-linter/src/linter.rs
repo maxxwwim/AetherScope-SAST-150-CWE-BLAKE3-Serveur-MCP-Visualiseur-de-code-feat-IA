@@ -28,6 +28,18 @@ pub struct CveRuleDef {
     pub default_enabled: bool,
 }
 
+impl CveRuleDef {
+    /// Retourne les extensions de fichiers associées à cette règle CWE
+    pub fn target_file_types(&self) -> &'static [&'static str] {
+        SecurityLinter::get_file_types_for_cwe(&self.rule_id)
+    }
+
+    /// Détermine si un chemin de fichier correspond à la cible de cette règle CWE
+    pub fn matches_file(&self, file_path: &str) -> bool {
+        SecurityLinter::is_file_eligible_for_cwe(&self.rule_id, file_path)
+    }
+}
+
 /// Vue du contenu d'un fichier qui mémorise le résultat des `contains` répétés.
 struct ContentIndex<'a> {
     text: &'a str,
@@ -962,8 +974,39 @@ impl SecurityLinter {
         ];
         rules.extend(crate::rules::AdvancedDefiRules::definitions());
         rules.extend(crate::deep_rules::DeepSecurityRules::definitions());
+        rules.extend(crate::php_rules::PhpSecurityRules::definitions());
         rules
     }
+    /// Détecte les types de fichiers ciblés en fonction du type de CWE / rule_id
+    pub fn get_file_types_for_cwe(rule_id: &str) -> &'static [&'static str] {
+        let r = rule_id;
+        if r.starts_with("CVE-PHP-") || r.contains("PHP") {
+            &[".php", ".phtml", ".php3", ".php4", ".php5", ".php7", ".phps"]
+        } else if r.starts_with("CVE-RUST-") || r.starts_with("CVE-L1-") || r.contains("RUST") {
+            &[".rs"]
+        } else if r.starts_with("CVE-PY-") || r.contains("PYTHON") {
+            &[".py"]
+        } else if r.starts_with("CVE-CPP-") || r.contains("CPP") {
+            &[".c", ".cpp", ".cc", ".h", ".hpp", ".hh", ".cxx", ".hxx", ".inl"]
+        } else if r.starts_with("CVE-JS-") || r.contains("NODE") || r.contains("TYPESCRIPT") {
+            &[".js", ".ts", ".tsx", ".jsx", ".mjs", ".cjs"]
+        } else if r.contains("SOL") || r.contains("DEFI") || r.contains("EVC") || r.contains("CIRCOM") {
+            &[".sol", ".yul", ".circom", ".rs"]
+        } else {
+            &["*"]
+        }
+    }
+
+    /// Vérifie si un fichier correspond au type ciblé par la règle CWE
+    pub fn is_file_eligible_for_cwe(rule_id: &str, file_path: &str) -> bool {
+        let targets = Self::get_file_types_for_cwe(rule_id);
+        if targets.contains(&"*") {
+            return true;
+        }
+        let lower = file_path.to_lowercase();
+        targets.iter().any(|ext| lower.ends_with(ext))
+    }
+
 
     pub fn audit_file_with_rules(
         file_path: &str,
@@ -994,6 +1037,31 @@ impl SecurityLinter {
         "CVE-DB-REDIS-UNAUTH-KEYS-DOS",
         "CVE-RUST-COMMAND-INJECTION-SHELL",
         "CVE-CPP-NET-FORMAT-STRING-LOGGING",
+        "CVE-PHP-SQL-INJECTION",
+        "CVE-PHP-COMMAND-INJECTION",
+        "CVE-PHP-EVAL-CODE-INJECTION",
+        "CVE-PHP-UNSERIALIZE-RCE",
+        "CVE-PHP-FILE-INCLUSION-RFI-LFI",
+        "CVE-PHP-PATH-TRAVERSAL",
+        "CVE-PHP-XSS-UNESCAPED-OUTPUT",
+        "CVE-PHP-SSRF-CURL-STREAM",
+        "CVE-PHP-UNRESTRICTED-FILE-UPLOAD",
+        "CVE-PHP-XXE-LIBXML-INJECTION",
+        "CVE-PHP-SESSION-FIXATION-NO-REGEN",
+        "CVE-PHP-COOKIE-SENSITIVE-PLAINTEXT",
+        "CVE-PHP-FILE-LOCKING-TOCTOU",
+        "CVE-PHP-BROKEN-CRYPTO-MD5-SHA1",
+        "CVE-PHP-HEADER-INJECTION-CRLF",
+        "CVE-PHP-VARIABLE-OVERWRITE-EXTRACT",
+        "CVE-PHP-MAIL-PARAM-INJECTION",
+        "CVE-PHP-TEMPLATE-INJECTION-SSTI",
+        "CVE-PHP-DISABLED-SSL-VERIFY",
+        "CVE-PHP-TYPE-JUGGLING-AUTH",
+        "CVE-PHP-WEAK-PRNG-SECRETS",
+        "CVE-PHP-LDAP-INJECTION",
+        "CVE-PHP-NOSQL-INJECTION",
+        "CVE-PHP-ZIP-SLIP-EXTRACTION",
+        "CVE-PHP-EXPOSED-DEBUG-CONFIG",
     ];
 
     /// Audit d'un fichier avec élimination des faux positifs issus de chaînes/commentaires :
@@ -1014,7 +1082,7 @@ impl SecurityLinter {
         }
         // Python: les règles SAST portent sur des littéraux (algorithms=["none"], Loader=...)
         // -> on ne masque que les commentaires. Autres langages: chaînes + commentaires.
-        let masked_content = if lang == crate::lexer::Lang::Python {
+        let masked_content = if lang == crate::lexer::Lang::Python || lang == crate::lexer::Lang::Php {
             crate::lexer::mask_comments_only(content, lang)
         } else {
             crate::lexer::mask_literals(content, lang)
@@ -1222,6 +1290,12 @@ impl SecurityLinter {
             is_interface_or_types,
         ));
         violations.extend(crate::deep_rules::DeepSecurityRules::audit_file(
+            file_path,
+            content,
+            is_test_file,
+            is_interface_or_types,
+        ));
+        violations.extend(crate::php_rules::PhpSecurityRules::audit_file(
             file_path,
             content,
             is_test_file,

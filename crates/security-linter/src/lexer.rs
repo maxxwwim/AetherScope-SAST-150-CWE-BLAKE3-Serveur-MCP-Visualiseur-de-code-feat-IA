@@ -11,6 +11,8 @@ pub enum Lang {
     CLike,
     /// Python (`#`, triples quotes)
     Python,
+    /// PHP (`//`, `/* */`, `#`, `'`, `"`)
+    Php,
 }
 
 impl Lang {
@@ -19,6 +21,13 @@ impl Lang {
             Some(Lang::Rust)
         } else if lower_path.ends_with(".py") {
             Some(Lang::Python)
+        } else if [
+            ".php", ".phtml", ".php3", ".php4", ".php5", ".php7", ".phps",
+        ]
+        .iter()
+        .any(|e| lower_path.ends_with(e))
+        {
+            Some(Lang::Php)
         } else if [
             ".js", ".ts", ".tsx", ".jsx", ".mjs", ".cjs", ".sol", ".circom", ".c", ".cpp", ".cc", ".h", ".hpp",
         ]
@@ -63,7 +72,9 @@ fn mask_impl(src: &str, lang: Lang, mask_strings: bool) -> String {
         let next = if i + 1 < n { ch[i + 1] } else { '\0' };
 
         // --- commentaires ligne ---
-        if (lang != Lang::Python && c == '/' && next == '/') || (lang == Lang::Python && c == '#') {
+        if (lang != Lang::Python && c == '/' && next == '/')
+            || ((lang == Lang::Python || lang == Lang::Php) && c == '#')
+        {
             while i < n && ch[i] != '\n' {
                 out.push(blank(ch[i]));
                 i += 1;

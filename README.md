@@ -2,12 +2,12 @@
 
 # 🪐 AetherScope V2 (`aether-engine`)
 
-### **Cockpit Spatial d'Architecture WebGL 2 (120 FPS) • Linter SAST Zero-Day (100+ Zero-Day Patterns & CWE Rules) • Gouvernance Cryptographique BLAKE3 • Serveur MCP & Passerelle IA "Zero-Shell"**
+### **Cockpit Spatial d'Architecture WebGL 2 (120 FPS) • Linter SAST Zero-Day (120+ Zero-Day Patterns & CWE Rules) • Gouvernance Cryptographique BLAKE3 • Serveur MCP & Passerelle IA "Zero-Shell"**
 
 [![Rust](https://img.shields.io/badge/Rust-100%25_Native_2021-orange?style=for-the-badge&logo=rust)](https://www.rust-lang.org/)
 [![WebGL 2](https://img.shields.io/badge/WebGL_2-120_FPS_Instanced_SDF-38bdf8?style=for-the-badge&logo=webgl)](https://www.khronos.org/webgl/)
 [![MCP Server](https://img.shields.io/badge/MCP-JSON--RPC_2.0_Stdio-a855f7?style=for-the-badge)](https://modelcontextprotocol.io/)
-[![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-100%2B_Zero--Day_Patterns_%26_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-100-zero-day-patterns--cwe-rules)
+[![SAST Linter](https://img.shields.io/badge/SAST_%26_Bug_Bounty-120%2B_Zero--Day_Patterns_%26_CWE_Rules-ef4444?style=for-the-badge&logo=securityscorecard)](#️-moteur-sast-chasse-zero-day--catalogue-des-120-zero-day-patterns--cwe-rules)
 [![BLAKE3](https://img.shields.io/badge/Contracts-BLAKE3_%2B_EARS_Sealed-10b981?style=for-the-badge)](#🔒-gouvernance-spec-driven-contrats-ears--sceau-blake3)
 [![License: Non-Commercial](https://img.shields.io/badge/License-Non--Commercial-ef4444?style=for-the-badge)](#📄-licence)
 
@@ -28,7 +28,7 @@
 | ADN du Moteur | Ce qu'il remplace / transcende | Ce qu'apporte AetherScope V2 |
 | :--- | :--- | :--- |
 | 🌌 **1. Graphe Spatial Vivant** *(L'ADN Obsidian)* | Graphes statiques lents, diagrammes UML figés | **Galaxie interactive 2D/3D à 120 FPS** (Shaders SDF WebGL 2), membranes cellulaires vivantes à 12 lobes, 4 layouts mathématiques, simulation physique de Coulomb/Hooke et audio procédural. |
-| 🛡️ **2. Scanner SAST & Bug Bounty** *(L'ADN Audit Zero-Day)* | Linters lents en CI/CD, bruit massif de faux positifs | **Audit statique temps réel (< 50 ms à chaque `Ctrl+S`)** avec **100+ Zero-Day Patterns & CWE Rules** (Rust/LLVM/UB, Smart Contracts & VMs Distribuées, DeFi, ZK-SNARKs, Python, Node/V8, C/C++), masquage lexical anti-faux-positifs et **Générateur de PoC & Scope Bug Bounty**. |
+| 🛡️ **2. Scanner SAST & Bug Bounty** *(L'ADN Audit Zero-Day)* | Linters lents en CI/CD, bruit massif de faux positifs | **Audit statique temps réel (< 50 ms à chaque `Ctrl+S`)** avec **120+ Zero-Day Patterns & CWE Rules** (Rust/LLVM/UB, PHP Web & API, Smart Contracts & VMs Distribuées, DeFi, ZK-SNARKs, Python, Node/V8, C/C++), masquage lexical anti-faux-positifs, routage typé par famille de CWE et **Générateur de PoC & Scope Bug Bounty**. |
 | 🏛️ **3. Cockpit IDE "Spec-Driven"** *(L'ADN Gouvernance)* | Documentation obsolète, dérive architecturale | Chaque dossier possède son contrat `README.md` (règles **EARS**, budgets de lignes, imports autorisés/interdits) **scellé cryptographiquement par BLAKE3** dans `aether.lock.toml`. Toute transgression allume un laser rouge d'alerte. |
 | 🤖 **4. Serveur MCP & Pont IA "Zero-Shell"** *(L'ADN Copilot Console)* | Context loss des LLMs, réécritures destructrices, hallucinations | **Serveur MCP natif (`aetherscope-mcp.exe`)** + **Paquets `<aether_handshake>`**. L'agent IA (Antigravity, Claude, Cursor) téléporte lui-même la caméra 3D sur les bulles qu'il édite, gère ses tâches dans `.aether/tasks/` et code par diffs chirurgicaux sans jamais perdre le contexte. |
 
@@ -54,8 +54,8 @@
    - [Console Chat Copilot (`<thought>`), Télémétrie Spatiale & `<aether_handshake>`](#console-chat-copilot-thought-télémétrie-spatiale--aether_handshake)
    - [Configuration Universelle (Antigravity, Claude Desktop, Cursor)](#configuration-universelle-antigravity-claude-desktop-cursor)
 5. [Gouvernance "Spec-Driven", Contrats EARS & Sceau BLAKE3](#-gouvernance-spec-driven-contrats-ears--sceau-blake3)
-6. [Moteur SAST, Chasse Zero-Day & Catalogue des 100+ Zero-Day Patterns & CWE Rules](#️-moteur-sast-chasse-zero-day--catalogue-des-100-zero-day-patterns--cwe-rules)
-   - [Masquage Lexical Anti-Faux-Positifs & Préparateur de Scope Bug Bounty / PoC](#masquage-lexical-anti-faux-positifs--préparateur-de-scope-bug-bounty--poc)
+6. [Moteur SAST, Chasse Zero-Day & Catalogue des 120+ Zero-Day Patterns & CWE Rules](#️-moteur-sast-chasse-zero-day--catalogue-des-120-zero-day-patterns--cwe-rules)
+   - [Masquage Lexical Anti-Faux-Positifs, Routage Typé CWE & Préparateur de Scope Bug Bounty](#masquage-lexical-anti-faux-positifs-routage-typé-cwe--préparateur-de-scope-bug-bounty)
    - [1. Rust Bas-Niveau, LLVM Codegen, ABI, Unwind & OS Kernel (24 règles)](#1-rust-bas-niveau-llvm-codegen-abi-unwind--os-kernel)
    - [2. Consensus L1, Runtimes Wasm & Réseaux P2P (6 règles)](#2-consensus-l1-runtimes-wasm--réseaux-p2p)
    - [3. Smart Contracts EVM, Account Abstraction & Cross-Chain (30 règles)](#3-smart-contracts-evm-account-abstraction--cross-chain)
@@ -65,7 +65,8 @@
    - [7. SAST Fondamental, RCE & Injections Multi-Langages (18 règles)](#7-sast-fondamental-rce--injections-multi-langages)
    - [8. Front-End, DOM & Écosystème Node.js / V8 Internals (13 règles)](#8-front-end-dom--écosystème-nodejs--v8-internals)
    - [9. Architecture, Intégrité & Contrats EARS (4 règles)](#9-architecture-intégrité--contrats-ears)
-   - [10. C / C++ & Modules Natifs FFI (1 règle)](#10-c--c--modules-natifs-ffi)
+   - [10. C / C++ & Modules Natifs FFI / Network Bas-Niveau (11 règles)](#10-c--c--modules-natifs-ffi--network-bas-niveau-11-règles)
+   - [11. PHP Web & API Backend : Injections, RCE, Désérialisation & Sécurité Critique (25 règles)](#11-php-web--api-backend--injections-rce-désérialisation--sécurité-critique-25-règles)
 7. [API REST Locale (24 Routes), Options CLI, Raccourcis & Compilation](#-api-rest-locale-24-routes-options-cli-raccourcis--compilation)
 
 ---
@@ -98,14 +99,15 @@ aether-engine/
     │   └── src/manifest.rs                 # Manifestes de topologies logicielles & verrou BLAKE3
     │
     ├── ast-scanner/                        # 2. Scanner AST Polyglotte Multithread (Rayon)
-    │   └── src/scanner.rs                  # Regex OnceLock (Rust, TS/JS, Python, C/C++, Smart Contracts, MD)
+    │   └── src/scanner.rs                  # Regex OnceLock (Rust, PHP, TS/JS, Python, C/C++, Smart Contracts, MD)
     │
     ├── security-linter/                    # 3. Moteur SAST Zero-Day, Lexer & Contrats BLAKE3
     │   ├── src/contract.rs                 # Parseur README.md (YAML frontmatter + règles EARS + BLAKE3)
     │   ├── src/lexer.rs                    # Masquage lexical des littéraux/commentaires (Anti-Faux-Positifs)
     │   ├── src/rules.rs                    # Règles avancées DeFi, Vaults, Oracles & Taint Tracking
     │   ├── src/deep_rules.rs               # Règles d'élite (Rust LLVM/UB/ABI/Kernel, ZK-SNARKs, Runtimes VM)
-    │   └── src/linter.rs                   # Catalogue central des 100+ Zero-Day Patterns & CWE Rules & orchestrateur d'audit
+    │   ├── src/php_rules.rs                # 25 Règles PHP critiques/hautes (SQLi, RCE, Eval, Deser, LFI/RFI, SSRF, SSTI...)
+    │   └── src/linter.rs                   # Catalogue central des 120+ Zero-Day Patterns & CWE Rules, routage typé par extension & orchestrateur d'audit
     │
     ├── ai-file-bridge/                     # 4. Passerelle IA Zero-Shell & Gestionnaire de Tâches
     │   ├── src/watcher.rs                  # FileWatcher réactif notify (< 50 ms)
@@ -431,17 +433,19 @@ security_rules:
 
 ---
 
-## 🛡️ Moteur SAST, Chasse Zero-Day & Catalogue des 100+ Zero-Day Patterns & CWE Rules
+## 🛡️ Moteur SAST, Chasse Zero-Day & Catalogue des 120+ Zero-Day Patterns & CWE Rules
 
-### Masquage Lexical Anti-Faux-Positifs & Préparateur de Scope Bug Bounty / PoC
+### Masquage Lexical Anti-Faux-Positifs, Routage Typé CWE & Préparateur de Scope Bug Bounty
 
 Contrairement aux scanners par expressions régulières classiques qui génèrent des centaines de faux positifs sur les commentaires ou les fichiers de tests, le moteur SAST d'AetherScope V2 intègre :
 
-1. **Un Lexer Multi-Langages (`lexer.rs`) à Double Passe :** Masque automatiquement les commentaires (`//`, `/* */`, `#`, docstrings) et les littéraux de chaînes non pertinents avant d'évaluer les règles syntaxiques, tout en tronquant automatiquement les modules de tests unitaires Rust inline (`#[cfg(test)]`, `mod tests`).
-2. **Un Préparateur de Scope Bug Bounty & Générateur de PoC (`🎯 Scope / PoC Bug Bounty`) :**
-   - Permet de filtrer visuellement les dossiers **✅ IN-SCOPE** et **🚫 OUT-OF-SCOPE** (avec presets *L1 Consensus*, *Web3 DeFi*, *Rust Low-Level*) et de synchroniser ces exclusions avec le scanner.
+1. **Un Lexer Multi-Langages (`lexer.rs`) à Double Passe :** Masque automatiquement les commentaires (`//`, `/* */`, `#`, docstrings PHP/Python/Rust) et les littéraux de chaînes non pertinents avant d'évaluer les règles syntaxiques, tout en tronquant automatiquement les modules de tests unitaires Rust inline (`#[cfg(test)]`, `mod tests`).
+2. **Un Routage Typé des Fichiers par Famille de CWE (`matches_file` & `get_file_types_for_cwe`) :** Élimine 100% des interférences inter-langages grâce à la détection native par extension. Chaque règle de sécurité déclare son périmètre (`target_file_types()`). Les 25 règles PHP (CWE-89, CWE-78, etc.) ne s'exécutent que sur les extensions valides (`.php`, `.phtml`, `.php3`..), les règles Rust sur le Rust (`.rs`), et le C/C++ sur ses extensions propres (`.c`, `.cpp`, `.h`, `.hpp`). L'AST Scanner (`ast-scanner`) extrait en amont les classes, traits, interfaces, méthodes, fonctions, routes (`#[Route]`, `$app->get`, `Route::*`) et docstrings PHPDoc.
+3. **Un Préparateur de Scope Bug Bounty & Générateur de PoC (`🎯 Scope / PoC Bug Bounty`) :**
+   - Permet de filtrer visuellement les dossiers **✅ IN-SCOPE** et **🚫 OUT-OF-SCOPE** (avec presets *🐘 PHP Web & API*, *L1 Consensus*, *Web3 DeFi*, *Rust Low-Level*) et de synchroniser ces exclusions avec le scanner.
+   - Sélecteur de langages par badges dans l'inspecteur : bascule instantanée entre *Rust*, *Solidity*, *Go*, *JS/TS*, *Python*, *C/C++* et *🐘 PHP*.
    - **3 Modes de Génération de Prompts d'Audit :**
-     - 🧪 **Mode 1 — Triage & Proof of Concept (PoC) Exécutable (Sans modifier le code) :** Impose la règle *"Zéro correction barbare"*, demande à l'IA de vérifier l'atteignabilité *Source-to-Sink*, d'écrire un test d'exploitation autonome (`#[test]` Rust, `cargo miri`, ou Foundry `test_poc`) et de rédiger le rapport final au format **Immunefi / HackerOne / Cantina**.
+     - 🧪 **Mode 1 — Triage & Proof of Concept (PoC) Exécutable (Sans modifier le code) :** Impose la règle *"Zéro correction barbare"*, demande à l'IA de vérifier l'atteignabilité *Source-to-Sink*, d'écrire un test d'exploitation autonome (`#[test]` Rust, script exploit Python/curl, `cargo miri`, ou Foundry `test_poc`) et de rédiger le rapport final au format **Immunefi / HackerOne / Cantina**.
      - 🔬 **Mode 2 — Chasse Zero-Day Bas-Niveau :** Oriente l'audit sur les bugs subtils de compilateur LLVM, d'unwind de pile, d'ABI FFI et de désynchronisation d'état.
      - 🛡️ **Mode 3 — Patch Chirurgical Minimal :** Fournit le patron de remédiation certifié (*Gold Pattern*) pour corriger la ligne vulnérable sans effet de bord.
 
@@ -644,6 +648,38 @@ Contrairement aux scanners par expressions régulières classiques qui génèren
 
 ---
 
+### 11. PHP Web & API Backend : Injections, RCE, Désérialisation & Sécurité Critique (25 règles)
+
+| Identifiant Règle (`rule_id`) | Référence CWE / Classe | Gravité | Mécanisme de Faille & Vecteur d'Exploitation | Remédiation Certifiée |
+| :--- | :--- | :---: | :--- | :--- |
+| `CVE-PHP-SQL-INJECTION` | CWE-89 / SQL-INJECTION | **CRITICAL** | Concaténation directe d'entrées utilisateur (`$_GET`, `$_POST`, `$_REQUEST`, `$_COOKIE`) dans des requêtes SQL (`PDO::query`, `mysqli_query`) sans requête préparée : permet l'exfiltration ou la destruction de la base de données. | Utiliser impérativement des requêtes préparées avec paramètres liés (`$pdo->prepare()` puis `$stmt->execute([$param])` ou `bindParam`). |
+| `CVE-PHP-COMMAND-INJECTION` | CWE-78 / OS-COMMAND-INJECTION | **CRITICAL** | Exécution de commandes système OS (`system`, `exec`, `passthru`, `shell_exec`, `proc_open`, backticks) recevant des variables externes non assainies : prise de contrôle du serveur hôte via des métacaractères shell (`;`, `\|`, `&`, `$`...). | Échapper chaque argument individuellement via `escapeshellarg()` / `escapeshellcmd()`, ou remplacer par des APIs natives PHP sans passerelle shell. |
+| `CVE-PHP-EVAL-CODE-INJECTION` | CWE-94 / EVAL-CODE-INJECTION | **CRITICAL** | Évaluation dynamique de chaînes arbitraires via `eval()`, `create_function()`, `assert()` dynamique ou `preg_replace` avec modificateur `/e` : exécution de code PHP arbitraire à distance (RCE) avec les privilèges du processus serveur. | Bannir tout appel à `eval()`, `create_function()` ou `preg_replace('/.../e')`. Privilégier `preg_replace_callback()` et des parseurs déclaratifs sécurisés. |
+| `CVE-PHP-UNSERIALIZE-RCE` | CWE-502 / OBJECT-INJECTION-RCE | **CRITICAL** | Désérialisation de flux externes via `unserialize()` sans restriction de classes : instanciation malveillante d'objets et déclenchement automatique de méthodes magiques (`__destruct`, `__wakeup`) via des chaînes de gadgets POP. | Utiliser `json_decode($json, true)` ou contraindre explicitement la désérialisation via `unserialize($data, ['allowed_classes' => false])`. |
+| `CVE-PHP-FILE-INCLUSION-RFI-LFI` | CWE-98 / DYNAMIC-FILE-INCLUSION | **CRITICAL** | Inclusion dynamique de scripts via `include`, `require`, `include_once`, `require_once` recevant des données non filtrées : lecture de fichiers arbitraires (`/etc/passwd`), exécution de webshells locaux ou distants via les wrappers `php://filter`. | Restreindre strictement les fichiers inclus à une liste blanche fermée et immuable : `in_array($module, ALLOWED_MODULES, true)`. |
+| `CVE-PHP-PATH-TRAVERSAL` | CWE-22 / ARBITRARY-FILE-ACCESS | **HIGH** | Manipulation de chemins de fichiers via `file_get_contents`, `readfile`, `file_put_contents`, `unlink`, `fopen` avec entrées client : séquences `../` permettant de lire ou écraser des fichiers système hors de la racine web. | Nettoyer avec `basename($filename)` pour isoler le nom de fichier ou vérifier formellement le confinement via `str_starts_with(realpath($path), realpath($base_dir))`. |
+| `CVE-PHP-XSS-UNESCAPED-OUTPUT` | CWE-79 / REFLECTED-STORED-XSS | **HIGH** | Émission directe dans la réponse HTTP (`echo`, `print`, `<?=`) de superglobales (`$_GET`, `$_POST`, `$_SERVER['PHP_SELF']`) sans échappement contextuel : injection de scripts tiers, vol de sessions et défacement. | Neutraliser systématiquement la sortie HTML avec `htmlspecialchars($input, ENT_QUOTES \| ENT_SUBSTITUTE, 'UTF-8')`. |
+| `CVE-PHP-SSRF-CURL-STREAM` | CWE-918 / SERVER-SIDE-REQUEST-FORGERY | **HIGH** | Requêtes HTTP sortantes via `curl_exec()`, `file_get_contents($url)` ou `fopen($url)` vers une URL fournie par le client sans filtrage : accès aux services internes (127.0.0.1, RFC 1918) et métadonnées cloud AWS/GCP (169.254.169.254). | Résoudre le DNS et valider l'adresse IP avec `filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE \| FILTER_FLAG_NO_RES_RANGE)` avant l'appel curl. |
+| `CVE-PHP-UNRESTRICTED-FILE-UPLOAD` | CWE-434 / UNRESTRICTED-FILE-UPLOAD | **CRITICAL** | Déplacement de fichiers téléversés (`move_uploaded_file`) en conservant le nom client d'origine (`$_FILES['...']['name']`) sans contrôle strict de type MIME/extension : dépôt direct de webshells `.php` exécutables sur le serveur. | Valider l'extension contre une liste blanche stricte (`.jpg`, `.png`, `.pdf`) et régénérer un nom aléatoire cryptographique : `bin2hex(random_bytes(16)) . '.' . $ext`. |
+| `CVE-PHP-XXE-LIBXML-INJECTION` | CWE-611 / XML-EXTERNAL-ENTITY-INJECTION | **HIGH** | Analyse XML via `simplexml_load_string()`, `simplexml_load_file()` ou `DOMDocument::loadXML()` avec entités externes actives : inclusion d'entités `SYSTEM` menant à l'exfiltration de fichiers locaux ou au déni de service (Billion Laughs). | Désactiver le chargement des entités externes via `libxml_disable_entity_loader(true)` ou configurer le flag `LIBXML_NONET` lors du parsing. |
+| `CVE-PHP-SESSION-FIXATION-NO-REGEN` | CWE-384 / SESSION-FIXATION | **HIGH** | Affectation d'un état authentifié dans `$_SESSION['user_id']` ou `$_SESSION['auth']` sans régénération d'identifiant : un attaquant force l'ID de session au préalable et s'approprie les droits de la victime dès sa connexion. | Invoquer impérativement `session_regenerate_id(true)` immédiatement après une authentification réussie ou un changement de privilèges. |
+| `CVE-PHP-COOKIE-SENSITIVE-PLAINTEXT` | CWE-312 / INSECURE-COOKIE-TRANSMISSION | **HIGH** | Définition de cookies sensibles (`setcookie`, `session_set_cookie_params`) avec les drapeaux `secure` ou `httponly` à `false` ou omis : cookie de session accessible via JavaScript (vol par XSS) ou interceptable en clair sur HTTP. | Définir systématiquement les attributs de sécurité recommandés : `['secure' => true, 'httponly' => true, 'samesite' => 'Strict']`. |
+| `CVE-PHP-FILE-LOCKING-TOCTOU` | CWE-362 / TOCTOU-FILE-RACE-CONDITION | **HIGH** | Vérification préalable d'existence (`file_exists`, `is_file`) immédiatement suivie d'une écriture sans verrouillage atomique : condition de course temporelle menant à la corruption ou l'écrasement concurrent de données. | Verrouiller le descripteur de fichier de manière exclusive via `flock($fp, LOCK_EX)` ou utiliser le flag de création atomique exclusive `fopen($path, 'x')`. |
+| `CVE-PHP-BROKEN-CRYPTO-MD5-SHA1` | CWE-327 / BROKEN-CRYPTOGRAPHIC-HASH | **HIGH** | Hachage de mots de passe ou secrets avec des algorithmes obsolètes et rapides (`md5()`, `sha1()`, `crypt()`) vulnérables aux attaques par dictionnaire et collisions GPU massives. | Employer l'API native de hachage de mots de passe avec algorithmes adaptatifs modernes : `password_hash($pass, PASSWORD_ARGON2ID)` ou `PASSWORD_BCRYPT`. |
+| `CVE-PHP-HEADER-INJECTION-CRLF` | CWE-113 / HTTP-RESPONSE-SPLITTING | **HIGH** | Émission d'en-têtes HTTP via `header()` contenant des entrées utilisateur brutes sans assainissement des sauts de ligne (`\r`, `\n`) ni validation d'hôte : découpage de réponse HTTP (Response Splitting) et redirections ouvertes (phishing). | Éliminer les caractères CRLF via `str_replace(["\r", "\n"], '', $dest)` et valider rigoureusement l'URL de redirection avec `filter_var($dest, FILTER_VALIDATE_URL)`. |
+| `CVE-PHP-VARIABLE-OVERWRITE-EXTRACT` | CWE-621 / VARIABLE-OVERWRITE-EXTRACT | **CRITICAL** | Importation non sécurisée via `extract($_GET/$_POST)` sans `EXTR_SKIP` ou assignation dynamique `$$` : écrasement de variables locales critiques (`$is_admin`, `$role`). | Bannir `extract()` sur entrées externes ou imposer `extract($_POST, EXTR_SKIP)`. |
+| `CVE-PHP-MAIL-PARAM-INJECTION` | CWE-88 / MAIL-PARAMETER-INJECTION | **CRITICAL** | Fonction `mail()` recevant un 5ème argument dynamique non échappé : injection de drapeaux Sendmail (`-X /tmp/shell.php`) menant à un Remote Code Execution (RCE). | Échapper impérativement le 5ème argument avec `escapeshellcmd($extra)` ou employer Symfony Mailer. |
+| `CVE-PHP-TEMPLATE-INJECTION-SSTI` | CWE-1336 / SERVER-SIDE-TEMPLATE-INJECTION | **CRITICAL** | Rendu dynamique de templates Twig (`createTemplate`), Blade (`Blade::render`) ou Smarty alimentés par des chaînes utilisateur : exécution de code PHP arbitraire (RCE). | Ne jamais compiler de chaînes utilisateur ; passer les données comme variables de contexte du template. |
+| `CVE-PHP-DISABLED-SSL-VERIFY` | CWE-295 / DISABLED-SSL-VERIFICATION | **HIGH** | Désactivation de la vérification SSL/TLS (`CURLOPT_SSL_VERIFYPEER` à `false` ou `verify_peer` à `false`) : expose les appels APIs et webhooks aux attaques Man-in-the-Middle (MitM). | Conserver `CURLOPT_SSL_VERIFYPEER => true` et référencer un magasin d'autorités de certification valide via `CURLOPT_CAINFO`. |
+| `CVE-PHP-TYPE-JUGGLING-AUTH` | CWE-697 / LOOSE-COMPARISON-TYPE-JUGGLING | **HIGH** | Comparaison non stricte (`==`, `strcmp() == 0`) sur un mot de passe, token HMAC ou secret : contournement d'authentification via Type Juggling ("magic hashes" `0e...`) et timing attacks. | Utiliser la comparaison à temps constant `hash_equals($secret, $input)` ou l'égalité stricte `===`. |
+| `CVE-PHP-WEAK-PRNG-SECRETS` | CWE-338 / CRYPTOGRAPHICALLY-WEAK-PRNG | **HIGH** | Génération de jetons de sécurité (reset password, CSRF, API keys) via des PRNG prévisibles (`rand()`, `mt_rand()`, `uniqid()`) : prévisibilité de la graine et falsification de jetons. | Utiliser les générateurs CSPRNG cryptographiquement sûrs : `bin2hex(random_bytes(32))` ou `random_int()`. |
+| `CVE-PHP-LDAP-INJECTION` | CWE-90 / LDAP-INJECTION | **HIGH** | Concaténation directe de données utilisateur dans des filtres LDAP (`ldap_search`, `ldap_list`) : contournement d'authentification et exfiltration d'annuaires d'entreprise. | Échapper systématiquement les données injectées avec `ldap_escape($input, null, LDAP_ESCAPE_FILTER)`. |
+| `CVE-PHP-NOSQL-INJECTION` | CWE-943 / NOSQL-INJECTION-MONGODB | **HIGH** | Passage direct de superglobales (`$_POST`, `$_GET`) dans des requêtes MongoDB sans transtypage : injection d'opérateurs BSON (`[$ne] => null`) court-circuitant l'authentification. | Transtyper obligatoirement en scalaires stricts (`['password' => (string)$_POST['password']]`). |
+| `CVE-PHP-ZIP-SLIP-EXTRACTION` | CWE-770 / ZIP-SLIP-ARBITRARY-EXTRACTION | **HIGH** | Décompression d'archive `ZipArchive::extractTo()` sans contrôle de confinement des chemins : séquences `../` écrasant des fichiers de code système hors du répertoire cible. | Vérifier pour chaque entrée que `realpath()` commence strictement par le répertoire de destination autorisé. |
+| `CVE-PHP-EXPOSED-DEBUG-CONFIG` | CWE-209 / SENSITIVE-INFO-DEBUG-EXPOSURE | **HIGH** | Activation de `ini_set('display_errors', '1')` ou présence de `phpinfo()` dans des scripts exposés : fuite de variables d'environnement (`$_ENV`), identifiants DB et configuration serveur. | Forcer `display_errors = 0` en production, consigner les erreurs dans `error_log()` et supprimer tout appel à `phpinfo()`. |
+
+---
+
 ## 🕹️ API REST Locale (24 Routes), Options CLI, Raccourcis & Compilation
 
 ### 🚀 Démarrage Rapide & Utilitaires Windows 1-Clic
@@ -703,7 +739,7 @@ AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'arc
 | `GET` / `POST /api/tasks` | Liste ou crée une tâche persistante dans `.aether/tasks/`. |
 | `POST /api/tasks/update` | Met à jour le statut, la progression (`0-100%`) et le `README.md` d'une tâche. |
 | `POST /api/tasks/delete` | Supprime une tâche et met à jour `.aether/TASKS_SUMMARY.md`. |
-| `GET` / `POST /api/settings` | Lit ou sauvegarde les exclusions et l'activation granulaire des 100+ Zero-Day Patterns & CWE Rules. |
+| `GET` / `POST /api/settings` | Lit ou sauvegarde les exclusions et l'activation granulaire des 120+ Zero-Day Patterns & CWE Rules. |
 | `POST /api/export` | Exporte le graphe interactif en un fichier autonome `aetherscope_viewer.html`. |
 
 ---
@@ -725,7 +761,7 @@ AetherScope V2 fournit des scripts prêts à l'emploi à la racine et dans l'arc
 | <kbd>C</kbd> | **Console Chat IA :** Ouvre/ferme la fenêtre flottante de dialogue Copilot. |
 | <kbd>T</kbd> | **Gestionnaire de Tâches & Quêtes :** Ouvre la modale des missions `.aether/tasks/`. |
 | <kbd>A</kbd> | **Télémétrie HUD :** Affiche/masque le bandeau de suivi spatial de l'agent IA. |
-| <kbd>P</kbd> | **Préférences & Catalogue Sécurité :** Configure les labels, FPS, audio, exclusions et les 100+ Zero-Day Patterns & CWE Rules. |
+| <kbd>P</kbd> | **Préférences & Catalogue Sécurité :** Configure les labels, FPS, audio, exclusions et les 120+ Zero-Day Patterns & CWE Rules. |
 | <kbd>S</kbd> | **Snapshot HD :** Enregistre une capture PNG haute résolution du viewport WebGL 2. |
 | <kbd>Échap</kbd> | Ferme la modale active, quitte le mode de vision spécial ou désélectionne la cible. |
 

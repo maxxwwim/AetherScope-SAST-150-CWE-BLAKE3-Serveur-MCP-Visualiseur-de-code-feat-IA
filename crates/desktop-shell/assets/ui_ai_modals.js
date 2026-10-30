@@ -2432,6 +2432,18 @@ async function renderCveRulesSettings() {
   }
 
   let html = '';
+  const getFileTypesBadge = (r) => {
+    const rid = (r.rule_id || '').toUpperCase();
+    const cat = (r.category || '').toLowerCase();
+    if (rid.includes('-PHP-') || cat.includes('php')) return '<span class="cve-rule-cat" style="color:#c084fc; border-color:rgba(192,132,252,0.3); background:rgba(192,132,252,0.1);">📁 .php, .phtml</span>';
+    if (rid.includes('-RUST-') || cat.includes('rust')) return '<span class="cve-rule-cat" style="color:#f97316; border-color:rgba(249,115,22,0.3); background:rgba(249,115,22,0.1);">📁 .rs</span>';
+    if (rid.includes('-PY-') || cat.includes('python')) return '<span class="cve-rule-cat" style="color:#eab308; border-color:rgba(234,179,8,0.3); background:rgba(234,179,8,0.1);">📁 .py</span>';
+    if (rid.includes('-CPP-') || cat.includes('c / c++')) return '<span class="cve-rule-cat" style="color:#38bdf8; border-color:rgba(56,189,248,0.3); background:rgba(56,189,248,0.1);">📁 .cpp, .c, .h</span>';
+    if (rid.includes('-JS-') || cat.includes('node') || cat.includes('front-end')) return '<span class="cve-rule-cat" style="color:#4ade80; border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.1);">📁 .ts, .js</span>';
+    if (rid.includes('SOL') || cat.includes('defi') || cat.includes('crypto')) return '<span class="cve-rule-cat" style="color:#818cf8; border-color:rgba(129,140,248,0.3); background:rgba(129,140,248,0.1);">📁 .sol</span>';
+    return '<span class="cve-rule-cat">📁 Tout fichier</span>';
+  };
+
   filtered.forEach(rule => {
     const isChecked = activeRules.has(rule.rule_id);
     const sevClass = rule.severity.toLowerCase() === 'critical' ? 'critical' : (rule.severity.toLowerCase() === 'high' ? 'high' : 'warning');
@@ -2448,6 +2460,7 @@ async function renderCveRulesSettings() {
             <span class="cve-rule-id">${rule.rule_id}</span>
             <span class="cve-badge ${sevClass}" style="font-size:0.60rem; padding:1px 5px;">${sevBadge}</span>
             <span class="cve-rule-cat">${rule.category}</span>
+            ${getFileTypesBadge(rule)}
             ${rule.cve_id ? `<span style="font-size:0.62rem; font-family:var(--font-mono); color:#a855f7;">${rule.cve_id}</span>` : ''}
           </div>
           <div style="font-size:0.74rem; font-weight:700; color:#e2e8f0; margin-top:1px;">${rule.name}</div>

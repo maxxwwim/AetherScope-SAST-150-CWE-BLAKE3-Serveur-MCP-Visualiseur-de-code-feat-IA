@@ -2,9 +2,11 @@
 # Rust & Cargo Build Artifacts
 # ==========================================
 /target/
+/target-build/
 **/*.rs.bk
 *.pdb
 Cargo.lock.bak
+*.WebView2/
 
 # ==========================================
 # AetherScope Runtime Transient Bridge

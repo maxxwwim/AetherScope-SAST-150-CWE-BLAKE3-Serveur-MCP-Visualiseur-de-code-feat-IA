@@ -11,6 +11,8 @@ if exist "%SCRIPT_DIR%aether-engine.exe" (
     set "ENGINE_EXE=%SCRIPT_DIR%aether-engine.exe"
 ) else if exist "%SCRIPT_DIR%target\release\aether-engine.exe" (
     set "ENGINE_EXE=%SCRIPT_DIR%target\release\aether-engine.exe"
+) else if exist "%SCRIPT_DIR%target-build\release\aether-engine.exe" (
+    set "ENGINE_EXE=%SCRIPT_DIR%target-build\release\aether-engine.exe"
 ) else if exist "%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe" (
     set "ENGINE_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe"
 )
@@ -19,13 +21,15 @@ if exist "%SCRIPT_DIR%aetherscope-mcp.exe" (
     set "MCP_EXE=%SCRIPT_DIR%aetherscope-mcp.exe"
 ) else if exist "%SCRIPT_DIR%target\release\aetherscope-mcp.exe" (
     set "MCP_EXE=%SCRIPT_DIR%target\release\aetherscope-mcp.exe"
+) else if exist "%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe" (
+    set "MCP_EXE=%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe"
 ) else if exist "%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe" (
     set "MCP_EXE=%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe"
 )
 
 if not defined ENGINE_EXE (
     echo [ERREUR] Impossible de trouver aether-engine.exe !
-    echo Veuillez compiler le projet (cargo build --release) ou executer install.ps1.
+    echo Veuillez compiler le projet via cargo build --release ou executer install.ps1.
     pause
     exit /b 1
 )
@@ -33,7 +37,7 @@ if not defined ENGINE_EXE (
 :MENU
 cls
 echo ==============================================================
-echo       🪐 AETHERSCOPE V2 — COCKPIT SPATIAL & MCP SUITE
+echo       🪐 AETHERSCOPE V2 — COCKPIT SPATIAL ET MCP SUITE
 echo ==============================================================
 echo.
 echo   [1] 🚀 Lancer le Cockpit WebGL 3D (GUI + Serveur Axum)

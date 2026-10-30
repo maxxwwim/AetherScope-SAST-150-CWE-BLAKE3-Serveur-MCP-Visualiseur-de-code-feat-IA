@@ -370,12 +370,12 @@
           </div>
         </div>
 
-        <!-- Option 8 : Catalogue & Règles de Sécurité 90+ Zero-Day Patterns & CWE Rules -->
+        <!-- Option 8 : Catalogue & Règles de Sécurité 120+ Zero-Day Patterns & CWE Rules -->
         <div class="settings-group-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.04);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <div class="hub-section-title" style="color:#ef4444; margin-bottom:0;">
-              <span>🛡️</span> 8. 90+ Zero-Day Patterns & CWE Rules (SAST Linter)
-              <span id="cve-rules-counter" class="cve-badge critical" style="margin-left:8px; font-size:0.65rem; padding:2px 6px;">90+ règles</span>
+              <span>🛡️</span> 8. 120+ Zero-Day Patterns & CWE Rules (SAST Linter)
+              <span id="cve-rules-counter" class="cve-badge critical" style="margin-left:8px; font-size:0.65rem; padding:2px 6px;">120+ règles</span>
             </div>
             <div style="display:flex; gap:6px;">
               <button type="button" class="search-cat-pill" style="font-size:0.65rem; padding:2px 8px; color:#38bdf8; border-color:rgba(56,189,248,0.4);" onclick="toggleAllCveRules(true)">Tout Activer</button>
@@ -383,14 +383,14 @@
             </div>
           </div>
           <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:10px;">
-            Activez ou désactivez les moteurs d'analyse AST statique pour les 90+ Zero-Day Patterns & CWE Rules (Rust, Smart Contracts, DeFi, ZK, Python, Node/V8, C/C++).
+            Activez ou désactivez les moteurs d'analyse AST statique pour les 120+ Zero-Day Patterns & CWE Rules (PHP, Rust, Smart Contracts, DeFi, ZK, Python, Node/V8, C/C++).
           </div>
           <div style="display:flex; gap:8px; margin-bottom:8px;">
-            <input type="text" id="setting-cve-search" class="cosmo-input" style="flex:1; padding:4px 10px; font-size:0.72rem;" placeholder="Filtrer les 90+ Zero-Day Patterns & CWE Rules..." oninput="filterCveRulesList(this.value)" />
+            <input type="text" id="setting-cve-search" class="cosmo-input" style="flex:1; padding:4px 10px; font-size:0.72rem;" placeholder="Filtrer les 120+ Zero-Day Patterns & CWE Rules..." oninput="filterCveRulesList(this.value)" />
           </div>
           <div id="settings-cve-rules-container" class="settings-cve-checklist" style="max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;">
             <!-- Dynamically populated by ui_ai_modals.js -->
-            <div style="font-size:0.75rem; color:#64748b; text-align:center; padding:12px;">Chargement des 90+ Zero-Day Patterns & CWE Rules...</div>
+            <div style="font-size:0.75rem; color:#64748b; text-align:center; padding:12px;">Chargement des 120+ Zero-Day Patterns & CWE Rules...</div>
           </div>
         </div>
       </div>
@@ -1137,6 +1137,7 @@
           <div class="cve-lang-filters" id="cve-lang-filters">
             <button class="cve-filter-btn active" data-lang="all" onclick="filterCveAnomalies('all', this)">[Tous]</button>
             <button class="cve-filter-btn" data-lang="critical" onclick="filterCveAnomalies('critical', this)">[🔴 Critical]</button>
+            <button class="cve-filter-btn" data-lang="php" onclick="filterCveAnomalies('php', this)">[🐘 PHP]</button>
             <button class="cve-filter-btn" data-lang="rust" onclick="filterCveAnomalies('rust', this)">[🦀 Rust]</button>
             <button class="cve-filter-btn" data-lang="node" onclick="filterCveAnomalies('node', this)">[🟢 Node/TS]</button>
             <button class="cve-filter-btn" data-lang="web3" onclick="filterCveAnomalies('web3', this)">[🌐 Web3]</button>
@@ -1517,6 +1518,7 @@
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <span style="font-size:0.68rem; font-weight:800; color:#fbbf24; font-family:var(--font-mono);">⚡ PRESETS SCOPE :</span>
             <button class="cat-pill" onclick="applyBountyScopePreset('auto')" style="border-color:#38bdf8; color:#7dd3fc;">✨ Auto (Projet Actif)</button>
+            <button class="cat-pill" onclick="applyBountyScopePreset('php_web')" style="border-color:#a855f7; color:#d8b4fe;">🐘 PHP Web & API</button>
             <button class="cat-pill" onclick="applyBountyScopePreset('l1_consensus')" style="border-color:#f59e0b; color:#fde047;">⛓️ L1 & Consensus Distribué</button>
             <button class="cat-pill" onclick="applyBountyScopePreset('web3_defi')" style="border-color:#c084fc; color:#e9d5ff;">🌐 Smart Contracts & DeFi</button>
             <button class="cat-pill" onclick="applyBountyScopePreset('rust_lowlevel')" style="border-color:#10b981; color:#6ee7b7;">🦀 Rust Deep-Core & Unsafe</button>
