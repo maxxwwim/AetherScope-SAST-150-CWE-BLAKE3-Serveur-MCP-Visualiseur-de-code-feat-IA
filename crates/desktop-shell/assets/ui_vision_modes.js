@@ -680,6 +680,39 @@ function isWeb3Anomaly(a) {
   return a.lang === 'web3' || r.includes('WEB3') || r.includes('DEFI') || r.includes('EVC') || p.includes('wallet') || p.includes('auth_controller') || p.endsWith('.sol');
 }
 
+function isCweOrRuleIgnored(ruleId, cveId) {
+  if (!state.settings) return false;
+  const ignored = state.settings.ignoredCwes || [];
+  if (!Array.isArray(ignored) || ignored.length === 0) {
+    if (Array.isArray(state.settings.activeCveRules) && ruleId) {
+      return !state.settings.activeCveRules.includes(ruleId);
+    }
+    return false;
+  }
+  
+  const rUp = (ruleId || '').toUpperCase().trim();
+  const cUp = (cveId || '').toUpperCase().trim();
+
+  // 1. Vérification dans la liste explicite des règles/CWE ignorées
+  for (const ign of ignored) {
+    const ignUp = String(ign || '').toUpperCase().trim();
+    if (!ignUp) continue;
+    if (rUp === ignUp || cUp === ignUp) return true;
+    if (rUp && rUp.includes(ignUp)) return true;
+    if (cUp && cUp.includes(ignUp)) return true;
+  }
+
+  // 2. Vérification dans le catalogue des règles actives
+  if (Array.isArray(state.settings.activeCveRules) && ruleId) {
+    if (!state.settings.activeCveRules.includes(ruleId)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+window.isCweOrRuleIgnored = isCweOrRuleIgnored;
+
 function renderCveAnomaliesPanel(lang = null) {
   if (lang !== null) currentCveLangFilter = lang;
   const targetBox = document.getElementById('cve-anomalies-list');
@@ -691,15 +724,11 @@ function renderCveAnomaliesPanel(lang = null) {
   const anomalies = [];
   const seenKey = new Set();
 
-  const activeRulesSet = (state.settings && Array.isArray(state.settings.activeCveRules))
-    ? new Set(state.settings.activeCveRules)
-    : null;
-
   // 1. Collect structured anomalies from node metadata
   nodes.forEach(n => {
     if (n.metadata && n.metadata.cve_anomalies && Array.isArray(n.metadata.cve_anomalies)) {
       n.metadata.cve_anomalies.forEach(a => {
-        if (activeRulesSet && a.rule_id && !activeRulesSet.has(a.rule_id)) {
+        if (isCweOrRuleIgnored(a.rule_id, a.cve_id)) {
           return;
         }
         // Exclure les simples avertissements de budget de lignes du panneau CVE
@@ -735,7 +764,7 @@ function renderCveAnomaliesPanel(lang = null) {
       const tgtNode = nodes.find(n => n.id === e.target);
       const filePath = (srcNode && srcNode.file_path) || (tgtNode && tgtNode.file_path) || 'source';
       const ruleId = (e.label || 'SECURITY_VIOLATION').split(':')[0].trim();
-      if (activeRulesSet && ruleId !== 'SECURITY_VIOLATION' && !activeRulesSet.has(ruleId)) {
+      if (isCweOrRuleIgnored(ruleId, e.cve_id)) {
         return;
       }
       if (ruleId === 'RULE_MAX_LINES' || (e.severity && e.severity.toUpperCase() === 'WARNING')) {
@@ -810,6 +839,19 @@ function renderCveAnomaliesPanel(lang = null) {
   const synthBadgeCve = document.getElementById('synth-badge-cve');
   if (synthBadgeCve) {
     synthBadgeCve.innerText = `${totalCount}`;
+  }
+
+  // Update ignored CWE count & button state
+  const ignoredList = (state.settings && state.settings.ignoredCwes) || [];
+  const ignoredCountEl = document.getElementById('cwe-ignored-count');
+  if (ignoredCountEl) {
+    ignoredCountEl.innerText = `${ignoredList.length}`;
+  }
+  const ignoredBtn = document.getElementById('btn-view-ignored-cwe');
+  if (ignoredBtn) {
+    ignoredBtn.style.opacity = ignoredList.length > 0 ? '1' : '0.65';
+    ignoredBtn.style.color = ignoredList.length > 0 ? '#fca5a5' : '#94a3b8';
+    ignoredBtn.style.borderColor = ignoredList.length > 0 ? 'rgba(239,68,68,0.45)' : 'rgba(148,163,184,0.3)';
   }
 
   // Also update pill on 16 filter button
@@ -981,12 +1023,214 @@ function renderCveAnomaliesPanel(lang = null) {
             🛡️ Patch
           </button>
           ${defiPatchBtn}
+          <button class="cve-action-btn ignore" onclick="event.stopPropagation(); ignoreCweAnomaly(${cacheIdx})" title="Ignorer cette règle CWE pour ce projet">
+            🚫 Ignorer CWE
+          </button>
         </div>
       </div>
     `;
   }).join('');
 }
 window.renderCveAnomaliesPanel = renderCveAnomaliesPanel;
+
+window.ignoreCweRuleExplicit = async function(ruleId, cveId) {
+  if (!state.settings) state.settings = {};
+  if (!Array.isArray(state.settings.ignoredCwes)) state.settings.ignoredCwes = [];
+
+  // Extraire l'identifiant CWE principal ou ID de règle
+  const cweMatch = (cveId || '').match(/CWE-\d+/i);
+  const cweCode = cweMatch ? cweMatch[0].toUpperCase() : null;
+  const targetId = cweCode || ruleId;
+
+  if (targetId && !state.settings.ignoredCwes.includes(targetId)) {
+    state.settings.ignoredCwes.push(targetId);
+  }
+  if (ruleId && !state.settings.ignoredCwes.includes(ruleId)) {
+    state.settings.ignoredCwes.push(ruleId);
+  }
+
+  // Désactiver également de activeCveRules si défini
+  if (Array.isArray(state.settings.activeCveRules)) {
+    state.settings.activeCveRules = state.settings.activeCveRules.filter(r => r !== ruleId && (!cweCode || !r.includes(cweCode)));
+  }
+
+  // Mettre à jour l'état visuel des nœuds du graphe
+  if (state.data?.nodes) {
+    state.data.nodes.forEach(n => {
+      if (n.metadata?.cve_anomalies) {
+        const remaining = n.metadata.cve_anomalies.filter(a => !isCweOrRuleIgnored(a.rule_id, a.cve_id));
+        if (remaining.length === 0 && (!n.metadata.violations || n.metadata.violations.length === 0)) {
+          n.has_security_violation = false;
+        }
+      }
+    });
+  }
+
+  // Sauvegarder dans LocalStorage
+  localStorage.setItem('aetherscope_settings', JSON.stringify(state.settings));
+
+  // Notification Toast et son
+  const label = cweCode ? `${cweCode} (${ruleId})` : ruleId;
+  if (typeof showToast === 'function') {
+    showToast(`🚫 Règle CWE ${label} ignorée.`);
+  }
+  if (window.AudioSys?.nodeSelect) AudioSys.nodeSelect();
+
+  // Synchroniser avec l'API serveur
+  try {
+    await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exclusions: state.settings.exclusions || [],
+        active_cve_rules: state.settings.activeCveRules || null,
+        ignored_cwes: state.settings.ignoredCwes
+      })
+    });
+  } catch (err) {
+    console.warn('Erreur synchronisation serveur CWE ignorées:', err);
+  }
+
+  // Rafraîchir l'interface
+  renderCveAnomaliesPanel();
+  if (typeof renderCveRulesSettings === 'function') renderCveRulesSettings();
+  if (state.selectedNodeId && typeof renderInspector === 'function') {
+    renderInspector(state.selectedNodeId);
+  }
+};
+
+window.ignoreCweAnomaly = async function(cacheIdx) {
+  const anomalies = currentCveAnomaliesCache || [];
+  const anom = anomalies[cacheIdx];
+  if (!anom) return;
+  return window.ignoreCweRuleExplicit(anom.rule_id, anom.cve_id);
+};
+};
+
+window.openIgnoredCweModal = function() {
+  const modal = document.getElementById('ignored-cwe-modal');
+  if (!modal) return;
+  renderIgnoredCweList();
+  modal.classList.add('open');
+};
+
+window.closeIgnoredCweModal = function() {
+  const modal = document.getElementById('ignored-cwe-modal');
+  if (modal) modal.classList.remove('open');
+};
+
+window.renderIgnoredCweList = function() {
+  const listEl = document.getElementById('ignored-cwe-list-container');
+  const countEl = document.getElementById('ignored-cwe-modal-count');
+  if (!listEl) return;
+
+  const ignored = (state.settings && state.settings.ignoredCwes) || [];
+  if (countEl) countEl.innerText = `${ignored.length}`;
+
+  if (ignored.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align:center; padding:24px; color:#64748b; font-family:var(--font-mono); font-size:0.8rem;">
+        ✅ Aucune règle CWE ignorée. Toutes les règles sont actives.
+      </div>
+    `;
+    const btnRestoreAll = document.getElementById('btn-restore-all-cwes');
+    if (btnRestoreAll) btnRestoreAll.style.display = 'none';
+    return;
+  }
+
+  const btnRestoreAll = document.getElementById('btn-restore-all-cwes');
+  if (btnRestoreAll) btnRestoreAll.style.display = 'inline-flex';
+
+  const escapeFn = typeof escapeHtml === 'function' ? escapeHtml : (str => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+
+  listEl.innerHTML = ignored.map(ruleId => {
+    const meta = (window.currentCveCatalogue || []).find(r => r.rule_id === ruleId || r.cve_id?.includes(ruleId));
+    const title = meta ? meta.name : ruleId;
+    const cat = meta ? meta.category : 'Règle CWE de Sécurité';
+    const desc = meta ? meta.description : 'Règle masquée de l\'audit et du graphe.';
+
+    return `
+      <div class="ignored-cwe-row">
+        <div style="flex:1; min-width:0; padding-right:12px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            <span class="cve-rule-id" style="color:#f87171; font-weight:700;">${escapeFn(ruleId)}</span>
+            <span class="cve-rule-cat" style="font-size:0.65rem;">${escapeFn(cat)}</span>
+          </div>
+          <div style="font-size:0.75rem; color:#e2e8f0; font-weight:600;">${escapeFn(title)}</div>
+          <div style="font-size:0.7rem; color:#94a3b8; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeFn(desc)}</div>
+        </div>
+        <button class="cve-action-btn restore" onclick="unignoreCwe('${escapeFn(ruleId)}')" title="Réactiver cette règle" style="padding:6px 12px; font-size:0.72rem;">
+          ↩️ Réactiver
+        </button>
+      </div>
+    `;
+  }).join('');
+};
+
+window.unignoreCwe = async function(ruleId) {
+  if (!state.settings) return;
+  state.settings.ignoredCwes = (state.settings.ignoredCwes || []).filter(id => id !== ruleId);
+  
+  if (Array.isArray(state.settings.activeCveRules) && !state.settings.activeCveRules.includes(ruleId)) {
+    state.settings.activeCveRules.push(ruleId);
+  }
+
+  localStorage.setItem('aetherscope_settings', JSON.stringify(state.settings));
+  if (typeof showToast === 'function') {
+    showToast(`✅ Règle CWE ${ruleId} réactivée.`);
+  }
+  if (window.AudioSys?.nodeSelect) AudioSys.nodeSelect();
+
+  try {
+    await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exclusions: state.settings.exclusions || [],
+        active_cve_rules: state.settings.activeCveRules || null,
+        ignored_cwes: state.settings.ignoredCwes
+      })
+    });
+  } catch (_) {}
+
+  renderIgnoredCweList();
+  renderCveAnomaliesPanel();
+  if (typeof renderCveRulesSettings === 'function') renderCveRulesSettings();
+};
+
+window.restoreAllIgnoredCwes = async function() {
+  if (!state.settings) return;
+  const count = (state.settings.ignoredCwes || []).length;
+  state.settings.ignoredCwes = [];
+  
+  if (window.currentCveCatalogue && window.currentCveCatalogue.length > 0) {
+    state.settings.activeCveRules = window.currentCveCatalogue.map(r => r.rule_id);
+  } else {
+    delete state.settings.activeCveRules;
+  }
+
+  localStorage.setItem('aetherscope_settings', JSON.stringify(state.settings));
+  if (typeof showToast === 'function') {
+    showToast(`✅ ${count} règle(s) CWE réactivée(s) !`);
+  }
+  if (window.AudioSys?.nodeSelect) AudioSys.nodeSelect();
+
+  try {
+    await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exclusions: state.settings.exclusions || [],
+        active_cve_rules: state.settings.activeCveRules || null,
+        ignored_cwes: []
+      })
+    });
+  } catch (_) {}
+
+  renderIgnoredCweList();
+  renderCveAnomaliesPanel();
+  if (typeof renderCveRulesSettings === 'function') renderCveRulesSettings();
+};
 
 function clearCveQuickSearch() {
   const inp = document.getElementById('cve-quick-search-input');
@@ -3648,7 +3892,8 @@ async function syncBountyOutScopeToScanner() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         exclusions: merged,
-        active_cve_rules: state.settings.activeCveRules || []
+        active_cve_rules: state.settings.activeCveRules || null,
+        ignored_cwes: state.settings.ignoredCwes || []
       })
     });
     showToast(`🔄 ${parsed.paths.length} motifs Out-of-Scope synchronisés avec le Scanner AST ! Relancez Analyser.`);

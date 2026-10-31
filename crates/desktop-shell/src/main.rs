@@ -222,6 +222,7 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
         graph_version: std::sync::atomic::AtomicU64::new(1),
         custom_exclusions: RwLock::new(Vec::new()),
         active_cve_rules: RwLock::new(None),
+        ignored_cwes: RwLock::new(Vec::new()),
     });
 
     // FileWatcher background loop
@@ -1175,9 +1176,11 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                     let saved_active = state.active_cve_rules.read().await.clone();
                     let active_rules: Vec<String> = saved_active
                         .unwrap_or_else(|| catalogue.iter().map(|r| r.rule_id.clone()).collect());
+                    let ignored_cwes = state.ignored_cwes.read().await.clone();
                     axum::Json(SettingsPayload {
                         exclusions,
                         active_cve_rules: Some(active_rules),
+                        ignored_cwes: Some(ignored_cwes),
                         cve_catalogue: Some(catalogue),
                         mcp_binary_path: resolve_mcp_binary_path(),
                     })
@@ -1194,14 +1197,36 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         let mut cve_guard = state.active_cve_rules.write().await;
                         *cve_guard = Some(rules.clone());
                     }
+                    if let Some(ref ignored) = payload.ignored_cwes {
+                        let mut ign_guard = state.ignored_cwes.write().await;
+                        *ign_guard = ignored.clone();
+                    }
                     let p_root = state.project_root.read().await.clone();
                     let scanner = ProjectScanner::default();
                     let mut new_graph = scanner.scan_project_with_exclusions(&p_root, &payload.exclusions);
                     let active_opt = state.active_cve_rules.read().await.clone();
-                    if let Some(ref allowed) = active_opt {
-                        let allowed_set: std::collections::HashSet<&str> = allowed.iter().map(|s| s.as_str()).collect();
+                    let ignored_cwes = state.ignored_cwes.read().await.clone();
+                    let ignored_set: std::collections::HashSet<String> = ignored_cwes.iter().map(|s| s.to_uppercase()).collect();
+                    if active_opt.is_some() || !ignored_set.is_empty() {
+                        let allowed_set_opt: Option<std::collections::HashSet<&str>> = active_opt.as_ref().map(|allowed| allowed.iter().map(|s| s.as_str()).collect());
                         for node in &mut new_graph.nodes {
-                            node.metadata.cve_anomalies.retain(|a| allowed_set.contains(a.rule_id.as_str()));
+                            node.metadata.cve_anomalies.retain(|a| {
+                                let rule_str = a.rule_id.as_str();
+                                if let Some(ref allowed_set) = allowed_set_opt {
+                                    if !allowed_set.contains(rule_str) {
+                                        return false;
+                                    }
+                                }
+                                let rule_up = rule_str.to_uppercase();
+                                let cve_up = a.cve_id.to_uppercase();
+                                if ignored_set.contains(&rule_up) || ignored_set.contains(&cve_up) {
+                                    return false;
+                                }
+                                if ignored_set.iter().any(|ign| !ign.is_empty() && (cve_up.contains(ign) || rule_up.contains(ign))) {
+                                    return false;
+                                }
+                                true
+                            });
                             if node.metadata.cve_anomalies.is_empty() {
                                 node.has_security_violation = false;
                             }
@@ -1216,6 +1241,7 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         "status": "ok",
                         "exclusions": payload.exclusions,
                         "active_cve_rules": active_resp,
+                        "ignored_cwes": ignored_cwes,
                         "cve_catalogue": catalogue,
                         "total_nodes": new_graph.nodes.len(),
                         "total_edges": new_graph.edges.len()

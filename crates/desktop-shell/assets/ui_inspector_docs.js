@@ -467,7 +467,7 @@ function renderNodeDebrief(n, incoming, outgoing) {
 
   // Violations list block
   let violationsHtml = '';
-  const anomaliesList = meta.cve_anomalies || [];
+  const anomaliesList = (meta.cve_anomalies || []).filter(a => !(typeof isCweOrRuleIgnored === 'function' && isCweOrRuleIgnored(a.rule_id, a.cve_id)));
   if ((meta.violations && meta.violations.length > 0) || anomaliesList.length > 0) {
     const totalV = Math.max(meta.violations ? meta.violations.length : 0, anomaliesList.length);
     violationsHtml = `
@@ -523,6 +523,9 @@ function renderNodeDebrief(n, incoming, outgoing) {
                   🧪 PoC Bug Bounty
                 </button>
                 ${defiPatchBtn}
+                <button class="cve-action-btn ignore" onclick="if(window.ignoreCweRuleExplicit)window.ignoreCweRuleExplicit('${escapeForBacktick(a.rule_id)}', '${escapeForBacktick(a.cve_id)}')">
+                  🚫 Ignorer CWE
+                </button>
               </div>
             </div>
             `;

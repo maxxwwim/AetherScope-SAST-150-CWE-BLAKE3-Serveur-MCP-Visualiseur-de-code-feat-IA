@@ -89,6 +89,9 @@ Contrairement aux scanners par expressions régulières classiques qui génèren
      - 🧪 **Mode 1 — Triage & Proof of Concept (PoC) Exécutable (Sans modifier le code) :** Impose la règle *"Zéro correction barbare"*, demande à l'IA de vérifier l'atteignabilité *Source-to-Sink*, d'écrire un test d'exploitation autonome (`#[test]` Rust, script exploit Python/curl, `cargo miri`, ou Foundry `test_poc`) et de rédiger le rapport final au format **Immunefi / HackerOne / Cantina**.
      - 🔬 **Mode 2 — Chasse Zero-Day Bas-Niveau :** Oriente l'audit sur les bugs subtils de compilateur LLVM, d'unwind de pile, d'ABI FFI et de désynchronisation d'état.
      - 🛡️ **Mode 3 — Patch Chirurgical Minimal :** Fournit le patron de remédiation certifié (*Gold Pattern*) pour corriger la ligne vulnérable sans effet de bord.
+4. **Gestion Flexible des Règles CWE & Tolérance Haute Verbosité (Java) :**
+   - **Bouton d'Ignoration Directe des CWE (« 🚫 Ignorer CWE ») :** Intégré directement sur chaque carte de vulnérabilité de l'onglet latéral droit CVE/SAST. Permet en 1 clic d'ignorer une règle CWE spécifique pour le projet en cours, avec persistance LocalStorage et synchronisation /api/settings. Les règles peuvent être auditées et restaurées via la modale « 🚫 Ignorées ».
+   - **Tolérance Haute Verbosité Java (RULE_MAX_LINES / CWE-1075) :** Le langage Java étant structurellement très verbeux (boilerplate, annotations Spring/Jakarta, getters/setters, DTOs, entités JPA), le seuil de détection d'excédent de lignes est automatiquement relevé à 10 000 lignes (au lieu de 300 lignes standards) pour éviter les alertes intempestives sur les classes de production normales.
 
 ---
 
@@ -335,7 +338,7 @@ Le serveur Axum embarqué sert le cockpit spatial directement sur la route racin
 | `BLAKE3_TAMPERED` | CWE-353 / Contract Tampering | **CRITICAL** | Contrat `README.md` modifié sur disque sans correspondance avec l'empreinte BLAKE3 scellée dans `aether.lock.toml`. | Auditer la modification et cliquer sur **« 🔒 Signer Contrat »** dans l'inspecteur. |
 | `RULE_FORBIDDEN_IMPORT` | CWE-1075 / Boundary Crossing | **CRITICAL** | Franchissement illégal de couche (ex: module `client/ui` important directement `data-nodes` ou `server/domain`). | Supprimer l'import interdit et transiter par les interfaces de `contracts/`. |
 | `SAST_DIRECT_ENV_ACCESS` | CWE-15 / Impure Domain Env | **HIGH** | Lecture directe de `std::env::var` ou `process.env` au sein d'un module de domaine pur (`deterministic_only: true`). | Injecter la configuration typée depuis la couche d'orchestration au démarrage. |
-| `RULE_MAX_LINES` | CWE-1075 / LOC Budget Exceeded| **WARNING** | Fichier source dépassant le budget `max_lines_per_file` défini dans le contrat du dossier. | Découper le fichier en sous-modules atomiques à responsabilité unique. |
+| `RULE_MAX_LINES` | CWE-1075 / LOC Budget Exceeded| **WARNING** | Fichier source dépassant le budget `max_lines_per_file` défini dans le contrat du dossier (seuil standard : 300 lignes, Solidity : 600 lignes, Java : calibré à 10 000 lignes pour tolérer la haute verbosité naturelle du langage, frameworks Spring/Jakarta et getters/setters). | Découper le fichier en sous-modules atomiques à responsabilité unique. |
 
 ---
 
@@ -601,6 +604,8 @@ Basculez instantanément entre 4 topologies géométriques interpolées à 120 F
   2. **Onglet Architecture UML & Mini-DAG :** Génère la carte UML de la structure/classe (attributs typés `+`, méthodes et types de retour) ainsi qu'un **mini-graphe vectoriel SVG** interactif centré sur le nœud.
   3. **Onglet Relations :** Liste cliquable et catégorisée de tous les appelants amont et sous-appels aval.
   4. **Onglet Anomalies CVE (`🚨`) :** Centre de tri interactif des vulnérabilités détectées avec filtres par sévérité (`CRITICAL`, `HIGH`) et par langage (`🦀 Rust`, `🌐 Web3`, `🟢 Node/TS`, `🐍 Python`, `⚙️ C/C++`, `🏛️ Arch`), explication détaillée du vecteur d'attaque, remédiation et génération de PoC en 1 clic.
+     - **Bouton 1-Clic « 🚫 Ignorer CWE » :** Chaque carte de vulnérabilité dispose désormais d'un bouton direct pour ignorer instantanément une règle CWE spécifique. L'anomalie est immédiatement retirée de l'audit et du graphe spatial 3D.
+     - **Gestionnaire « 🚫 Ignorées (<span id="cwe-ignored-count">N</span>) » :** Situé dans l'en-tête de l'onglet droit, ce bouton ouvre une modale dédiée listant toutes les règles ignorées, permettant de les inspecter et de les réactiver individuellement ou globalement (« 🔄 Tout Réactiver »). Persistance automatique en LocalStorage et synchronisation serveur API `/api/settings`.
 
 ---
 

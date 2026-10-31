@@ -2498,10 +2498,15 @@ async function renderCveRulesSettings() {
         const data = await res.json();
         if (data.cve_catalogue) {
           currentCveCatalogue = data.cve_catalogue;
+          window.currentCveCatalogue = data.cve_catalogue;
         }
         if (data.active_cve_rules && !state.settings?.activeCveRules) {
           if (!state.settings) state.settings = {};
           state.settings.activeCveRules = data.active_cve_rules;
+        }
+        if (data.ignored_cwes && (!state.settings?.ignoredCwes || state.settings.ignoredCwes.length === 0)) {
+          if (!state.settings) state.settings = {};
+          state.settings.ignoredCwes = data.ignored_cwes;
         }
       }
     }
@@ -2589,6 +2594,9 @@ window.onCveRuleToggle = function(ruleId, isChecked) {
   let active = new Set(state.settings.activeCveRules || currentCveCatalogue.map(r => r.rule_id));
   if (isChecked) {
     active.add(ruleId);
+    if (Array.isArray(state.settings.ignoredCwes)) {
+      state.settings.ignoredCwes = state.settings.ignoredCwes.filter(id => id !== ruleId && !ruleId.includes(id));
+    }
   } else {
     active.delete(ruleId);
   }
@@ -2608,6 +2616,7 @@ window.toggleAllCveRules = function(enableAll) {
   if (!state.settings) state.settings = {};
   if (enableAll) {
     state.settings.activeCveRules = currentCveCatalogue.map(r => r.rule_id);
+    state.settings.ignoredCwes = [];
   } else {
     state.settings.activeCveRules = [];
   }
@@ -2756,20 +2765,22 @@ document.getElementById('btn-save-settings')?.addEventListener('click', async ()
     const aiPromptInput = document.getElementById('setting-ai-custom-prompt');
     if (aiPromptInput) state.settings.copilotPrompt = aiPromptInput.value.trim();
 
-    // 8. CVE Active Rules
+    // 8. CVE Active Rules & Ignored CWEs
     const activeCve = state.settings.activeCveRules || (currentCveCatalogue ? currentCveCatalogue.map(r => r.rule_id) : []);
+    const ignoredCwes = state.settings.ignoredCwes || [];
 
     // Persist to LocalStorage
     localStorage.setItem('aetherscope_settings', JSON.stringify(state.settings));
 
-    // Send exclusions & active CVE rules to Server API
+    // Send exclusions, active CVE rules & ignored CWEs to Server API
     try {
       await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           exclusions: lines,
-          active_cve_rules: activeCve
+          active_cve_rules: activeCve,
+          ignored_cwes: ignoredCwes
         })
       });
     } catch (_) {}

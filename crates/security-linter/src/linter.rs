@@ -1249,16 +1249,26 @@ impl SecurityLinter {
             || norm_path.starts_with("interface")
             || norm_path.ends_with("interface.sol")
             || norm_path.ends_with(".d.ts")
-            || (file_name.starts_with('I') && file_name.chars().nth(1).map_or(false, |c| c.is_uppercase()) && norm_path.ends_with(".sol"))
+            || (file_name.starts_with('I') && file_name.chars().nth(1).map_or(false, |c| c.is_uppercase()) && (norm_path.ends_with(".sol") || norm_path.ends_with(".java")))
             || norm_path.contains("/types/")
-            || (norm_path.ends_with(".sol") && content.contains("interface ") && !content.contains("contract "));
+            || (norm_path.ends_with(".sol") && content.contains("interface ") && !content.contains("contract "))
+            || (norm_path.ends_with(".java") && content.contains("interface "));
 
         // 1. Règle max_lines_per_file (Architecture)
         // Exclut formellement les tests, scripts, mocks, interfaces et déclarations de types
         if !is_test_file && !is_interface_or_types {
             if let Some(c) = contract {
-                // Pour les contrats Solidity de production, relever le seuil par défaut à 600 si aucun contrat README local ne fixe de budget strict différent de 300
-                let limit = if norm_path.ends_with(".sol") && c.frontmatter.max_lines_per_file == 300 {
+                let is_java = norm_path.ends_with(".java");
+                // Pour les contrats Solidity de production, relever le seuil par défaut à 600 si aucun contrat README local ne fixe de budget strict différent de 300.
+                // Pour Java : langage structurellement très verbeux (imports, packages, annotations Spring/Jakarta, getters/setters, modèles DTO/Entités),
+                // porter le seuil à 10 000 lignes (ou ne pas pénaliser la verbosité standard) afin d'éviter les faux positifs d'excédent de lignes.
+                let limit = if is_java {
+                    if c.frontmatter.max_lines_per_file == 300 {
+                        10_000
+                    } else {
+                        c.frontmatter.max_lines_per_file.max(10_000)
+                    }
+                } else if norm_path.ends_with(".sol") && c.frontmatter.max_lines_per_file == 300 {
                     600
                 } else {
                     c.frontmatter.max_lines_per_file
@@ -4080,6 +4090,11 @@ mod tests {
         assert!(test_lines_v.iter().all(|v| v.rule_id != "RULE_MAX_LINES"), "Tests must not trigger RULE_MAX_LINES");
         let iface_lines_v = SecurityLinter::audit_file("src/EVault/IEVault.sol", &big_code, Some(&contract));
         assert!(iface_lines_v.iter().all(|v| v.rule_id != "RULE_MAX_LINES"), "Interfaces must not trigger RULE_MAX_LINES");
+
+        // 6. Java files are very verbose (imports, getters/setters, annotations) and must not trigger RULE_MAX_LINES for verbose classes up to 10 000 lines
+        let java_code = "line\n".repeat(2500);
+        let java_lines_v = SecurityLinter::audit_file("src/main/java/com/example/MyVerboseService.java", &java_code, Some(&contract));
+        assert!(java_lines_v.iter().all(|v| v.rule_id != "RULE_MAX_LINES"), "Verbose Java files up to 10 000 lines must not trigger RULE_MAX_LINES");
     }
 
     #[test]

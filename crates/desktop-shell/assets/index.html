@@ -1143,6 +1143,7 @@
               </div>
             </div>
             <div class="cve-insp-actions">
+              <button id="btn-view-ignored-cwe" class="aether-btn ignored-cwe-btn" onclick="openIgnoredCweModal()" style="font-size:0.65rem; padding:4px 9px;" title="Gérer ou réactiver les règles CWE ignorées">🚫 Ignorées (<span id="cwe-ignored-count">0</span>)</button>
               <button class="aether-btn bounty-btn" onclick="openBountyScopeModal()" style="font-size:0.65rem; padding:4px 9px;" title="Préparer un Prompt PoC Zero-Day filtré avec In-Scope / Out-of-Scope du Bug Bounty">🎯 Scope & PoC</button>
               <button class="aether-btn" onclick="copyAllCveHandshakes()" style="font-size:0.65rem; padding:4px 9px;" title="Copier le prompt PoC & Triage Bug Bounty pour toutes les règles In-Scope">🧪 Tout Copier</button>
             </div>
@@ -1642,6 +1643,34 @@
           <button class="aether-btn primary" onclick="copyBountyScopePrompt()" style="background:linear-gradient(135deg, #f59e0b, #ef4444); border-color:#fbbf24; color:#02040a; font-weight:800;">📋 Copier le Prompt PoC Bug Bounty</button>
           <button class="aether-btn" onclick="closeBountyScopeModal()">Fermer</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 10: Gestion des CWE & Règles Ignorées -->
+  <div id="ignored-cwe-modal" class="modal-overlay" onclick="if (event.target === this) closeIgnoredCweModal()">
+    <div class="modal-card" style="width: 720px; max-width: 95vw; border-color: #ef4444; box-shadow: 0 0 50px rgba(239, 68, 68, 0.35);">
+      <div class="modal-header" style="border-bottom-color: rgba(239, 68, 68, 0.3);">
+        <div class="modal-title" style="display:flex; align-items:center; gap:8px;">
+          <span>🚫</span>
+          <strong>Règles CWE Ignorées</strong>
+          <span class="project-pill" id="ignored-cwe-modal-count">0</span>
+        </div>
+        <button class="modal-close" onclick="closeIgnoredCweModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 12px; max-height: 70vh; overflow-y: auto;">
+        <p style="font-size:0.78rem; color:#94a3b8; margin:0;">
+          Les règles CWE ci-dessous ont été ignorées directement depuis l'onglet CVE/Vulns. Elles sont masquées du graphe spatial et des alertes. Vous pouvez les réactiver à tout moment.
+        </p>
+        <div id="ignored-cwe-list-container" style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+          <!-- Rempli dynamiquement -->
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(239, 68, 68, 0.2); justify-content:space-between;">
+        <button class="aether-btn danger" onclick="restoreAllIgnoredCwes()" id="btn-restore-all-cwes" style="font-size:0.75rem; padding:6px 12px; color:#fca5a5; border-color:rgba(239,68,68,0.4); background:rgba(239,68,68,0.15);">
+          🔄 Tout Réactiver
+        </button>
+        <button class="aether-btn" onclick="closeIgnoredCweModal()">Fermer</button>
       </div>
     </div>
   </div>

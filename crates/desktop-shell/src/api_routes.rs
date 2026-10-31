@@ -33,6 +33,8 @@ pub struct SettingsPayload {
     pub exclusions: Vec<String>,
     #[serde(default)]
     pub active_cve_rules: Option<Vec<String>>,
+    #[serde(default)]
+    pub ignored_cwes: Option<Vec<String>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cve_catalogue: Option<Vec<security_linter::CveRuleDef>>,
     /// Chemin réel de `aetherscope-mcp` (à côté de l'exécutable en cours) pour générer la config MCP.
@@ -270,6 +272,7 @@ pub struct AppState {
     pub graph_version: std::sync::atomic::AtomicU64,
     pub custom_exclusions: RwLock<Vec<String>>,
     pub active_cve_rules: RwLock<Option<Vec<String>>>,
+    pub ignored_cwes: RwLock<Vec<String>>,
 }
 
 pub fn clean_path_string(p: &Path) -> String {
