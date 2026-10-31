@@ -170,6 +170,11 @@ impl AuditWriter {
             "rust"
         } else if project_root.join("pyproject.toml").exists() || project_root.join("requirements.txt").exists() {
             "python"
+        } else if project_root.join("pom.xml").exists()
+            || project_root.join("build.gradle").exists()
+            || project_root.join("build.gradle.kts").exists()
+        {
+            "java"
         } else if project_root.join("package.json").exists() || project_root.join("pnpm-lock.yaml").exists() {
             "ts"
         } else {
@@ -200,6 +205,11 @@ impl AuditWriter {
                 "🟢 Node.js TypeScript (pnpm Workspace)",
                 "`pnpm` Workspace : `contracts/` (Zod), `server/` (Hono / tRPC), `client/` (Vite UI), `data-nodes/` (Drizzle / Prisma)",
                 "Schémas Zod et routeurs tRPC de bout en bout",
+            ),
+            "java" | "minecraft" => (
+                "☕ Java & JVM Ecosystem (Minecraft / Paper / Spring)",
+                "Java / Gradle / Maven : Plugins Paper/Purpur (`src/main/java`), Runner Tokio, API Endpoints & Event Listeners",
+                "Interfaces & Records Java, Invariants EARS et Spécifications Manifest universelles",
             ),
             _ => (
                 "⚡ Hybride Web3 & Temps Réel MMO",

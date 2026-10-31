@@ -1,7 +1,7 @@
 ---
 id: desktop-shell
 layer: api
-max_lines_per_file: 1100
+max_lines_per_file: 1200
 allowed_imports: ["core_graph::*", "ast_scanner::*", "arch_templates::*", "security_linter::*", "ai_file_bridge::*", "axum::*", "tokio::*", "clap::*", "wry::*", "tao::*", "rfd::*", "serde::*", "serde_json::*", "std::*"]
 forbidden_imports: []
 security_rules:

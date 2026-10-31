@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}AetherCraft — Serveur Survie & Donjons Célestes (1.20 - 1.21.x){% endblock %}
+
+{% block content %}
+<!-- ========================================================
+     HERO SECTION CINÉMATIQUE ÉPURÉE (STYLE PRÉSENTATION)
+     ======================================================== -->
+<section class="relative min-h-[95vh] flex items-center justify-center overflow-hidden">
+  
+  <!-- Image de Fond : Voxel Cube Vert Minecraft & Veines Sanglantes (RTX) -->
+  <div id="hero-bg-layer" 
+       class="absolute inset-0 bg-cover bg-center sm:bg-[center_top_15%] bg-no-repeat transition-transform duration-100 ease-out will-change-transform scale-105 pointer-events-none"
+       style="background-image: url('/static/images/hero-cube.jpg');">
+    
+    <!-- Dégradé fluide : L'image reste éclatante en haut/centre, puis fond harmonieusement vers le noir obsidienne -->
+    <div class="absolute inset-0 bg-gradient-to-b from-obsidian-950/30 via-transparent to-obsidian-950"></div>
+    <div class="absolute bottom-0 inset-x-0 h-72 bg-gradient-to-t from-obsidian-950 via-obsidian-950/90 to-transparent"></div>
+    
+    <!-- Lueur d'ambiance émeraude et rubis -->
+    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute top-1/2 right-1/3 w-80 h-80 bg-rose-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+  </div>
+
+  <!-- Conteneur Présentation Épuré (Cible du Scroll Fou Disparition) -->
+  <div id="hero-content-wrapper" class="max-w-6xl mx-auto px-6 py-28 relative z-10 w-full transition-all duration-75 ease-out will-change-transform text-center lg:text-left">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Colonne Principale (8 Cols) : Présentation Typographique & IP Capsule -->
+      <div class="lg:col-span-8 space-y-8">
+        
+        <!-- Badge de Présentation Épuré -->
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-panel border border-emerald-500/30 text-xs font-gaming tracking-wider shadow-2xl backdrop-blur-xl">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="text-emerald-300 font-bold uppercase">AETHERCRAFT // SAISON 4 PRIMORDIALE</span>
+          <span class="text-rose-400 font-mono text-[11px] border-l border-white/10 pl-2">PAPER 1.21.1</span>
+        </div>
+
+        <!-- Titre Monumental Style Présentation -->
+        <div class="space-y-3">
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black font-gaming tracking-tight text-white leading-none drop-shadow-2xl">
+            L'ARCHIPEL CÉLESTE. <br>
+            <span class="bg-gradient-to-r from-emerald-300 via-teal-200 to-rose-400 bg-clip-text text-transparent">
+              REDÉFINI POUR L'ÉLITE.
+            </span>
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed font-normal drop-shadow pt-2">
+            Un écosystème Minecraft survie et donjons instanciés d'une pureté absolue. 
+            <strong>100% sans mods</strong>, <strong>économie réelle</strong> et <strong>20.0 TPS imperturbables</strong> propulsés par le runner natif Tokio.
+          </p>
+        </div>
+
+        <!-- Capsule IP Épurée & Minimaliste (Style Keynote) -->
+        <div class="p-3 sm:p-4 rounded-3xl glass-panel max-w-lg mx-auto lg:mx-0 shadow-2xl border border-white/15 spotlight-card backdrop-blur-2xl">
+          <div class="flex flex-col sm:flex-row items-center gap-2.5">
+            
+            <div class="flex-1 w-full flex items-center justify-between bg-black/60 border border-white/10 rounded-2xl px-4 py-3 text-sm font-mono text-emerald-300 font-bold select-all">
+              <span class="flex items-center gap-2">
+                <span class="text-emerald-400">⚡</span>
+                <span>play.aethercraft.net</span>
+              </span>
+              <span class="inline-flex items-center text-[10px] text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800 font-mono">
+                {{ server_status.players_online }} EN LIGNE
+              </span>
+            </div>
+
+            <button onclick="copyServerIp()" 
+                    class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-obsidian-950 font-gaming font-black text-xs whitespace-nowrap shadow-xl shadow-emerald-500/25 transition active:scale-95 flex items-center justify-center gap-2">
+              <span>📋</span> <span>COPIER</span>
+            </button>
+          </div>
+          
+          <div class="mt-2.5 px-2 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Minecraft Java <strong>1.20 à 1.21.1</strong></span>
+            <span class="text-emerald-400 font-mono font-semibold">{{ server_status.ping_ms }} ms (Paris)</span>
+          </div>
+        </div>
+
+        <!-- Boutons d'Action Rapide -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+          <a href="/boutique" onclick="AudioSys.playClick()" 
+             class="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-obsidian-950 font-gaming font-black text-xs tracking-wider shadow-2xl shadow-amber-500/30 transition flex items-center gap-2.5 active:scale-95">
+            <span>👑</span> BOUTIQUE DU SERVEUR
+          </a>
+          <a href="#presentation" onclick="AudioSys.playClick()" 
+             class="px-8 py-4 rounded-2xl glass-panel hover:bg-white/10 border border-white/20 text-white font-gaming font-bold text-xs tracking-wider transition flex items-center gap-2 active:scale-95">
+            <span>🧭</span> EXPLORER L'EXPÉRIENCE ↓
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Colonne Droite (4 Cols) : Capsule Carte d'Honneur (Minimaliste & Flottante) -->
+      <div class="lg:col-span-4 hidden lg:flex justify-end">
+        <div class="relative w-full max-w-xs">
+          
+          <!-- Halo Rubis & Émeraude -->
+          <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 via-rose-600/20 to-amber-500/20 rounded-3xl blur-2xl transform scale-110 pointer-events-none"></div>
+
+          <!-- Carte Flottante Épurée -->
+          <div class="relative glass-panel rounded-3xl p-6 shadow-2xl border border-white/15 overflow-hidden animate-float spotlight-card">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <span class="text-[10px] font-gaming font-bold text-slate-300 uppercase tracking-widest">CHAMPION DU ROYAUME</span>
+              <span class="px-2 py-0.5 rounded text-[9px] font-gaming font-black bg-rose-950 text-rose-300 border border-rose-800">
+                PVP ÉLITE
+              </span>
+            </div>
+
+            <!-- Skin 3D Render -->
+            <div class="py-4 flex justify-center items-center relative">
+              <img src="https://mc-heads.net/body/AetherKnight/right" 
+                   alt="Minecraft Skin 3D" 
+                   class="h-56 object-contain filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.9)] animate-glow">
+              
+              <div class="absolute bottom-2 left-2 glass-panel px-3 py-1 rounded-xl border border-emerald-500/40 text-[10px] font-mono font-bold text-emerald-300 shadow-lg">
+                ⚔️ Niv. 100
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 gap-2 text-center text-xs pt-3 border-t border-white/10">
+              <div class="bg-black/40 p-2 rounded-xl border border-white/5">
+                <span class="text-[10px] text-slate-400 block font-gaming">FRAGS</span>
+                <span class="font-mono font-bold text-rose-400 text-sm">892</span>
+              </div>
+              <div class="bg-black/40 p-2 rounded-xl border border-white/5">
+                <span class="text-[10px] text-slate-400 block font-gaming">FORTUNE</span>
+                <span class="font-mono font-bold text-amber-300 text-sm">184k 🪙</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scroll Indicator Arrow -->
+    <div class="text-center pt-14">
+      <div class="inline-flex flex-col items-center gap-1.5 text-slate-400/80 animate-bounce cursor-pointer" 
+           onclick="document.getElementById('presentation').scrollIntoView({ behavior: 'smooth' })">
+        <span class="text-[10px] font-gaming uppercase tracking-widest text-emerald-400">Défiler pour la présentation</span>
+        <span class="text-base text-emerald-400">↓</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ========================================================
+     BANDE DE TÉLÉMÉTRIE ÉPURÉE & SPÉCIFICATIONS
+     ======================================================== -->
+<section class="py-10 border-y border-white/10 bg-obsidian-950 relative z-20">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 reveal-on-scroll">
+      
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 text-center spotlight-card">
+        <div class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight">20.0</div>
+        <div class="text-xs font-gaming font-bold text-white uppercase tracking-wider mt-1">TPS Constant</div>
+        <div class="text-[10px] text-slate-400 mt-0.5">Zéro lag • Moteur Tokio</div>
+      </div>
+
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 text-center delay-100 spotlight-card">
+        <div class="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">1.21.1</div>
+        <div class="text-xs font-gaming font-bold text-white uppercase tracking-wider mt-1">Version Serveur</div>
+        <div class="text-[10px] text-slate-400 mt-0.5">Compatible 1.20 à 1.21.x</div>
+      </div>
+
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 text-center delay-200 spotlight-card">
+        <div class="text-3xl sm:text-4xl font-black text-rose-400 font-mono tracking-tight">&lt; 15 ms</div>
+        <div class="text-xs font-gaming font-bold text-white uppercase tracking-wider mt-1">Latence Réseau</div>
+        <div class="text-[10px] text-slate-400 mt-0.5">Datacenter Paris (Fibre 10Gbps)</div>
+      </div>
+
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 text-center delay-300 spotlight-card">
+        <div class="text-3xl sm:text-4xl font-black text-amber-400 font-mono tracking-tight">0 MOD</div>
+        <div class="text-xs font-gaming font-bold text-white uppercase tracking-wider mt-1">100% Vanilla</div>
+        <div class="text-[10px] text-slate-400 mt-0.5">Pack automatique intégré</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================================
+     PRÉSENTATION DES 3 GRANDS PILIERS (STYLE TRIPTYQUE ÉPURÉ)
+     ======================================================== -->
+<section id="presentation" class="py-24 bg-obsidian-900/40 relative z-20">
+  <div class="max-w-6xl mx-auto px-6">
+    
+    <!-- En-tête de Section -->
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal-on-scroll">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-400 text-xs font-gaming tracking-wide mb-3">
+        <span>💎</span> L'EXPÉRIENCE EN 3 ACTES
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-black font-gaming text-white tracking-tight">
+        Conçu Sans Concession.
+      </h2>
+      <p class="text-sm text-slate-400 mt-3 font-normal leading-relaxed">
+        Trois piliers fondamentaux garantissent une aventure équilibrée, immersive et techniquement irréprochable.
+      </p>
+    </div>
+
+    <!-- Triptyque de Présentation (3 Grands Blocs) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Pilier 1 : Survie Primordiale -->
+      <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 hover:border-emerald-500/40 transition duration-300 flex flex-col justify-between spotlight-card reveal-on-scroll">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-800 flex items-center justify-center text-2xl text-emerald-400 shadow-inner">
+            ⚔️
+          </div>
+          <h3 class="text-xl font-bold font-gaming text-white">Survie & Territoires</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            Revendiquez votre domaine en toute sécurité grâce au système de claims automatique. Vos coffres, spawners et cultures sont protégés des pillages non autorisés.
+          </p>
+          <ul class="space-y-2 text-xs text-slate-400 pt-2 border-t border-white/5">
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Biomes féeriques sculptés à la main</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Monde Minage renouvelé chaque semaine</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> Économie réelle 100% régulée par les joueurs</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Pilier 2 : Donjons Sanglants & Boss -->
+      <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 hover:border-rose-500/40 transition duration-300 flex flex-col justify-between spotlight-card reveal-on-scroll delay-100">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-rose-950/80 border border-rose-800 flex items-center justify-center text-2xl text-rose-400 shadow-inner">
+            🗝️
+          </div>
+          <h3 class="text-xl font-bold font-gaming text-white">Donjons & Boss Célestes</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            Pénétrez en escouade dans les failles de l'Aether. Affrontez des boss légendaires aux paternes dynamiques et récupérez des armes enchantées Tier 5 exclusives.
+          </p>
+          <ul class="space-y-2 text-xs text-slate-400 pt-2 border-t border-white/5">
+            <li class="flex items-center gap-2"><span class="text-rose-400">✓</span> 3 paliers de difficulté (Normal, Héroïque, Mythique+)</li>
+            <li class="flex items-center gap-2"><span class="text-rose-400">✓</span> Compétences d'éclair, vampirisme et téléportation</li>
+            <li class="flex items-center gap-2"><span class="text-rose-400">✓</span> Coffres de fin de raid partagés</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Pilier 3 : Moteur Rust Tokio -->
+      <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 hover:border-amber-500/40 transition duration-300 flex flex-col justify-between spotlight-card reveal-on-scroll delay-200">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-amber-950/80 border border-amber-800 flex items-center justify-center text-2xl text-amber-400 shadow-inner">
+            🦀
+          </div>
+          <h3 class="text-xl font-bold font-gaming text-white">Moteur Rust Tokio</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            Déploiement et supervision via notre binaire natif compilé en Rust. Vérification continue des checksums SHA-256 et allocation dynamique de la mémoire JVM.
+          </p>
+          <ul class="space-y-2 text-xs text-slate-400 pt-2 border-t border-white/5">
+            <li class="flex items-center gap-2"><span class="text-amber-400">✓</span> Pré-génération Chunky sur 10 000 blocs</li>
+            <li class="flex items-center gap-2"><span class="text-amber-400">✓</span> Garbage Collector G1GC optimisé par profil RAM</li>
+            <li class="flex items-center gap-2"><span class="text-amber-400">✓</span> Synchronisation RCON des achats en &lt; 5 secondes</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================
+     COMMENT NOUS REJOINDRE (3 ÉTAPES MINIMALISTES)
+     ======================================================== -->
+<section class="py-20 bg-obsidian-950 border-t border-white/10 relative z-20">
+  <div class="max-w-5xl mx-auto px-6">
+    
+    <div class="text-center mb-16 reveal-on-scroll">
+      <h2 class="text-xs font-gaming font-bold text-emerald-400 tracking-widest uppercase mb-1">Accès Instantané</h2>
+      <h3 class="text-3xl sm:text-4xl font-black font-gaming text-white">Rejoindre en 3 Étapes Simples</h3>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+      
+      <!-- Étape 1 -->
+      <div class="glass-panel p-8 rounded-3xl border border-white/10 spotlight-card reveal-on-scroll">
+        <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-black font-gaming text-lg mx-auto flex items-center justify-center mb-4">
+          01
+        </div>
+        <h4 class="font-gaming font-bold text-white text-base mb-2">Lancez Minecraft</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Démarrez Minecraft Java Edition en version officielle ou launcher libre (1.20 à 1.21.1).
+        </p>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="glass-panel p-8 rounded-3xl border border-white/10 spotlight-card reveal-on-scroll delay-100">
+        <div class="w-12 h-12 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 font-black font-gaming text-lg mx-auto flex items-center justify-center mb-4">
+          02
+        </div>
+        <h4 class="font-gaming font-bold text-white text-base mb-2">Ajoutez l'Adresse</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Dans Multijoueur, cliquez sur « Ajouter un serveur » et entrez <code class="text-emerald-300 font-mono font-bold">play.aethercraft.net</code>.
+        </p>
+      </div>
+
+      <!-- Étape 3 -->
+      <div class="glass-panel p-8 rounded-3xl border border-white/10 spotlight-card reveal-on-scroll delay-200">
+        <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 font-black font-gaming text-lg mx-auto flex items-center justify-center mb-4">
+          03
+        </div>
+        <h4 class="font-gaming font-bold text-white text-base mb-2">Entrez dans l'Aether</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Connectez-vous ! Le pack de ressources se charge automatiquement. L'aventure commence.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Bannière CTA Centrale -->
+    <div class="mt-14 glass-panel p-8 sm:p-10 rounded-3xl border border-emerald-500/30 text-center relative overflow-hidden spotlight-card">
+      <div class="max-w-2xl mx-auto space-y-4">
+        <h3 class="text-2xl sm:text-3xl font-black font-gaming text-white">
+          Prêt à bâtir votre empire céleste ?
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-300">
+          Rejoignez plus de 3 400 aventuriers déjà inscrits dans les donjons et guildes d'AetherCraft.
+        </p>
+        <div class="pt-2 flex flex-wrap justify-center gap-3">
+          <button onclick="copyServerIp()" 
+                  class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-obsidian-950 font-gaming font-black text-xs shadow-xl shadow-emerald-500/30 transition active:scale-95 flex items-center gap-2">
+            <span>📋</span> <span>COPIER PLAY.AETHERCRAFT.NET</span>
+          </button>
+          <a href="/boutique" onclick="AudioSys.playClick()" 
+             class="px-8 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-obsidian-950 font-gaming font-black text-xs shadow-xl shadow-amber-500/25 transition active:scale-95 flex items-center gap-2">
+            <span>👑</span> BOUTIQUE OFFICIELLE
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================================
+     FAQ ÉPURÉE (ACCORDÉON MINIMALISTE)
+     ======================================================== -->
+<section class="py-20 bg-obsidian-950 border-t border-white/10 relative z-20">
+  <div class="max-w-4xl mx-auto px-6">
+    
+    <div class="text-center mb-12 reveal-on-scroll">
+      <h2 class="text-xs font-gaming font-bold text-emerald-400 tracking-wider uppercase mb-1">Assistance</h2>
+      <h3 class="text-3xl font-black font-gaming text-white">Questions Fréquentes</h3>
+    </div>
+
+    <div class="space-y-4">
+      
+      <!-- FAQ 1 -->
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden reveal-on-scroll">
+        <button onclick="toggleFaq(1)" class="w-full p-6 text-left font-gaming font-bold text-sm text-white flex items-center justify-between hover:text-emerald-400 transition">
+          <span>Faut-il installer des mods ou Forge/Fabric pour jouer ?</span>
+          <span id="faq-icon-1" class="text-xl transition transform text-emerald-400">＋</span>
+        </button>
+        <div id="faq-content-1" class="px-6 pb-6 text-xs text-slate-300 hidden leading-relaxed border-t border-white/5 pt-4">
+          Non, aucun mod n'est requis ! Le serveur fonctionne avec le client Minecraft vanilla. Dès votre première connexion, notre resource-pack officiel est téléchargé en quelques secondes pour afficher les modèles 3D d'armes, donjons et cosmétiques.
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden reveal-on-scroll delay-100">
+        <button onclick="toggleFaq(2)" class="w-full p-6 text-left font-gaming font-bold text-sm text-white flex items-center justify-between hover:text-emerald-400 transition">
+          <span>Quelles sont les versions supportées ?</span>
+          <span id="faq-icon-2" class="text-xl transition transform text-emerald-400">＋</span>
+        </button>
+        <div id="faq-content-2" class="px-6 pb-6 text-xs text-slate-300 hidden leading-relaxed border-t border-white/5 pt-4">
+          Vous pouvez vous connecter avec n'importe quel client Minecraft Java de la version <strong>1.20 à 1.21.1</strong>. La version recommandée est la <strong>1.21.1</strong> pour profiter de la totalité des effets de particules et shaders.
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden reveal-on-scroll delay-200">
+        <button onclick="toggleFaq(3)" class="w-full p-6 text-left font-gaming font-bold text-sm text-white flex items-center justify-between hover:text-emerald-400 transition">
+          <span>Comment fonctionnent les commandes de la boutique ?</span>
+          <span id="faq-icon-3" class="text-xl transition transform text-emerald-400">＋</span>
+        </button>
+        <div id="faq-content-3" class="px-6 pb-6 text-xs text-slate-300 hidden leading-relaxed border-t border-white/5 pt-4">
+          La livraison est automatisée par notre passerelle RCON. Dès la confirmation de commande, le grade ou les clés sont instantanément crédités sur votre compte en jeu, même si vous êtes hors-ligne.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- Script FAQ -->
+<script>
+  function toggleFaq(id) {
+    AudioSys.playClick();
+    const content = document.getElementById('faq-content-' + id);
+    const icon = document.getElementById('faq-icon-' + id);
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      icon.textContent = '✕';
+      icon.classList.add('rotate-90', 'text-rose-400');
+      icon.classList.remove('text-emerald-400');
+    } else {
+      content.classList.add('hidden');
+      icon.textContent = '＋';
+      icon.classList.remove('rotate-90', 'text-rose-400');
+      icon.classList.add('text-emerald-400');
+    }
+  }
+</script>
+{% endblock %}

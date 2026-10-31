@@ -29,7 +29,7 @@ impl Lang {
         {
             Some(Lang::Php)
         } else if [
-            ".js", ".ts", ".tsx", ".jsx", ".mjs", ".cjs", ".sol", ".circom", ".c", ".cpp", ".cc", ".h", ".hpp",
+            ".js", ".ts", ".tsx", ".jsx", ".mjs", ".cjs", ".sol", ".circom", ".c", ".cpp", ".cc", ".h", ".hpp", ".java",
         ]
         .iter()
         .any(|e| lower_path.ends_with(e))

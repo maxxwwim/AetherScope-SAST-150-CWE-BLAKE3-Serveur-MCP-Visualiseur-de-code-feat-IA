@@ -202,7 +202,11 @@ function updateTopbarSearchResults() {
     let icon = '⚡';
     if (itemData.is_folder) icon = '📁';
     else if (itemData.has_security_violation) icon = '🚨';
-    else if (itemData.is_file) icon = '📄';
+    else if (itemData.is_file) {
+      const p = (itemData.file_path || itemData.name || '').toLowerCase();
+      if (p.endsWith('.java')) icon = '☕';
+      else icon = '📄';
+    }
     else if (itemData.is_class) icon = '🏛️';
     else if (itemData.layer === 'docs') icon = '📖';
     else if (itemData.layer === 'ui') icon = '🎨';

@@ -140,7 +140,26 @@
             </div>
 
             <!-- Carte Hybride Web3 / MMO -->
-            <div class="arch-card theme-hybrid" data-stack="hybrid">
+                        <!-- Carte Minecraft Ecosystem -->
+            <div class="arch-card theme-mc" data-stack="minecraft" onclick="window.open('http://127.0.0.1:5000', '_blank')">
+              <div class="arch-header">
+                <div class="arch-title-group"><span>⛏️</span> Aether Minecraft</div>
+                <span class="arch-badge">Rust Tokio + Flask MVP</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🎯 Profil & Attentes :</span>
+                <span class="arch-detail-text">Serveurs Minecraft Paper/Purpur, streaming de chunks, tuning JVM Aikar.</span>
+              </div>
+              <div class="arch-detail-row">
+                <span class="arch-detail-label">🏛️ Architecture Recommandée :</span>
+                <span class="arch-detail-text">Runner Tokio (<code>crates/aether-mc-runner</code>) + Control-Plane Flask (<code>services/mc-control-plane</code>).</span>
+              </div>
+              <div class="arch-decoupling">
+                <strong>🔒 Découplage :</strong> Spécification Manifest universelle (<code>AETHER_MC_MANIFEST_SPEC.md</code>).
+              </div>
+            </div>
+
+<div class="arch-card theme-hybrid" data-stack="hybrid">
               <div class="arch-header">
                 <div class="arch-title-group"><span>⚡</span> Hybride Web3 & MMO</div>
                 <span class="arch-badge">PixiJS + Rust WS + EVM</span>
@@ -425,6 +444,10 @@
             </button>
             <button class="aether-dropdown-item" id="btn-open-hub">
               <span>🪐 <strong>Hub Multi-Architectures</strong></span>
+            </button>
+            <button class="aether-dropdown-item highlight-mc" id="btn-open-mc-cockpit" onclick="window.open('http://127.0.0.1:5000', '_blank')">
+              <span>⛏️ <strong>Aether Minecraft Cockpit...</strong></span>
+              <span class="kbd-shortcut">:5000</span>
             </button>
             <div class="aether-dropdown-divider"></div>
             <button class="aether-dropdown-item" id="btn-menu-pick-workspace">
@@ -1145,6 +1168,7 @@
             <button class="cve-filter-btn" data-lang="web3" onclick="filterCveAnomalies('web3', this)">🌐 Web3</button>
             <button class="cve-filter-btn" data-lang="python" onclick="filterCveAnomalies('python', this)">🐍 Python</button>
             <button class="cve-filter-btn" data-lang="cpp" onclick="filterCveAnomalies('cpp', this)">⚙️ C/C++</button>
+            <button class="cve-filter-btn" data-lang="java" onclick="filterCveAnomalies('java', this)">☕ Java</button>
             <button class="cve-filter-btn" data-lang="arch" onclick="filterCveAnomalies('arch', this)">🏛️ Arch</button>
           </div>
 

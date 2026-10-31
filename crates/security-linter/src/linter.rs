@@ -990,6 +990,8 @@ impl SecurityLinter {
             &[".c", ".cpp", ".cc", ".h", ".hpp", ".hh", ".cxx", ".hxx", ".inl"]
         } else if r.starts_with("CVE-JS-") || r.contains("NODE") || r.contains("TYPESCRIPT") {
             &[".js", ".ts", ".tsx", ".jsx", ".mjs", ".cjs"]
+        } else if r.starts_with("CVE-JAVA-") || r.contains("JAVA") {
+            &[".java"]
         } else if r.contains("SOL") || r.contains("DEFI") || r.contains("EVC") || r.contains("CIRCOM") {
             &[".sol", ".yul", ".circom", ".rs"]
         } else {

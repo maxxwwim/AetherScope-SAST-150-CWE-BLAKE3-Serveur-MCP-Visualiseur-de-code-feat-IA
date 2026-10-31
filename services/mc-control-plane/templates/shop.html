@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Boutique Officielle — AetherCraft{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 relative">
+
+  <!-- Mobile Floating Cart Pill Button -->
+  <a href="#cart-container" class="lg:hidden fixed bottom-6 left-6 z-40 bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian-950 font-gaming font-black text-xs py-3 px-5 rounded-full shadow-2xl flex items-center gap-2 border border-amber-400/50 active:scale-95 transition">
+    <span>🛍️</span> <span>VOIR LE PANIER</span>
+  </a>
+
+  <!-- Header -->
+  <div class="text-center max-w-2xl mx-auto mb-10">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/80 border border-amber-800 text-amber-400 text-xs font-gaming tracking-wide mb-3 shadow-inner">
+      <span>⭐</span> BOUTIQUE SÉCURISÉE • LIVRAISON AUTOMATIQUE RCON
+    </div>
+    <h1 class="text-3xl sm:text-5xl font-black font-gaming tracking-tight text-white">BOUTIQUE OFFICIELLE</h1>
+    <p class="text-xs sm:text-sm text-slate-400 mt-2 font-normal">
+      Débloquez des privilèges exclusifs, soutenez le serveur et hissez-vous au sommet du classement.
+    </p>
+  </div>
+
+  <!-- Layout: Store Products + Cart Sidebar -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- Products Column (8 Cols) -->
+    <div class="lg:col-span-8 space-y-6">
+
+      <!-- Category Filter Tabs (Hypixel Style) -->
+      <div class="flex flex-wrap gap-2 pb-2 font-gaming text-xs font-bold tracking-wide">
+        <a href="/boutique?cat=all" onclick="AudioSys.playClick()" 
+           class="px-5 py-2.5 rounded-xl transition {% if current_cat == 'all' or not current_cat %}bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian-950 font-black shadow-lg shadow-amber-500/25{% else %}glass-panel text-slate-300 hover:text-white hover:bg-white/10{% endif %}">
+          TOUS LES ARTICLES
+        </a>
+        <a href="/boutique?cat=grades" onclick="AudioSys.playClick()" 
+           class="px-5 py-2.5 rounded-xl transition flex items-center gap-2 {% if current_cat == 'grades' %}bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian-950 font-black shadow-lg shadow-amber-500/25{% else %}glass-panel text-slate-300 hover:text-white hover:bg-white/10{% endif %}">
+          <span>👑</span> GRADES VIP
+        </a>
+        <a href="/boutique?cat=keys" onclick="AudioSys.playClick()" 
+           class="px-5 py-2.5 rounded-xl transition flex items-center gap-2 {% if current_cat == 'keys' %}bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian-950 font-black shadow-lg shadow-amber-500/25{% else %}glass-panel text-slate-300 hover:text-white hover:bg-white/10{% endif %}">
+          <span>🗝️</span> CLÉS & CAISSES
+        </a>
+        <a href="/boutique?cat=cosmetics" onclick="AudioSys.playClick()" 
+           class="px-5 py-2.5 rounded-xl transition flex items-center gap-2 {% if current_cat == 'cosmetics' %}bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian-950 font-black shadow-lg shadow-amber-500/25{% else %}glass-panel text-slate-300 hover:text-white hover:bg-white/10{% endif %}">
+          <span>🪽</span> COSMÉTIQUES
+        </a>
+      </div>
+
+      <!-- Items Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for item in items %}
+        <div class="glass-panel {% if item.popular %}border-amber-500/60 shadow-xl shadow-amber-500/10{% else %}border-white/10{% endif %} rounded-3xl p-6 flex flex-col justify-between relative group glass-card-hover spotlight-card reveal-on-scroll">
+          
+          {% if item.popular %}
+          <div class="absolute -top-3 right-6 bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian-950 text-[10px] font-gaming font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
+            🔥 RECOMMANDÉ
+          </div>
+          {% endif %}
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl p-3 rounded-2xl bg-black/40 border border-white/10">{{ item.icon }}</span>
+              <div class="text-right">
+                <span class="text-2xl font-black text-amber-300 font-mono tracking-tight">{{ "%.2f"|format(item.price) }} €</span>
+                <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-gaming">À VIE</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-gaming font-bold uppercase tracking-wider 
+                {% if item.badge_color == 'emerald' %}bg-emerald-950 text-emerald-400 border border-emerald-800
+                {% elif item.badge_color == 'sky' %}bg-amber-950 text-amber-400 border border-amber-800
+                {% elif item.badge_color == 'amber' %}bg-amber-950 text-amber-400 border border-amber-800
+                {% elif item.badge_color == 'purple' %}bg-purple-950 text-purple-400 border border-purple-800
+                {% else %}bg-slate-800 text-slate-300 border border-slate-700{% endif %}">
+                {{ item.badge }}
+              </span>
+              <h3 class="text-lg font-bold font-gaming text-white mt-1.5">{{ item.name }}</h3>
+              <p class="text-xs text-slate-400 mt-1 leading-relaxed">{{ item.description }}</p>
+            </div>
+
+            <!-- Perks List -->
+            <div class="space-y-1.5 border-t border-white/10 pt-3 my-4">
+              <span class="text-[11px] font-gaming font-bold text-slate-300 block mb-2 uppercase tracking-wide">Privilèges Inclus :</span>
+              {% for perk in item.perks %}
+              <div class="flex items-start gap-2 text-xs text-slate-300">
+                <span class="text-amber-400 font-bold">✓</span>
+                <span class="leading-tight text-[11px]">{{ perk }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Add to cart button -->
+          <form hx-post="/api/store/cart/add" hx-target="#cart-container" class="mt-4 pt-2" onclick="AudioSys.playClick()">
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            <button type="submit" 
+                    class="w-full py-3 px-4 rounded-xl font-gaming font-bold text-xs bg-white/5 hover:bg-amber-500 text-slate-200 hover:text-obsidian-950 border border-white/10 hover:border-amber-400 transition flex items-center justify-center gap-2 group-hover:bg-amber-500 group-hover:text-obsidian-950 group-hover:font-black active:scale-95 shadow-md">
+              <span>🛒</span> <span>AJOUTER AU PANIER</span>
+            </button>
+          </form>
+
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- Cart Column (4 Cols) -->
+    <div class="lg:col-span-4 sticky top-24">
+      <div id="cart-container" class="glass-panel border border-white/10 rounded-3xl p-6 shadow-2xl">
+        {% include "partials/cart.html" %}
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="mt-4 glass-panel rounded-2xl p-4 text-xs text-slate-400 space-y-2 border border-white/5">
+        <div class="flex items-center gap-2 text-slate-300 font-gaming font-bold text-xs">
+          <span>🔒</span> LIVRAISON IMMÉDIATE RCON
+        </div>
+        <p class="text-[11px] leading-relaxed">
+          Les commandes en jeu sont expédiées sur le serveur dans les 5 secondes suivant le paiement.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

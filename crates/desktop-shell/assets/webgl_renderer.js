@@ -1782,12 +1782,12 @@ function render(now) {
         } else if (lodLevel === 3) {
           if (n.stereotype === '«Form»' || n.is_form) text = `📝 ${displayName}`;
           else if (n.stereotype === '«Endpoint»' || (n.id && n.id.startsWith('api::'))) text = `🌐 ${displayName}`;
-          else if (n.is_file) text = `📄 ${displayName}`;
+          else if (n.is_file) text = `${(displayName.endsWith('.java') || (n.file_path && n.file_path.endsWith('.java'))) ? '☕' : '📄'} ${displayName}`;
           else if (n.is_class) text = `🏛️ ${displayName}`;
           else if (n.layer === 'docs' || n.symbol_type === 'document') text = `📖 ${displayName}`;
           else if (n.symbol_type === 'function') text = `⚡ ${displayName}`;
         } else if (n.is_file) {
-          text = `📄 ${displayName}`;
+          text = `${(displayName.endsWith('.java') || (n.file_path && n.file_path.endsWith('.java'))) ? '☕' : '📄'} ${displayName}`;
         }
 
         ctx.font = `600 ${fontSize}px ${FONT_UI}`;

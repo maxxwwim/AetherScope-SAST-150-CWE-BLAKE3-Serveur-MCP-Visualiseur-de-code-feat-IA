@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "server_id": "test_mc_srv",
+  "name": "Test Server Aether",
+  "runtime": {
+    "java_major_version": 21,
+    "vendor": "adoptium",
+    "heap_min": "2G",
+    "heap_max": "2G",
+    "jvm_flags": [
+      "-Xms2G",
+      "-Xmx2G"
+    ]
+  },
+  "core": {
+    "type": "paper",
+    "mc_version": "1.21.1",
+    "build": 118,
+    "target_jar": "paper-server.jar",
+    "download_url": "https://raw.githubusercontent.com/PaperMC/Paper/master/README.md",
+    "sha256": ""
+  },
+  "plugins_and_mods": [
+    {
+      "name": "chunky-readme.txt",
+      "target_dir": "plugins",
+      "download_url": "https://raw.githubusercontent.com/pop4959/Chunky/master/README.md",
+      "sha256": ""
+    }
+  ],
+  "configs": {
+    "eula.txt": "eula=true\n",
+    "server.properties": "server-port=25565\nmotd=Aether Test Server\n"
+  }
+}

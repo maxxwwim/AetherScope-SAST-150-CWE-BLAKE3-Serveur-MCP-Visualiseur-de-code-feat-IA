@@ -669,6 +669,7 @@ function getLanguageForAnomaly(filePath, ruleId) {
   if (p.endsWith('.rs')) return 'rust';
   if (p.endsWith('.py')) return 'python';
   if (p.endsWith('.js') || p.endsWith('.ts') || p.endsWith('.tsx') || p.endsWith('.jsx') || p.endsWith('.mjs') || p.endsWith('.cjs')) return 'node';
+  if (p.endsWith('.java') || r.includes('-JAVA-') || r.includes('JAVA')) return 'java';
   if (r.includes('WEB3')) return 'web3';
   return 'arch';
 }
@@ -892,6 +893,7 @@ function renderCveAnomaliesPanel(lang = null) {
     node: '🟢',
     web3: '🌐',
     cpp: '⚙️',
+    java: '☕',
     arch: '🏛️'
   };
 

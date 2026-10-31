@@ -7,6 +7,7 @@ members = [
     "crates/security-linter",
     "crates/ai-file-bridge",
     "crates/desktop-shell",
+    "crates/aether-mc-runner",
 ]
 
 [workspace.package]

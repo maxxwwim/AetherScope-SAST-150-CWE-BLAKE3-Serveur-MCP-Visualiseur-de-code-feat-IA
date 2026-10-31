@@ -364,7 +364,7 @@ function renderFolderDebrief(folderName, folderNodes, edges) {
       const loc = (f.metadata && f.metadata.lines) || '';
       html += `
         <div class="debrief-list-item" onclick="jumpToNode('${f.id}')">
-          <span style="color:#f8fafc; font-weight:600;">📄 ${f.name}</span>
+          <span style="color:#f8fafc; font-weight:600;">${(f.name && f.name.endsWith('.java')) ? '☕' : '📄'} ${f.name}</span>
           <span class="debrief-tag">${loc ? loc + ' LOC' : f.layer}</span>
         </div>
       `;
@@ -591,7 +591,7 @@ function renderNodeDebrief(n, incoming, outgoing) {
 
     html = `
       <div class="debrief-badge-row">
-        <span class="debrief-badge" style="background:#38bdf822; border:1px solid #38bdf8; color:#38bdf8;">📄 Fichier Source</span>
+        <span class="debrief-badge" style="background:#38bdf822; border:1px solid #38bdf8; color:#38bdf8;">${(n.name && n.name.endsWith('.java')) ? '☕ Fichier Java' : '📄 Fichier Source'}</span>
         <span class="debrief-badge" style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:#fbbf24; cursor:pointer;" onclick="selectFolder('${folder}')">📁 ${folder}</span>
         ${extraBadges}
       </div>

@@ -1,7 +1,7 @@
 ---
 id: ast-scanner
 layer: application
-max_lines_per_file: 3200
+max_lines_per_file: 3900
 allowed_imports: ["core_graph::*", "security_linter::*", "walkdir::*", "rayon::*", "regex::*", "serde::*", "serde_json::*", "toml::*", "std::*"]
 forbidden_imports: ["ai_file_bridge::*", "arch_templates::*", "desktop_shell::*", "axum::*", "tokio::*"]
 security_rules:
@@ -16,7 +16,7 @@ Parcourt un projet (`walkdir` + `rayon`), extrait symboles, relations et routes,
 
 | Fichier | Rôle |
 | :--- | :--- |
-| `src/scanner.rs` | `ProjectScanner` : extraction par regex `OnceLock` (Rust, PHP, TS/JS, Python, C/C++, Smart Contracts, Markdown) |
+| `src/scanner.rs` | `ProjectScanner` : extraction par regex `OnceLock` (Rust, Java, PHP, TS/JS, Python, C/C++, Smart Contracts, Markdown) |
 | `src/lib.rs` | Ré-exports publics |
 
 > [!NOTE]
