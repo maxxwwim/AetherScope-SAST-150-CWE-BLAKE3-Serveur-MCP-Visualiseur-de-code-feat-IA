@@ -148,13 +148,58 @@ fn extract_live_audit_from_graph(
 }
 
 async fn run_audit_cli(args: Args) -> Result<(), Box<dyn std::error::Error>> {
-    let project_root = fs::canonicalize(Path::new(&args.path)).unwrap_or_else(|_| PathBuf::from(&args.path));
+    let raw = args.path.trim().trim_matches('"').trim_matches('\'');
+    let clean = raw.strip_prefix(r"\\?\").unwrap_or(raw);
+    let project_root = if clean.is_empty() || clean == "." {
+        std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
+    } else {
+        fs::canonicalize(&clean).unwrap_or_else(|_| PathBuf::from(&clean))
+    };
+
     AuditWriter::ensure_master_rules_file(&project_root)?;
     let scanner = ProjectScanner::default();
     let graph = scanner.scan_project(&project_root);
 
     let (all_violations, file_count) = extract_live_audit_from_graph(&graph);
     AuditWriter::write_live_audit(&project_root, &all_violations, file_count)?;
+
+    println!(
+        "✅ [SAST] Audit terminé sur `{}` : {} nœuds, {} flux, {} violations dans .aether/LIVE_AUDIT.md ({} fichiers audités)",
+        project_root.display(),
+        graph.nodes.len(),
+        graph.edges.len(),
+        all_violations.len(),
+        file_count
+    );
+
+    if mcp::check_server_listening(args.port) {
+        println!(
+            "📡 [SYNCHRO EN DIRECT] Cockpit AetherScope détecté sur http://127.0.0.1:{} : actualisation du Cockpit 3D & du MCP...",
+            args.port
+        );
+        let path_str = clean_path_string(&project_root);
+        match mcp::send_http_request(
+            args.port,
+            "POST",
+            "/api/analyze",
+            Some(&serde_json::json!({ "path": path_str })),
+        )
+        .await
+        {
+            Ok(_) => {
+                println!("🚀 [OK] Graphe WebGL 3D et passerelle MCP synchronisés en temps réel !");
+            }
+            Err(e) => {
+                eprintln!("⚠️ Échec synchronisation en direct avec le Cockpit ({})", e);
+            }
+        }
+    } else {
+        println!(
+            "ℹ️ Serveur Cockpit non actif sur le port {}. Lancez le Cockpit via le Launcher pour visualiser le graphe en 3D.",
+            args.port
+        );
+    }
+
     Ok(())
 }
 
@@ -395,7 +440,11 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                     async move {
                         let raw = req.path.trim().trim_matches('"').trim_matches('\'');
                         let clean = raw.strip_prefix(r"\\?\").unwrap_or(raw);
-                        let path = fs::canonicalize(&clean).unwrap_or_else(|_| PathBuf::from(&clean));
+                        let path = if clean.is_empty() || clean == "." {
+                            state.project_root.read().await.clone()
+                        } else {
+                            fs::canonicalize(&clean).unwrap_or_else(|_| PathBuf::from(&clean))
+                        };
                         let mut custom_excl = state.custom_exclusions.read().await.clone();
                         if let Some(req_excl) = req.exclusions {
                             custom_excl = req_excl.clone();
@@ -414,6 +463,49 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         let (violations, file_count) = extract_live_audit_from_graph(&new_graph);
                         let _ = AuditWriter::write_live_audit(&path, &violations, file_count);
 
+                        let now_ms = std::time::SystemTime::now()
+                            .duration_since(std::time::UNIX_EPOCH)
+                            .unwrap_or_default()
+                            .as_millis() as u64;
+                        let proj_display = path
+                            .file_name()
+                            .map(|n| n.to_string_lossy().to_string())
+                            .unwrap_or_else(|| "Projet".to_string());
+
+                        // Émet un événement de télémétrie spatiale vers le HUD du Cockpit
+                        {
+                            let mut t_guard = state.telemetry.write().await;
+                            *t_guard = Some(AiTelemetryEvent {
+                                target: proj_display.clone(),
+                                action: "Analyse AST & SAST Live".to_string(),
+                                details: format!(
+                                    "Codebase actualisée : {} nœuds, {} flux, {} failles SAST",
+                                    new_graph.nodes.len(),
+                                    new_graph.edges.len(),
+                                    violations.len()
+                                ),
+                                timestamp: now_ms,
+                            });
+                        }
+
+                        // Journalise l'analyse dans le chat Copilot IA
+                        {
+                            let mut chat_guard = state.chat_messages.write().await;
+                            chat_guard.push(AiChatMessage {
+                                id: format!("msg_{}", now_ms),
+                                sender: "system".to_string(),
+                                text: format!(
+                                    "⚡ Analyse terminée pour `{}` : {} symboles, {} liaisons, {} règles de sécurité auditées.",
+                                    proj_display,
+                                    new_graph.nodes.len(),
+                                    new_graph.edges.len(),
+                                    violations.len()
+                                ),
+                                target_symbol: Some(proj_display),
+                                timestamp: now_ms,
+                            });
+                        }
+
                         let mut g_guard = state.graph.write().await;
                         *g_guard = new_graph.clone();
                         let mut p_guard = state.project_root.write().await;
@@ -431,7 +523,11 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         let p_str = query.get("path").cloned().unwrap_or_default();
                         let raw = p_str.trim().trim_matches('"').trim_matches('\'');
                         let clean = raw.strip_prefix(r"\\?\").unwrap_or(raw);
-                        let path = fs::canonicalize(&clean).unwrap_or_else(|_| PathBuf::from(&clean));
+                        let path = if clean.is_empty() || clean == "." {
+                            state.project_root.read().await.clone()
+                        } else {
+                            fs::canonicalize(&clean).unwrap_or_else(|_| PathBuf::from(&clean))
+                        };
                         let custom_excl = state.custom_exclusions.read().await.clone();
                         let scan_path = path.clone();
                         let new_graph = tokio::task::spawn_blocking(move || {
@@ -444,6 +540,49 @@ pub async fn run_server_and_watcher(args: Args) -> Result<(), Box<dyn std::error
                         let _ = AuditWriter::ensure_master_rules_file(&path);
                         let (violations, file_count) = extract_live_audit_from_graph(&new_graph);
                         let _ = AuditWriter::write_live_audit(&path, &violations, file_count);
+
+                        let now_ms = std::time::SystemTime::now()
+                            .duration_since(std::time::UNIX_EPOCH)
+                            .unwrap_or_default()
+                            .as_millis() as u64;
+                        let proj_display = path
+                            .file_name()
+                            .map(|n| n.to_string_lossy().to_string())
+                            .unwrap_or_else(|| "Projet".to_string());
+
+                        // Émet un événement de télémétrie spatiale vers le HUD du Cockpit
+                        {
+                            let mut t_guard = state.telemetry.write().await;
+                            *t_guard = Some(AiTelemetryEvent {
+                                target: proj_display.clone(),
+                                action: "Analyse AST & SAST Live".to_string(),
+                                details: format!(
+                                    "Codebase actualisée : {} nœuds, {} flux, {} failles SAST",
+                                    new_graph.nodes.len(),
+                                    new_graph.edges.len(),
+                                    violations.len()
+                                ),
+                                timestamp: now_ms,
+                            });
+                        }
+
+                        // Journalise l'analyse dans le chat Copilot IA
+                        {
+                            let mut chat_guard = state.chat_messages.write().await;
+                            chat_guard.push(AiChatMessage {
+                                id: format!("msg_{}", now_ms),
+                                sender: "system".to_string(),
+                                text: format!(
+                                    "⚡ Analyse terminée pour `{}` : {} symboles, {} liaisons, {} règles de sécurité auditées.",
+                                    proj_display,
+                                    new_graph.nodes.len(),
+                                    new_graph.edges.len(),
+                                    violations.len()
+                                ),
+                                target_symbol: Some(proj_display),
+                                timestamp: now_ms,
+                            });
+                        }
 
                         let mut g_guard = state.graph.write().await;
                         *g_guard = new_graph.clone();

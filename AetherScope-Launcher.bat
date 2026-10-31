@@ -50,27 +50,29 @@ echo ==============================================================
 echo       🪐 AETHERSCOPE V2 — COCKPIT SPATIAL ET MCP SUITE
 echo ==============================================================
 echo.
-echo   [1] 🚀 Lancer le Cockpit WebGL 3D (GUI + Serveur Axum)
-echo   [2] 🤖 Lancer le Serveur en Arriere-Plan (Mode Headless)
-echo   [3] 🔌 Configurer le Serveur MCP (Claude / Antigravity / Cursor)
-echo   [4] 🎯 Scanner un projet en ligne de commande (SAST Headless)
-echo   [5] ⛏️ Lancer Aether Minecraft Cockpit (Web Flask + Runner)
-echo   [6] 🧹 Liberer le port 3030 (Fermer les processus Aether en cours)
-echo   [7] 📦 Installer AetherScope dans Windows (PATH + Bureau)
-echo   [8] ❌ Quitter
+echo   [1] 🚀 Lancer le Cockpit Spatial Complet (GUI 3D + Serveur Axum + MCP)
+echo   [2] 🤖 Lancer le Serveur MCP Stdio autonome (aetherscope-mcp.exe)
+echo   [3] 🌐 Lancer le Serveur en Arriere-Plan (Mode Headless Axum)
+echo   [4] 🔌 Configurer les Clients IA (Claude / Antigravity / Cursor)
+echo   [5] 🎯 Scanner & Synchroniser un Projet (SAST Live Synchro GUI)
+echo   [6] ⛏️ Lancer Aether Minecraft Cockpit (Web Flask + Runner)
+echo   [7] 🧹 Liberer le port 3030 (Fermer tous les processus Aether)
+echo   [8] 📦 Installer AetherScope dans Windows (PATH + Bureau)
+echo   [9] ❌ Quitter
 echo.
 echo ==============================================================
-set /p "CHOICE=Choisissez une option (1-8) [defaut: 1] : "
+set /p "CHOICE=Choisissez une option (1-9) [defaut: 1] : "
 
 if "%CHOICE%"=="" set "CHOICE=1"
 if "%CHOICE%"=="1" goto LAUNCH_GUI
-if "%CHOICE%"=="2" goto LAUNCH_HEADLESS
-if "%CHOICE%"=="3" goto CONFIG_MCP
-if "%CHOICE%"=="4" goto SCAN_SAST
-if "%CHOICE%"=="5" goto LAUNCH_MC
-if "%CHOICE%"=="6" goto KILL_PORT
-if "%CHOICE%"=="7" goto RUN_INSTALL
-if "%CHOICE%"=="8" goto QUIT
+if "%CHOICE%"=="2" goto LAUNCH_MCP
+if "%CHOICE%"=="3" goto LAUNCH_HEADLESS
+if "%CHOICE%"=="4" goto CONFIG_MCP
+if "%CHOICE%"=="5" goto SCAN_SAST
+if "%CHOICE%"=="6" goto LAUNCH_MC
+if "%CHOICE%"=="7" goto KILL_PORT
+if "%CHOICE%"=="8" goto RUN_INSTALL
+if "%CHOICE%"=="9" goto QUIT
 
 echo Option invalide.
 timeout /t 2 >nul
@@ -87,9 +89,36 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3030 ^| findstr LISTENING') 
         taskkill /PID !PORT_PID! /F >nul 2>&1
     )
 )
-echo [INFO] Lancement du Cockpit AetherScope V2...
+echo [INFO] Demarrage du Cockpit AetherScope V2...
 start "" "%ENGINE_EXE%"
+
+if defined MCP_EXE (
+    echo [INFO] Demarrage de la passerelle MCP AetherScope...
+    start "AetherScope MCP Server" /min "%MCP_EXE%" --port 3030
+)
+
+echo [OK] Cockpit et passerelle MCP actives et synchronises !
+timeout /t 2 >nul
 exit /b 0
+
+:LAUNCH_MCP
+cls
+echo ==============================================================
+echo       🤖 AETHERSCOPE V2 — SERVEUR MCP STDIO DEDIE
+echo ==============================================================
+echo.
+echo Le serveur MCP communique en JSON-RPC 2.0 sur stdio.
+echo Port de synchronisation HTTP Cockpit : 3030
+echo.
+if not defined MCP_EXE (
+    echo [ERREUR] Impossible de trouver aetherscope-mcp.exe !
+    pause
+    goto MENU
+)
+echo Demarrage du serveur MCP (Ctrl+C pour arreter)...
+"%MCP_EXE%" --port 3030
+pause
+goto MENU
 
 :LAUNCH_HEADLESS
 cls
@@ -111,10 +140,10 @@ goto MENU
 cls
 set /p "SCAN_PATH=Chemin du projet a scanner [defaut: .] : "
 if "%SCAN_PATH%"=="" set "SCAN_PATH=."
-echo [INFO] Audit SAST en cours sur %SCAN_PATH%...
+echo [INFO] Audit SAST & Synchronisation en direct en cours sur %SCAN_PATH%...
 "%ENGINE_EXE%" --path "%SCAN_PATH%" --audit-only
 echo.
-echo Rapport disponible dans : %SCAN_PATH%\.aether\LIVE_AUDIT.md
+echo [OK] Rapport disponible dans : %SCAN_PATH%\.aether\LIVE_AUDIT.md
 pause
 goto MENU
 
@@ -131,7 +160,13 @@ cls
 echo [INFO] Arret des processus aether-engine et aetherscope-mcp...
 taskkill /F /IM aether-engine.exe >nul 2>&1
 taskkill /F /IM aetherscope-mcp.exe >nul 2>&1
-echo [OK] Processus arretes et port 3030 libere !
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3030 ^| findstr LISTENING') do (
+    set "PORT_PID=%%a"
+    if defined PORT_PID (
+        taskkill /PID !PORT_PID! /F >nul 2>&1
+    )
+)
+echo [OK] Tous les processus AetherScope ont ete arretes et le port 3030 est libere !
 timeout /t 2 >nul
 goto MENU
 

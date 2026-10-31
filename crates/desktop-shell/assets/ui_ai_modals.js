@@ -1675,7 +1675,7 @@ function hideLoadingScreen() {
 }
 
 async function analyze(path) {
-  if (!path) return;
+  if (!path) path = state.data?.project_path || '.';
   const projectName = path.split(/[\\/]/).filter(Boolean).pop() || path;
   showLoadingScreen(projectName, 'Démarrage du scan AST...', path);
   showToast('⚡ Analyse Rust V2 ultra-rapide...');
@@ -1812,6 +1812,8 @@ function applyData(data) {
 
   state.data = data;
   state.project_path = data.project_path || '';
+  const inpPath = document.getElementById('project-path-input');
+  if (inpPath && data.project_path) inpPath.value = data.project_path;
   const topPill = document.getElementById('topbar-project-pill');
   if (topPill) topPill.innerText = data.project_name || 'Projet';
   const synthStats = document.getElementById('synth-stats');
@@ -1878,6 +1880,8 @@ function applyDataKeepView(data, focusSymbol) {
 
   state.data = data;
   state.project_path = data.project_path || '';
+  const inpPath = document.getElementById('project-path-input');
+  if (inpPath && data.project_path) inpPath.value = data.project_path;
   const topPill = document.getElementById('topbar-project-pill');
   if (topPill) topPill.innerText = data.project_name || 'Projet';
   const synthStats2 = document.getElementById('synth-stats');
@@ -2201,7 +2205,8 @@ document.getElementById('btn-submit-create-file')?.addEventListener('click', asy
 });
 
 document.getElementById('btn-analyze')?.addEventListener('click', () => {
-  const p = document.getElementById('project-path-input')?.value.trim() || '';
+  let p = document.getElementById('project-path-input')?.value.trim();
+  if (!p) p = state.data?.project_path || '.';
   analyze(p);
 });
 

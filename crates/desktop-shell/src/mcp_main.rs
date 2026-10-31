@@ -82,7 +82,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Err(_) => break,
         };
 
-        let trimmed = line.trim();
+        let trimmed = line.trim().trim_start_matches('\u{feff}');
         if trimmed.is_empty() {
             continue;
         }
@@ -454,6 +454,12 @@ async fn handle_mcp_request(req: JsonRpcRequest, server_port: u16, default_path:
 
                     match res {
                         Ok(val) => {
+                            let _ = send_http_request(server_port, "POST", "/api/ai/telemetry", Some(&json!({
+                                "target": scan_path,
+                                "action": "Scan de Projet AST",
+                                "details": "Réanalyse complète déclenchée par l'agent IA via MCP"
+                            }))).await;
+
                             let summary = format_graph_summary(&val);
                             json!([{
                                 "type": "text",

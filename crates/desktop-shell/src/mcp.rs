@@ -24,21 +24,23 @@ struct JsonRpcResponse {
     error: Option<Value>,
 }
 
+pub fn check_server_listening(port: u16) -> bool {
+    use std::net::{SocketAddr, TcpStream};
+    use std::time::Duration;
+    if let Ok(addr) = format!("127.0.0.1:{}", port).parse::<SocketAddr>() {
+        TcpStream::connect_timeout(&addr, Duration::from_millis(150)).is_ok()
+    } else {
+        false
+    }
+}
+
 pub async fn run_mcp_server(args: Args) -> Result<(), Box<dyn std::error::Error>> {
     let port = args.port;
     let path = args.path.clone();
 
     // 1. Détection intelligente : Si le serveur WebGL n'est pas déjà actif sur le port,
     // on le démarre automatiquement en tâche de fond pour garantir la disponibilité de l'API !
-    let is_server_listening = {
-        use std::net::{SocketAddr, TcpStream};
-        use std::time::Duration;
-        if let Ok(addr) = format!("127.0.0.1:{}", port).parse::<SocketAddr>() {
-            TcpStream::connect_timeout(&addr, Duration::from_millis(150)).is_ok()
-        } else {
-            false
-        }
-    };
+    let is_server_listening = check_server_listening(port);
 
     if !is_server_listening {
         eprintln!("📡 [AetherScope MCP] Démarrage du serveur Axum & FileWatcher en arrière-plan sur http://127.0.0.1:{}...", port);
@@ -63,7 +65,7 @@ pub async fn run_mcp_server(args: Args) -> Result<(), Box<dyn std::error::Error>
             Err(_) => break,
         };
 
-        let trimmed = line.trim();
+        let trimmed = line.trim().trim_start_matches('\u{feff}');
         if trimmed.is_empty() {
             continue;
         }
@@ -425,6 +427,12 @@ async fn handle_mcp_request(req: JsonRpcRequest, server_port: u16, default_path:
 
                     match res {
                         Ok(val) => {
+                            let _ = send_http_request(server_port, "POST", "/api/ai/telemetry", Some(&json!({
+                                "target": scan_path,
+                                "action": "Scan de Projet AST",
+                                "details": "Réanalyse complète déclenchée par l'agent IA via MCP"
+                            }))).await;
+
                             let summary = format_graph_summary(&val);
                             json!([{
                                 "type": "text",
@@ -810,7 +818,7 @@ fn offline_active_target_fallback(project_path: &str, symbol_id: &str) -> String
     }
 }
 
-async fn send_http_request(
+pub async fn send_http_request(
     server_port: u16,
     method: &str,
     path: &str,
