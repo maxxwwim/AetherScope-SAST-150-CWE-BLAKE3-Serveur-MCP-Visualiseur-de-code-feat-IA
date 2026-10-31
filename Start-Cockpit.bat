@@ -7,25 +7,15 @@ set "SCRIPT_DIR=%~dp0"
 set "ENGINE_EXE="
 set "MCP_EXE="
 
-if exist "%SCRIPT_DIR%aether-engine.exe" (
-    set "ENGINE_EXE=%SCRIPT_DIR%aether-engine.exe"
-) else if exist "%SCRIPT_DIR%target\release\aether-engine.exe" (
-    set "ENGINE_EXE=%SCRIPT_DIR%target\release\aether-engine.exe"
-) else if exist "%SCRIPT_DIR%target-build\release\aether-engine.exe" (
-    set "ENGINE_EXE=%SCRIPT_DIR%target-build\release\aether-engine.exe"
-) else if exist "%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe" (
-    set "ENGINE_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe"
-)
+if exist "%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe" set "ENGINE_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe"
+if exist "%SCRIPT_DIR%target-build\release\aether-engine.exe" set "ENGINE_EXE=%SCRIPT_DIR%target-build\release\aether-engine.exe"
+if exist "%SCRIPT_DIR%target\release\aether-engine.exe" set "ENGINE_EXE=%SCRIPT_DIR%target\release\aether-engine.exe"
+if exist "%SCRIPT_DIR%aether-engine.exe" set "ENGINE_EXE=%SCRIPT_DIR%aether-engine.exe"
 
-if exist "%SCRIPT_DIR%aetherscope-mcp.exe" (
-    set "MCP_EXE=%SCRIPT_DIR%aetherscope-mcp.exe"
-) else if exist "%SCRIPT_DIR%target\release\aetherscope-mcp.exe" (
-    set "MCP_EXE=%SCRIPT_DIR%target\release\aetherscope-mcp.exe"
-) else if exist "%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe" (
-    set "MCP_EXE=%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe"
-) else if exist "%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe" (
-    set "MCP_EXE=%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe"
-)
+if exist "%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe" set "MCP_EXE=%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe"
+if exist "%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe" set "MCP_EXE=%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe"
+if exist "%SCRIPT_DIR%target\release\aetherscope-mcp.exe" set "MCP_EXE=%SCRIPT_DIR%target\release\aetherscope-mcp.exe"
+if exist "%SCRIPT_DIR%aetherscope-mcp.exe" set "MCP_EXE=%SCRIPT_DIR%aetherscope-mcp.exe"
 
 if not defined ENGINE_EXE (
     echo [ERREUR] aether-engine.exe est introuvable.

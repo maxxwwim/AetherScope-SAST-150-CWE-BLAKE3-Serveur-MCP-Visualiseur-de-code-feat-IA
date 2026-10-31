@@ -6,36 +6,21 @@ chcp 65001 >nul
 set "SCRIPT_DIR=%~dp0"
 set "ENGINE_EXE="
 set "MCP_EXE="
-
-if exist "%SCRIPT_DIR%aether-engine.exe" (
-    set "ENGINE_EXE=%SCRIPT_DIR%aether-engine.exe"
-) else if exist "%SCRIPT_DIR%target\release\aether-engine.exe" (
-    set "ENGINE_EXE=%SCRIPT_DIR%target\release\aether-engine.exe"
-) else if exist "%SCRIPT_DIR%target-build\release\aether-engine.exe" (
-    set "ENGINE_EXE=%SCRIPT_DIR%target-build\release\aether-engine.exe"
-) else if exist "%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe" (
-    set "ENGINE_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe"
-)
-
-if exist "%SCRIPT_DIR%aetherscope-mcp.exe" (
-    set "MCP_EXE=%SCRIPT_DIR%aetherscope-mcp.exe"
-) else if exist "%SCRIPT_DIR%target\release\aetherscope-mcp.exe" (
-    set "MCP_EXE=%SCRIPT_DIR%target\release\aetherscope-mcp.exe"
-) else if exist "%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe" (
-    set "MCP_EXE=%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe"
-) else if exist "%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe" (
-    set "MCP_EXE=%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe"
-)
-
 set "MC_RUNNER_EXE="
 
-if exist "%SCRIPT_DIR%aether-mc-runner.exe" (
-    set "MC_RUNNER_EXE=%SCRIPT_DIR%aether-mc-runner.exe"
-) else if exist "%SCRIPT_DIR%target\release\aether-mc-runner.exe" (
-    set "MC_RUNNER_EXE=%SCRIPT_DIR%target\release\aether-mc-runner.exe"
-) else if exist "%LOCALAPPDATA%\AetherScope\bin\aether-mc-runner.exe" (
-    set "MC_RUNNER_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-mc-runner.exe"
-)
+if exist "%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe" set "ENGINE_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-engine.exe"
+if exist "%SCRIPT_DIR%target-build\release\aether-engine.exe" set "ENGINE_EXE=%SCRIPT_DIR%target-build\release\aether-engine.exe"
+if exist "%SCRIPT_DIR%target\release\aether-engine.exe" set "ENGINE_EXE=%SCRIPT_DIR%target\release\aether-engine.exe"
+if exist "%SCRIPT_DIR%aether-engine.exe" set "ENGINE_EXE=%SCRIPT_DIR%aether-engine.exe"
+
+if exist "%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe" set "MCP_EXE=%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe"
+if exist "%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe" set "MCP_EXE=%SCRIPT_DIR%target-build\release\aetherscope-mcp.exe"
+if exist "%SCRIPT_DIR%target\release\aetherscope-mcp.exe" set "MCP_EXE=%SCRIPT_DIR%target\release\aetherscope-mcp.exe"
+if exist "%SCRIPT_DIR%aetherscope-mcp.exe" set "MCP_EXE=%SCRIPT_DIR%aetherscope-mcp.exe"
+
+if exist "%LOCALAPPDATA%\AetherScope\bin\aether-mc-runner.exe" set "MC_RUNNER_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-mc-runner.exe"
+if exist "%SCRIPT_DIR%target\release\aether-mc-runner.exe" set "MC_RUNNER_EXE=%SCRIPT_DIR%target\release\aether-mc-runner.exe"
+if exist "%SCRIPT_DIR%aether-mc-runner.exe" set "MC_RUNNER_EXE=%SCRIPT_DIR%aether-mc-runner.exe"
 
 if not defined ENGINE_EXE (
     echo [ERREUR] Impossible de trouver aether-engine.exe !
@@ -54,7 +39,7 @@ echo   [1] 🚀 Lancer le Cockpit Spatial Complet (GUI 3D + Serveur Axum + MCP)
 echo   [2] 🤖 Lancer le Serveur MCP Stdio autonome (aetherscope-mcp.exe)
 echo   [3] 🌐 Lancer le Serveur en Arriere-Plan (Mode Headless Axum)
 echo   [4] 🔌 Configurer les Clients IA (Claude / Antigravity / Cursor)
-echo   [5] 🎯 Scanner & Synchroniser un Projet (SAST Live Synchro GUI)
+echo   [5] 🎯 Scanner et Synchroniser un Projet (SAST Live Synchro GUI)
 echo   [6] ⛏️ Lancer Aether Minecraft Cockpit (Web Flask + Runner)
 echo   [7] 🧹 Liberer le port 3030 (Fermer tous les processus Aether)
 echo   [8] 📦 Installer AetherScope dans Windows (PATH + Bureau)
@@ -140,7 +125,7 @@ goto MENU
 cls
 set /p "SCAN_PATH=Chemin du projet a scanner [defaut: .] : "
 if "%SCAN_PATH%"=="" set "SCAN_PATH=."
-echo [INFO] Audit SAST & Synchronisation en direct en cours sur %SCAN_PATH%...
+echo [INFO] Audit SAST et Synchronisation en direct en cours sur %SCAN_PATH%...
 "%ENGINE_EXE%" --path "%SCAN_PATH%" --audit-only
 echo.
 echo [OK] Rapport disponible dans : %SCAN_PATH%\.aether\LIVE_AUDIT.md
