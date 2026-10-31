@@ -20,6 +20,7 @@ $binDir = Join-Path $InstallDir "bin"
 # 1. Recherche des executables
 $engineExe = $null
 $mcpExe = $null
+$mcRunnerExe = $null
 
 $candidates = @(
     $scriptDir,
@@ -29,9 +30,11 @@ $candidates = @(
 foreach ($c in $candidates) {
     $e = Join-Path $c "aether-engine.exe"
     $m = Join-Path $c "aetherscope-mcp.exe"
-    if (Test-Path $e) { $engineExe = (Resolve-Path $e).Path }
-    if (Test-Path $m) { $mcpExe = (Resolve-Path $m).Path }
-    if ($engineExe -and $mcpExe) { break }
+    $r = Join-Path $c "aether-mc-runner.exe"
+    if (-not $engineExe -and (Test-Path $e)) { $engineExe = (Resolve-Path $e).Path }
+    if (-not $mcpExe -and (Test-Path $m)) { $mcpExe = (Resolve-Path $m).Path }
+    if (-not $mcRunnerExe -and (Test-Path $r)) { $mcRunnerExe = (Resolve-Path $r).Path }
+    if ($engineExe -and $mcpExe -and $mcRunnerExe) { break }
 }
 
 if (-not $engineExe) {
@@ -50,6 +53,9 @@ Write-Host "[INFO] Copie des binaires vers $binDir..." -ForegroundColor DarkGray
 Copy-Item -Path $engineExe -Destination (Join-Path $binDir "aether-engine.exe") -Force
 if ($mcpExe) {
     Copy-Item -Path $mcpExe -Destination (Join-Path $binDir "aetherscope-mcp.exe") -Force
+}
+if ($mcRunnerExe) {
+    Copy-Item -Path $mcRunnerExe -Destination (Join-Path $binDir "aether-mc-runner.exe") -Force
 }
 
 $launcherSrc = Join-Path $scriptDir "AetherScope-Launcher.bat"

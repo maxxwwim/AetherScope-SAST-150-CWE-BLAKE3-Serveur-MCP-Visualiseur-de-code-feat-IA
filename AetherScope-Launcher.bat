@@ -27,6 +27,16 @@ if exist "%SCRIPT_DIR%aetherscope-mcp.exe" (
     set "MCP_EXE=%LOCALAPPDATA%\AetherScope\bin\aetherscope-mcp.exe"
 )
 
+set "MC_RUNNER_EXE="
+
+if exist "%SCRIPT_DIR%aether-mc-runner.exe" (
+    set "MC_RUNNER_EXE=%SCRIPT_DIR%aether-mc-runner.exe"
+) else if exist "%SCRIPT_DIR%target\release\aether-mc-runner.exe" (
+    set "MC_RUNNER_EXE=%SCRIPT_DIR%target\release\aether-mc-runner.exe"
+) else if exist "%LOCALAPPDATA%\AetherScope\bin\aether-mc-runner.exe" (
+    set "MC_RUNNER_EXE=%LOCALAPPDATA%\AetherScope\bin\aether-mc-runner.exe"
+)
+
 if not defined ENGINE_EXE (
     echo [ERREUR] Impossible de trouver aether-engine.exe !
     echo Veuillez compiler le projet via cargo build --release ou executer install.ps1.
@@ -44,21 +54,23 @@ echo   [1] 🚀 Lancer le Cockpit WebGL 3D (GUI + Serveur Axum)
 echo   [2] 🤖 Lancer le Serveur en Arriere-Plan (Mode Headless)
 echo   [3] 🔌 Configurer le Serveur MCP (Claude / Antigravity / Cursor)
 echo   [4] 🎯 Scanner un projet en ligne de commande (SAST Headless)
-echo   [5] 🧹 Liberer le port 3030 (Fermer les processus Aether en cours)
-echo   [6] 📦 Installer AetherScope dans Windows (PATH + Bureau)
-echo   [7] ❌ Quitter
+echo   [5] ⛏️ Lancer Aether Minecraft Cockpit (Web Flask + Runner)
+echo   [6] 🧹 Liberer le port 3030 (Fermer les processus Aether en cours)
+echo   [7] 📦 Installer AetherScope dans Windows (PATH + Bureau)
+echo   [8] ❌ Quitter
 echo.
 echo ==============================================================
-set /p "CHOICE=Choisissez une option (1-7) [defaut: 1] : "
+set /p "CHOICE=Choisissez une option (1-8) [defaut: 1] : "
 
 if "%CHOICE%"=="" set "CHOICE=1"
 if "%CHOICE%"=="1" goto LAUNCH_GUI
 if "%CHOICE%"=="2" goto LAUNCH_HEADLESS
 if "%CHOICE%"=="3" goto CONFIG_MCP
 if "%CHOICE%"=="4" goto SCAN_SAST
-if "%CHOICE%"=="5" goto KILL_PORT
-if "%CHOICE%"=="6" goto RUN_INSTALL
-if "%CHOICE%"=="7" goto QUIT
+if "%CHOICE%"=="5" goto LAUNCH_MC
+if "%CHOICE%"=="6" goto KILL_PORT
+if "%CHOICE%"=="7" goto RUN_INSTALL
+if "%CHOICE%"=="8" goto QUIT
 
 echo Option invalide.
 timeout /t 2 >nul
@@ -103,6 +115,14 @@ echo [INFO] Audit SAST en cours sur %SCAN_PATH%...
 "%ENGINE_EXE%" --path "%SCAN_PATH%" --audit-only
 echo.
 echo Rapport disponible dans : %SCAN_PATH%\.aether\LIVE_AUDIT.md
+pause
+goto MENU
+
+:LAUNCH_MC
+cls
+echo [INFO] Lancement du Control-Plane Minecraft Cockpit (http://127.0.0.1:5000)...
+start http://127.0.0.1:5000
+python "%SCRIPT_DIR%services\mc-control-plane\app.py"
 pause
 goto MENU
 

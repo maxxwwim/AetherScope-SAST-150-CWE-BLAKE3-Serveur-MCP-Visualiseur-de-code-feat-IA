@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "aether-mc-runner"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "anyhow",
  "blake3",
@@ -29,7 +29,7 @@ dependencies = [
 
 [[package]]
 name = "ai-file-bridge"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "chrono",
  "colored",
@@ -108,7 +108,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 
 [[package]]
 name = "arch-templates"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "blake3",
  "core-graph",
@@ -147,7 +147,7 @@ dependencies = [
 
 [[package]]
 name = "ast-scanner"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "core-graph",
  "rayon",
@@ -759,7 +759,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "core-graph"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "bitflags 2.13.2",
  "rayon",
@@ -919,7 +919,7 @@ dependencies = [
 
 [[package]]
 name = "desktop-shell"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "ai-file-bridge",
  "arch-templates",
@@ -3241,7 +3241,7 @@ checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
 
 [[package]]
 name = "security-linter"
-version = "2.0.4"
+version = "2.0.5"
 dependencies = [
  "blake3",
  "core-graph",
