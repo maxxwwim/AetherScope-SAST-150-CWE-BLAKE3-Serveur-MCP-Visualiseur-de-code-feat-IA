@@ -1105,7 +1105,6 @@ window.ignoreCweAnomaly = async function(cacheIdx) {
   if (!anom) return;
   return window.ignoreCweRuleExplicit(anom.rule_id, anom.cve_id);
 };
-};
 
 window.openIgnoredCweModal = function() {
   const modal = document.getElementById('ignored-cwe-modal');
